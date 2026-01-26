@@ -1454,133 +1454,191 @@
             animation: shine 4s ease infinite;
         }
     </style>
+    <style>
+    /* === 4K OLED GLASS EFFECT === */
+    .oled-glass-bg {
+        /* ផ្ទៃខាងក្រោយកញ្ចក់គុណភាពខ្ពស់ */
+        background: rgba(255, 255, 255, 0.70); /* កាត់បន្ថយភាពស្រអាប់ */
+        backdrop-filter: blur(40px) saturate(200%) contrast(110%); /* បង្កើន Saturation & Contrast ឱ្យច្បាស់ */
+        -webkit-backdrop-filter: blur(40px) saturate(200%) contrast(110%);
+        border: 1px solid rgba(255, 255, 255, 0.6); /* គែមច្បាស់ */
+        border-top: 1px solid rgba(255, 255, 255, 0.9); /* គែមខាងលើភ្លឺជាង (ពន្លឺចាំង) */
+        box-shadow: 
+            0 20px 50px -12px rgba(0, 0, 0, 0.15), /* ស្រមោលធំ */
+            inset 0 0 0 1px rgba(255, 255, 255, 0.2); /* ស្រមោលខាងក្នុង */
+    }
+
+    .dark .oled-glass-bg {
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(40px) saturate(150%);
+        -webkit-backdrop-filter: blur(40px) saturate(150%);
+    }
+
+    /* កាតខាងក្នុង (Inner Cards) */
+    .crystal-card {
+        background: linear-gradient(145deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.4) 100%);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+    }
+    
+    .dark .crystal-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.4) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* Input Fields ដែលច្បាស់ល្អ */
+    .oled-input {
+        background: rgba(255, 255, 255, 0.6) !important;
+        border: 1px solid rgba(203, 213, 225, 0.6) !important;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .oled-input:focus {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-color: #0d9488 !important;
+        box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15), inset 0 1px 2px rgba(0,0,0,0.05);
+        transform: translateY(-1px);
+    }
+    .dark .oled-input {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border-color: rgba(71, 85, 105, 0.6) !important;
+        color: white !important;
+    }
+    .dark .oled-input:focus {
+        background: rgba(30, 41, 59, 0.9) !important;
+    }
+</style>
 
     <div id="modal-order"
-    class="fixed inset-0 bg-slate-900/60 dark:bg-black/80 z-50 hidden flex items-end sm:items-center justify-center backdrop-blur-[4px] transition-all duration-300">
+    class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 z-50 hidden flex items-end sm:items-center justify-center backdrop-blur-[8px] transition-all duration-300">
     
-    <div class="relative w-full sm:w-[480px] h-[92vh] sm:h-[85vh] rounded-t-[35px] sm:rounded-[32px] overflow-hidden shadow-2xl animate-slide-up flex flex-col border border-white/40 dark:border-white/10 premium-glass-bg"
-         style="background-color: rgba(255, 255, 255, 0.96); backdrop-filter: blur(25px);">
+    <div class="relative w-full sm:w-[480px] h-[92vh] sm:h-[85vh] rounded-t-[40px] sm:rounded-[40px] overflow-hidden animate-slide-up flex flex-col oled-glass-bg">
         
-        <div class="absolute inset-0 bg-transparent dark:bg-slate-900/95 -z-10 pointer-events-none"></div>
+        <div class="absolute top-[-10%] left-[-10%] w-[200px] h-[200px] bg-teal-400/30 rounded-full blur-[80px] pointer-events-none"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[200px] h-[200px] bg-purple-400/30 rounded-full blur-[80px] pointer-events-none"></div>
 
-        <div class="flex justify-between items-center px-6 py-5 z-20 shrink-0 border-b border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md">
+        <div class="flex justify-between items-center px-6 py-6 z-20 shrink-0 border-b border-white/40 dark:border-white/5 bg-white/20 dark:bg-black/20 backdrop-blur-xl">
             <div>
-                <h3 class="text-2xl font-black font-serif-kh tracking-wide bg-gradient-to-r from-teal-600 via-blue-600 to-purple-600 dark:from-teal-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent" id="modal-title">
+                <h3 class="text-2xl font-black font-serif-kh tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-blue-700 dark:from-teal-300 dark:to-blue-400 drop-shadow-sm" id="modal-title">
                     ការលក់ថ្មី
                 </h3>
             </div>
             <div class="flex gap-2">
                 <div id="invoice-btn-group" class="hidden gap-2">
-                    <button onclick="ui.openInvoice('customer')" class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-200 dark:border-blue-700 shadow-sm active:scale-95 transition"><i class="fas fa-file-invoice"></i></button>
-                    <button onclick="ui.openInvoice('admin')" class="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-200 dark:border-purple-700 shadow-sm active:scale-95 transition"><i class="fas fa-user-shield"></i></button>
+                    <button onclick="ui.openInvoice('customer')" class="w-10 h-10 rounded-full bg-blue-50/80 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i class="fas fa-file-invoice"></i></button>
+                    <button onclick="ui.openInvoice('admin')" class="w-10 h-10 rounded-full bg-purple-50/80 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i class="fas fa-user-shield"></i></button>
                 </div>
-                <button onclick="ui.shareTextOrder()" class="w-10 h-10 rounded-full bg-teal-50 dark:bg-teal-900/40 text-teal-600 dark:text-teal-400 flex items-center justify-center border border-teal-200 dark:border-teal-700 shadow-sm active:scale-95 transition"><i class="fas fa-share-alt"></i></button>
-                <button onclick="ui.closeModal('modal-order')" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-red-500 hover:bg-red-50 transition flex items-center justify-center active:scale-95"><i class="fas fa-times"></i></button>
+                <button onclick="ui.shareTextOrder()" class="w-10 h-10 rounded-full bg-teal-50/80 text-teal-600 dark:bg-teal-900/50 dark:text-teal-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i class="fas fa-share-alt"></i></button>
+                <button onclick="ui.closeModal('modal-order')" class="w-10 h-10 rounded-full bg-gray-100/80 text-gray-500 dark:bg-gray-800/50 dark:text-gray-400 hover:text-red-500 hover:bg-red-50 transition flex items-center justify-center active:scale-95 backdrop-blur-md"><i class="fas fa-times"></i></button>
             </div>
         </div>
 
-        <div class="overflow-y-auto p-4 sm:p-5 space-y-4 flex-1 custom-scrollbar pb-32">
-            <form id="form-order" class="space-y-4" onsubmit="return false;">
+        <div class="overflow-y-auto p-5 space-y-5 flex-1 custom-scrollbar pb-32">
+            <form id="form-order" class="space-y-5" onsubmit="return false;">
                 <input type="hidden" id="entry-id">
 
-                <div class="relative group p-4 rounded-[20px] bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 shadow-sm">
-                    <div class="absolute top-0 right-0 p-4 opacity-5 text-6xl text-blue-500 pointer-events-none transform rotate-12"><i class="fas fa-user"></i></div>
+                <div class="relative group p-5 rounded-[28px] crystal-card">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl text-blue-600 pointer-events-none transform rotate-12"><i class="fas fa-user"></i></div>
                     
                     <div class="relative z-10">
-                        <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-2 block flex items-center gap-2">
-                            <i class="fas fa-id-card"></i> អតិថិជន (Customer)
+                        <span class="text-[11px] font-extrabold text-blue-700 dark:text-blue-300 uppercase tracking-widest mb-3 block flex items-center gap-2 drop-shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-blue-500 box-shadow-glow"></span> អតិថិជន (Customer)
                         </span>
                         <div class="space-y-3">
                             <input type="text" id="cust-name" placeholder="ឈ្មោះអតិថិជន" required
-                                class="w-full h-[45px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white font-bold text-left pl-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-gray-400">
+                                class="oled-input w-full h-[52px] rounded-2xl text-gray-900 dark:text-white font-bold text-lg text-left pl-5 outline-none">
                             <div class="grid grid-cols-2 gap-3">
                                 <input type="tel" inputmode="numeric" id="cust-phone" placeholder="លេខទូរស័ព្ទ"
-                                    class="h-[45px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white text-sm text-left pl-4 focus:ring-2 focus:ring-blue-500 outline-none">
+                                    class="oled-input h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-5 outline-none">
                                 <input type="text" id="cust-addr" placeholder="ទីតាំង" 
-                                    class="h-[45px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white text-sm text-left pl-4 focus:ring-2 focus:ring-blue-500 outline-none">
+                                    class="oled-input h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-5 outline-none">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="relative group p-4 rounded-[20px] bg-white dark:bg-slate-800/60 border border-gray-200 dark:border-slate-700 shadow-sm">
-                    <div class="absolute top-0 right-0 p-4 opacity-5 text-6xl text-purple-500 pointer-events-none transform -rotate-12"><i class="fas fa-box-open"></i></div>
+                <div class="relative group p-5 rounded-[28px] crystal-card">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl text-purple-600 pointer-events-none transform -rotate-12"><i class="fas fa-box-open"></i></div>
                     
                     <div class="relative z-10">
-                        <span class="text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest mb-2 block flex items-center gap-2">
-                            <i class="fas fa-tag"></i> ទំនិញ (Product)
+                        <span class="text-[11px] font-extrabold text-purple-700 dark:text-purple-300 uppercase tracking-widest mb-3 block flex items-center gap-2 drop-shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-purple-500 box-shadow-glow"></span> ទំនិញ (Product)
                         </span>
                         <div class="space-y-3">
                             <input type="text" id="prod-name" placeholder="ឈ្មោះទំនិញ / កូដ" required
-                                class="w-full h-[45px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 focus:ring-2 focus:ring-purple-500 outline-none">
+                                class="oled-input w-full h-[52px] rounded-2xl text-gray-900 dark:text-white font-bold text-xl text-left pl-5 outline-none">
                             <div class="grid grid-cols-2 gap-3">
                                 <input type="text" id="prod-size" placeholder="Size" 
-                                    class="h-[45px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white text-left pl-4 focus:ring-2 focus:ring-purple-500 outline-none">
+                                    class="oled-input h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-left pl-5 outline-none">
                                 <input type="number" id="prod-qty" value="1" placeholder="Qty" 
-                                    class="h-[45px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white font-bold text-left pl-4 focus:ring-2 focus:ring-purple-500 outline-none">
+                                    class="oled-input h-[48px] rounded-2xl text-gray-900 dark:text-white font-bold text-left pl-5 outline-none">
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                <div class="grid grid-cols-2 gap-3">
                     
-                    <div class="relative p-3 rounded-[20px] bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-700 shadow-sm flex flex-col gap-3">
+                    <div class="relative p-3 rounded-[28px] bg-gradient-to-br from-teal-50/80 to-teal-100/50 dark:from-teal-900/30 dark:to-teal-800/20 border border-white/60 dark:border-white/10 shadow-sm flex flex-col gap-3 backdrop-blur-md">
                         
-                        <div class="text-center pb-1">
-                            <span class="text-[11px] font-black text-teal-700 dark:text-teal-400 uppercase tracking-widest whitespace-nowrap">ចំណូល (Income)</span>
+                        <div class="text-center pb-1 pt-1">
+                            <span class="text-[10px] sm:text-[11px] font-black text-teal-800 dark:text-teal-300 uppercase tracking-widest whitespace-nowrap drop-shadow-sm">ចំណូល (Income)</span>
                         </div>
                         
                         <div class="flex flex-col gap-2 relative z-10">
                             <input type="number" inputmode="decimal" id="val-sale" placeholder="លក់ ($)" 
-                                   class="w-full h-[45px] bg-white dark:bg-slate-900 border border-teal-200 dark:border-teal-700/50 rounded-xl text-teal-800 dark:text-teal-300 font-bold text-lg text-left pl-3 focus:ring-2 focus:ring-teal-500 outline-none shadow-sm placeholder:text-teal-700/30">
+                                   class="oled-input w-full h-[48px] rounded-2xl text-teal-800 dark:text-teal-300 font-bold text-lg text-left pl-4 outline-none placeholder:text-teal-700/30">
                             
                             <input type="number" inputmode="decimal" id="val-ship-in" placeholder="ភ្ញៀវចេញថ្លៃដឹក" 
-                                   class="w-full h-[45px] bg-white dark:bg-slate-900 border border-teal-200 dark:border-teal-700/50 rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-3 outline-none shadow-sm focus:ring-2 focus:ring-teal-500 placeholder:text-gray-400">
+                                   class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
                             
-                            <div class="flex items-center gap-1 h-[45px]">
+                            <div class="flex items-center gap-1 h-[48px]">
                                 <div class="w-[50%] flex flex-col items-center justify-center leading-none flex-shrink-0">
-                                    <span class="text-[10px] sm:text-[11px] font-bold text-teal-800 dark:text-teal-400 whitespace-nowrap">អត្រាប្ដូរប្រាក់</span>
+                                    <span class="text-[10px] sm:text-[11px] font-bold text-teal-800 dark:text-teal-300 whitespace-nowrap">អត្រាប្ដូរប្រាក់</span>
                                     <span class="text-[8px] sm:text-[9px] text-red-500 font-bold mt-1 scale-90 whitespace-nowrap">(សម្រាប់តែភ្ញៀវ)</span>
                                 </div>
                                 
                                 <div class="w-[50%] relative h-full">
                                     <input type="number" inputmode="numeric" id="inv-rate-input" placeholder="4100" 
-                                           class="w-full h-full bg-white dark:bg-slate-900 border border-teal-200 dark:border-teal-700/50 rounded-xl text-right font-bold text-gray-900 dark:text-white outline-none pr-5 text-sm shadow-sm focus:ring-2 focus:ring-teal-500">
-                                    <span class="absolute right-1.5 top-1/2 -translate-y-1/2 text-[9px] font-bold text-gray-400 pointer-events-none">៛</span>
+                                           class="oled-input w-full h-full rounded-2xl text-right font-bold text-gray-900 dark:text-white outline-none pr-6 text-sm">
+                                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 pointer-events-none">៛</span>
                                 </div>
                             </div>
 
                         </div>
                     </div>
 
-                    <div class="relative p-3 rounded-[20px] bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-700 shadow-sm flex flex-col gap-3">
+                    <div class="relative p-3 rounded-[28px] bg-gradient-to-br from-rose-50/80 to-rose-100/50 dark:from-rose-900/30 dark:to-rose-800/20 border border-white/60 dark:border-white/10 shadow-sm flex flex-col gap-3 backdrop-blur-md">
                         
-                        <div class="text-center pb-1">
-                            <span class="text-[11px] font-black text-rose-700 dark:text-rose-400 uppercase tracking-widest whitespace-nowrap">ចំណាយ (Cost)</span>
+                        <div class="text-center pb-1 pt-1">
+                            <span class="text-[10px] sm:text-[11px] font-black text-rose-800 dark:text-rose-300 uppercase tracking-widest whitespace-nowrap drop-shadow-sm">ចំណាយ (Cost)</span>
                         </div>
                         
                         <div class="flex flex-col gap-2 relative z-10">
                             <input type="number" inputmode="decimal" id="cost-buy" placeholder="ថ្លៃដើម ($)" 
-                                   class="w-full h-[45px] bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-700/50 rounded-xl text-gray-900 dark:text-gray-100 font-bold text-left pl-3 outline-none shadow-sm focus:ring-2 focus:ring-rose-500 placeholder:text-rose-700/30">
+                                   class="oled-input w-full h-[48px] rounded-2xl text-gray-900 dark:text-gray-100 font-bold text-left pl-4 outline-none placeholder:text-rose-700/30">
                             
                             <input type="number" inputmode="decimal" id="cost-ship" placeholder="ថ្លៃដឹកចេញ ($)" 
-                                   class="w-full h-[45px] bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-700/50 rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-3 outline-none shadow-sm focus:ring-2 focus:ring-rose-500 placeholder:text-gray-400">
+                                   class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
                             
                             <input type="number" inputmode="decimal" id="cost-boost" placeholder="Boost ($)" 
-                                   class="w-full h-[45px] bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-700/50 rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-3 outline-none shadow-sm focus:ring-2 focus:ring-rose-500 placeholder:text-gray-400">
+                                   class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
                         </div>
                     </div>
                 </div>
 
-                <div class="p-1 rounded-[20px] bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-700/50">
+                <div class="p-1.5 rounded-[24px] bg-gradient-to-r from-yellow-50/80 to-amber-50/80 dark:from-yellow-900/20 dark:to-amber-900/20 border border-white/50 dark:border-white/10">
                     <input type="text" id="note" placeholder="📝 សរសេរចំណាំ (Note)..."
-                        class="w-full h-[45px] bg-transparent rounded-xl px-4 text-gray-800 dark:text-gray-200 font-sans text-left outline-none placeholder:text-gray-400">
+                        class="w-full h-[45px] bg-transparent rounded-xl px-4 text-gray-800 dark:text-gray-200 font-sans text-left outline-none placeholder:text-gray-400 placeholder:font-normal font-medium">
                 </div>
 
-                <div class="relative">
+                <div class="relative pb-6">
                      <select id="status"
-                        class="w-full h-[55px] px-5 rounded-[20px] border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-base font-bold text-gray-800 dark:text-white outline-none shadow-sm focus:ring-2 focus:ring-teal-500">
+                        class="oled-input w-full h-[60px] px-5 rounded-[24px] text-base font-bold text-gray-800 dark:text-white outline-none cursor-pointer">
                         <option value="pending">⏳ រង់ចាំ (Pending)</option>
                         <option value="ordered">🛒 បានកុម្មង់ (Ordered)</option>
                         <option value="shipping">🚚 កំពុងដឹក (Shipping)</option>
@@ -1593,14 +1651,13 @@
 
         <div class="absolute bottom-6 left-0 w-full flex justify-center z-30 pointer-events-none">
             <button type="button" onclick="ui.saveOrder()"
-                class="pointer-events-auto w-[92%] sm:w-[400px] h-[58px] rounded-[18px] bg-teal-600 hover:bg-teal-700 text-white font-bold text-lg shadow-lg shadow-teal-600/30 transition-all transform active:scale-[0.97] flex justify-center items-center gap-2 border border-teal-500/20">
-                <i class="fas fa-save text-xl"></i> រក្សាទុក (SAVE)
+                class="pointer-events-auto w-[85%] sm:w-[400px] h-[64px] rounded-[32px] bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white font-black text-xl shadow-[0_15px_35px_rgba(13,148,136,0.4)] dark:shadow-[0_15px_35px_rgba(45,212,191,0.2)] transition-all transform active:scale-[0.95] flex justify-center items-center gap-3 border-[4px] border-white/20 backdrop-blur-md ring-1 ring-white/30">
+                <i class="fas fa-save text-2xl drop-shadow-md"></i> <span class="drop-shadow-sm tracking-wide">រក្សាទុក (SAVE)</span>
             </button>
         </div>
 
     </div>
 </div>
-
     <div id="invoice-modal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-xl overflow-hidden shadow-2xl animate-fade-in relative">
             <div id="invoice-viewer" class="p-6 bg-white text-black font-sans relative"></div>
