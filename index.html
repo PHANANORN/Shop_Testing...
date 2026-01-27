@@ -1734,7 +1734,13 @@
                                             <i class="fas fa-link text-blue-400"></i>
                                         </div>
                                         <input type="text" id="prod-img" placeholder="Link រូបភាព (URL)"
-                                            class="oled-input h-[44px] w-full rounded-xl text-blue-600 dark:text-blue-400 text-xs text-left pl-9 outline-none">
+                                            class="oled-input h-[44px] w-full rounded-xl text-blue-600 dark:text-blue-400 text-xs text-left pl-9 pr-10 outline-none">
+
+                                        <button
+                                            onclick="navigator.clipboard.readText().then(t => { document.getElementById('prod-img').value = t; ui.showToast('បាន Paste Link រូបភាព'); }).catch(() => ui.showToast('សូមចុចជាប់ដើម្បី Paste'));"
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500 active:scale-90 transition z-30">
+                                            <i class="fas fa-paste"></i>
+                                        </button>
                                     </div>
                                 </div>
 
@@ -2445,10 +2451,20 @@
                     }
 
                     // បង្កើតប៊ូតុងរូបភាព (Image Button)
+                    // [START] កែប្រែ Logic រូបភាព (ការពារ 404 Error)
                     let imgBtn = '';
                     if (o.prodImg) {
-                        imgBtn = `<a href="${o.prodImg}" target="_blank" onclick="event.stopPropagation();" class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center hover:bg-purple-500 hover:text-white transition shadow-sm ml-2" title="មើលរូបភាព"><i class="fas fa-image text-xs"></i></a>`;
+                        // កាត់ Space មុខក្រោយចេញ
+                        let link = o.prodImg.trim();
+
+                        // ឆែកមើល៖ បើអត់មាន http:// ឬ https:// ទេ ថែម https:// ឱ្យស្វ័យប្រវត្តិ
+                        if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                            link = 'https://' + link;
+                        }
+
+                        imgBtn = `<a href="${link}" target="_blank" onclick="event.stopPropagation();" class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center hover:bg-purple-500 hover:text-white transition shadow-sm ml-2" title="មើលរូបភាព"><i class="fas fa-image text-xs"></i></a>`;
                     }
+                    // [END] បញ្ចប់កែប្រែ
 
                     // បង្កើតផ្នែក Tracking
                     let trackHtml = '';
