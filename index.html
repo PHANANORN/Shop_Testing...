@@ -1707,15 +1707,35 @@
                             </div>
 
                             <div class="space-y-3">
-                                <input type="text" id="prod-name" placeholder="ឈ្មោះទំនិញ / កូដ" required
-                                    class="oled-input w-full h-[48px] rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 outline-none relative z-20">
-                                <div class="grid grid-cols-2 gap-3">
-                                    <input type="text" id="prod-size" placeholder="Size"
-                                        class="oled-input h-[44px] rounded-xl text-gray-800 dark:text-gray-200 text-left pl-4 outline-none relative z-20">
-                                    <input type="number" id="prod-qty" value="1" placeholder="Qty"
-                                        class="oled-input h-[44px] rounded-xl text-gray-900 dark:text-white font-bold text-left pl-4 outline-none relative z-20">
-                                </div>
-                            </div>
+    
+    <div class="grid grid-cols-2 gap-3">
+        <div class="relative z-20">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-barcode text-gray-400"></i>
+            </div>
+            <input type="text" id="track-no" placeholder="លេខ Tracking (J&T...)" 
+                class="oled-input h-[44px] w-full rounded-xl text-gray-800 dark:text-gray-200 text-sm font-bold pl-9 outline-none placeholder:font-normal">
+        </div>
+            
+        <div class="relative z-20">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-link text-blue-400"></i>
+            </div>
+            <input type="text" id="prod-img" placeholder="Link រូបភាព (URL)" 
+                class="oled-input h-[44px] w-full rounded-xl text-blue-600 dark:text-blue-400 text-xs text-left pl-9 outline-none">
+        </div>
+    </div>
+
+    <input type="text" id="prod-name" placeholder="ឈ្មោះទំនិញ (Product Name)" required
+        class="oled-input w-full h-[48px] rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 outline-none relative z-20">
+
+    <div class="grid grid-cols-2 gap-3">
+        <input type="text" id="prod-size" placeholder="Size"
+            class="oled-input h-[44px] rounded-xl text-gray-800 dark:text-gray-200 text-left pl-4 outline-none relative z-20">
+        <input type="number" id="prod-qty" value="1" placeholder="Qty"
+            class="oled-input h-[44px] rounded-xl text-gray-900 dark:text-white font-bold text-left pl-4 outline-none relative z-20">
+    </div>
+</div>
                         </div>
                     </div>
 
@@ -2370,85 +2390,117 @@
                 document.getElementById('dash-real-profit').innerHTML = `$${realP.toFixed(2)} ${app.formatKHR(realP)}`; document.getElementById('dash-pending-profit').innerHTML = `$${pendP.toFixed(2)} ${app.formatKHR(pendP)}`;
                 if (activeData.length === 0) { container.innerHTML = `<div class="text-center mt-20 opacity-40"><i class="fas fa-box-open text-5xl mb-3 text-gray-300 dark:text-gray-600"></i><p class="text-sm text-gray-400 dark:text-gray-500">មិនមានទិន្ន័យ</p></div>`; return; }
 
-                activeData.forEach(o => {
-                    const f = app.calc(o); const totalPay = (parseFloat(o.valSale) || 0) + (parseFloat(o.valShipIn) || 0);
-                    const el = document.createElement('div');
-                    let st = { bg: 'bg-orange-50', text: 'text-orange-600', strip: 'bg-orange-400', label: 'រង់ចាំ', icon: 'fa-clock' };
-                    if (o.status === 'ordered') st = { bg: 'bg-blue-50', text: 'text-blue-600', strip: 'bg-blue-500', label: 'បានកុម្មង់', icon: 'fa-cart-shopping' };
-                    if (o.status === 'shipping') st = { bg: 'bg-indigo-50', text: 'text-indigo-600', strip: 'bg-indigo-500', label: 'កំពុងដឹក', icon: 'fa-truck-fast' };
-                    if (o.status === 'completed') st = { bg: 'bg-emerald-50', text: 'text-emerald-600', strip: 'bg-emerald-500', label: 'ជោគជ័យ', icon: 'fa-check-circle' };
-                    if (o.status === 'cancelled') st = { bg: 'bg-red-50', text: 'text-red-600', strip: 'bg-red-500', label: 'បោះបង់', icon: 'fa-circle-xmark' };
+                // [START] កូដបង្ហាញកាតថ្មី (Tracking & Image Search)
+            
+            // 1. Logic ស្វែងរក (Search Logic) - ដាក់ជំនួស Logic Search ចាស់
+            if (search) activeData = activeData.filter(o => 
+                o.custName.toLowerCase().includes(search) || 
+                o.custPhone.includes(search) || 
+                o.prodName.toLowerCase().includes(search) ||
+                (o.trackingNo && o.trackingNo.toLowerCase().includes(search)) // ស្វែងរកតាម Tracking
+            );
 
-                    let paymentHtml = '';
-                    if (o.status === 'completed') paymentHtml = `<span class="text-emerald-600 font-bold text-[11px] flex items-center gap-1"><i class="fas fa-check-circle"></i> ទូទាត់រួច</span>`;
-                    else if (o.status !== 'cancelled') paymentHtml = `<span class="text-orange-500 font-bold text-[11px] flex items-center gap-1"><i class="fas fa-clock"></i> រង់ចាំការទូទាត់: $${totalPay.toFixed(2)}</span>`;
-                    else paymentHtml = `<span class="text-gray-400 font-bold text-[11px]">-</span>`;
+            // 2. ការបង្កើតកាត
+            if (activeData.length === 0) { container.innerHTML = `<div class="text-center mt-20 opacity-40"><i class="fas fa-box-open text-5xl mb-3 text-gray-300 dark:text-gray-600"></i><p class="text-sm text-gray-400 dark:text-gray-500">មិនមានទិន្ន័យ</p></div>`; return; }
 
-                    el.className = 'order-card p-0 group'; el.onclick = () => ui.openOrderModal(o.id);
-                    // --- ចាប់ផ្តើមជំនួសត្រង់នេះ ---
-        
-        // Logic បង្ហាញប៊ូតុង Messenger
-        let messengerBtn = '';
-        if (o.fbLink) {
-            // បើមាន Link (ពណ៌ខៀវ)
-            messengerBtn = `<a href="${o.fbLink}" target="_blank" onclick="event.stopPropagation();" class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition border border-blue-200"><i class="fab fa-facebook-messenger text-sm"></i></a>`;
-        } else {
-            // បើអត់មាន Link (ពណ៌ប្រផេះ)
-            messengerBtn = `<div class="w-8 h-8 rounded-full bg-gray-100 text-gray-300 flex items-center justify-center border border-gray-200"><i class="fab fa-facebook-messenger text-sm"></i></div>`;
-        }
+            activeData.forEach(o => {
+                const f = app.calc(o); const totalPay = (parseFloat(o.valSale) || 0) + (parseFloat(o.valShipIn) || 0);
+                const el = document.createElement('div');
+                let st = { bg: 'bg-orange-50', text: 'text-orange-600', strip: 'bg-orange-400', label: 'រង់ចាំ', icon: 'fa-clock' };
+                if (o.status === 'ordered') st = { bg: 'bg-blue-50', text: 'text-blue-600', strip: 'bg-blue-500', label: 'បានកុម្មង់', icon: 'fa-cart-shopping' };
+                if (o.status === 'shipping') st = { bg: 'bg-indigo-50', text: 'text-indigo-600', strip: 'bg-indigo-500', label: 'កំពុងដឹក', icon: 'fa-truck-fast' };
+                if (o.status === 'completed') st = { bg: 'bg-emerald-50', text: 'text-emerald-600', strip: 'bg-emerald-500', label: 'ជោគជ័យ', icon: 'fa-check-circle' };
+                if (o.status === 'cancelled') st = { bg: 'bg-red-50', text: 'text-red-600', strip: 'bg-red-500', label: 'បោះបង់', icon: 'fa-circle-xmark' };
 
-        el.innerHTML = `
-        <div class="card-strip ${st.strip}"></div>
-        <div class="p-5 pl-6">
-            <div class="flex justify-between items-center mb-3">
-                <span class="status-badge ${st.bg} ${st.text}"><i class="fas ${st.icon}"></i> ${st.label}</span>
-                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-bold font-sans tracking-wide">${new Date(o.updatedAt).toLocaleDateString('km-KH')}</span>
-            </div>
-            <div class="mb-3 pb-3 border-b border-gray-100 dark:border-gray-700/50">
-                <h4 class="font-bold text-gray-800 dark:text-white text-lg leading-tight mb-1">${o.custName}</h4>
-                <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                let paymentHtml = '';
+                if (o.status === 'completed') paymentHtml = `<span class="text-emerald-600 font-bold text-[11px] flex items-center gap-1"><i class="fas fa-check-circle"></i> ទូទាត់រួច</span>`;
+                else if (o.status !== 'cancelled') paymentHtml = `<span class="text-orange-500 font-bold text-[11px] flex items-center gap-1"><i class="fas fa-clock"></i> រង់ចាំការទូទាត់: $${totalPay.toFixed(2)}</span>`;
+                else paymentHtml = `<span class="text-gray-400 font-bold text-[11px]">-</span>`;
+
+                el.className = 'order-card p-0 group'; el.onclick = () => ui.openOrderModal(o.id);
+
+                // បង្កើតប៊ូតុង Messenger
+                let messengerBtn = '';
+                if (o.fbLink) {
+                    messengerBtn = `<a href="${o.fbLink}" target="_blank" onclick="event.stopPropagation();" class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition border border-blue-200"><i class="fab fa-facebook-messenger text-sm"></i></a>`;
+                } else {
+                    messengerBtn = `<div class="w-8 h-8 rounded-full bg-gray-100 text-gray-300 flex items-center justify-center border border-gray-200"><i class="fab fa-facebook-messenger text-sm"></i></div>`;
+                }
+
+                // បង្កើតប៊ូតុងរូបភាព (Image Button)
+                let imgBtn = '';
+                if (o.prodImg) {
+                    imgBtn = `<a href="${o.prodImg}" target="_blank" onclick="event.stopPropagation();" class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center hover:bg-purple-500 hover:text-white transition shadow-sm ml-2" title="មើលរូបភាព"><i class="fas fa-image text-xs"></i></a>`;
+                }
+
+                // បង្កើតផ្នែក Tracking
+                let trackHtml = '';
+                if (o.trackingNo) {
+                    trackHtml = `
+                    <div class="mt-2 flex items-center gap-2">
+                        <span class="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-[10px] font-mono font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 flex items-center gap-1 select-all">
+                            <i class="fas fa-barcode text-gray-400"></i> ${o.trackingNo}
+                        </span>
+                        <button onclick="event.stopPropagation(); navigator.clipboard.writeText('${o.trackingNo}'); ui.showToast('បានចម្លងលេខ Tracking');" class="text-gray-400 hover:text-blue-500 transition"><i class="far fa-copy text-xs"></i></button>
+                    </div>`;
+                }
+
+                el.innerHTML = `
+                <div class="card-strip ${st.strip}"></div>
+                <div class="p-5 pl-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="status-badge ${st.bg} ${st.text}"><i class="fas ${st.icon}"></i> ${st.label}</span>
+                        <span class="text-[11px] text-gray-400 dark:text-gray-500 font-bold font-sans tracking-wide">${new Date(o.updatedAt).toLocaleDateString('km-KH')}</span>
+                    </div>
                     
-                    <a href="tel:${o.custPhone}" onclick="event.stopPropagation();" class="flex items-center gap-1 hover:text-green-600 px-1 py-0.5 rounded transition">
-                        <i class="fas fa-phone-alt text-[10px] mt-[3px]"></i> ${o.custPhone || 'N/A'}
-                    </a>
-
-                    <div onclick="event.stopPropagation(); ui.quickViewAddress('${o.custAddr ? o.custAddr.replace(/'/g, "\\'") : ''}')" class="flex items-center gap-1 max-w-[150px] truncate hover:text-blue-600 cursor-pointer px-1 py-0.5 rounded transition">
-                        <i class="fas fa-map-marker-alt text-[10px] mt-[3px]"></i> ${o.custAddr || 'N/A'}
+                    <div class="mb-3 pb-3 border-b border-gray-100 dark:border-gray-700/50">
+                        <h4 class="font-bold text-gray-800 dark:text-white text-lg leading-tight mb-2">${o.custName}</h4>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="tel:${o.custPhone}" onclick="event.stopPropagation();" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100 transition group-phone">
+                                <i class="fas fa-phone-alt text-[10px]"></i> <span class="text-xs font-bold font-mono">${o.custPhone || 'N/A'}</span>
+                            </a>
+                            <div onclick="event.stopPropagation(); ui.quickViewAddress('${o.custAddr ? o.custAddr.replace(/'/g, "\\'") : ''}')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 hover:bg-rose-100 transition cursor-pointer max-w-[150px]">
+                                <i class="fas fa-map-marker-alt text-[10px]"></i> <span class="text-xs font-medium truncate">${o.custAddr || 'N/A'}</span>
+                            </div>
+                        </div>
                     </div>
 
-                </div>
-            </div>
-            <div class="flex justify-between items-start">
-                <div class="flex-1 pr-2">
-                    <div class="font-bold text-gray-700 dark:text-gray-200 text-sm mb-1">${o.prodName}</div>
-                    <div class="flex flex-wrap gap-2">
-                        ${o.prodSize ? `<span class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-700 text-[10px] font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">Size: ${o.prodSize}</span>` : ''}
-                        <span class="px-2 py-0.5 rounded-md bg-teal-50 dark:bg-teal-900/30 text-[10px] font-bold text-teal-700 dark:text-teal-400 border border-teal-100 dark:border-teal-800">Qty: ${o.prodQty}</span>
-                    </div>
-                </div>
-                <div class="text-right flex flex-col items-end">
-                    <div class="flex flex-col items-center"> 
-                        <div class="font-bold text-xl ${f.profit >= 0 ? 'text-teal-600 dark:text-teal-400' : 'text-red-500'}">${f.profit >= 0 ? '+' : ''}$${f.profit.toFixed(2)}</div>
-                        ${app.formatKHR(Math.abs(f.profit), 'sys')}
-                    </div>
-                </div>
-            </div>
-            <hr class="border-dashed border-gray-200 dark:border-gray-700/50 my-3">
-            <div class="flex justify-between items-center">
-                <div>${paymentHtml}</div>
-                <div class="flex gap-2">
-                    
-                    ${messengerBtn}
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1 pr-2">
+                            <div class="flex items-center mb-1">
+                                <div class="font-bold text-gray-700 dark:text-gray-200 text-sm line-clamp-1">${o.prodName}</div>
+                                ${imgBtn}
+                            </div>
+                            
+                            <div class="flex flex-wrap gap-2">
+                                ${o.prodSize ? `<span class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-700 text-[10px] font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">Size: ${o.prodSize}</span>` : ''}
+                                <span class="px-2 py-0.5 rounded-md bg-teal-50 dark:bg-teal-900/30 text-[10px] font-bold text-teal-700 dark:text-teal-400 border border-teal-100 dark:border-teal-800">Qty: ${o.prodQty}</span>
+                            </div>
 
-                    ${o.note ? `<button onclick="event.stopPropagation(); ui.showNote('${o.note.replace(/'/g, "\\'")}')" class="w-8 h-8 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center hover:bg-yellow-100 transition border border-yellow-100"><i class="fas fa-sticky-note text-xs"></i></button>` : ''}
-                    <button onclick="event.stopPropagation(); ui.confirmDelete(${o.id})" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 flex items-center justify-center hover:bg-red-100 transition border border-red-100 dark:border-red-900/30"><i class="fas fa-trash-alt text-xs"></i></button>
-                </div>
-            </div>
-        </div>`;
-        
-        // --- បញ្ចប់ការជំនួស ---
-                    container.appendChild(el);
-                });
+                            ${trackHtml}
+
+                        </div>
+                        <div class="text-right flex flex-col items-end">
+                            <div class="flex flex-col items-center"> 
+                                <div class="font-bold text-xl ${f.profit >= 0 ? 'text-teal-600 dark:text-teal-400' : 'text-red-500'}">${f.profit >= 0 ? '+' : ''}$${f.profit.toFixed(2)}</div>
+                                ${app.formatKHR(Math.abs(f.profit), 'sys')}
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="border-dashed border-gray-200 dark:border-gray-700/50 my-3">
+                    <div class="flex justify-between items-center">
+                        <div>${paymentHtml}</div>
+                        <div class="flex gap-2">
+                            ${messengerBtn}
+                            ${o.note ? `<button onclick="event.stopPropagation(); ui.showNote('${o.note.replace(/'/g, "\\'")}')" class="w-8 h-8 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center hover:bg-yellow-100 transition border border-yellow-100"><i class="fas fa-sticky-note text-xs"></i></button>` : ''}
+                            <button onclick="event.stopPropagation(); ui.confirmDelete(${o.id})" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 flex items-center justify-center hover:bg-red-100 transition border border-red-100 dark:border-red-900/30"><i class="fas fa-trash-alt text-xs"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+                
+                container.appendChild(el);
+            });
+            // [END] បញ្ចប់ការជំនួសកូដបង្កើតកាត
             },
 
             openOrderModal: (id = null) => {
@@ -2473,7 +2525,7 @@
             document.getElementById('invoice-btn-group').classList.remove('flex');
 
             // សម្អាតទិន្នន័យចាស់ក្នុង Form
-                ['cust-name', 'cust-phone', 'cust-addr', 'cust-fb', 'prod-name', 'prod-size', 'val-sale', 'val-ship-in', 'cost-buy', 'cost-ship', 'cost-boost', 'note'].forEach(i => document.getElementById(i).value = '');
+                ['cust-name', 'cust-phone', 'cust-addr', 'cust-fb', 'track-no', 'prod-img', 'prod-name', 'prod-size', 'val-sale', 'val-ship-in', 'cost-buy', 'cost-ship', 'cost-boost', 'note'].forEach(i => document.getElementById(i).value = '');
             document.getElementById('prod-qty').value = '1';
             document.getElementById('inv-rate-input').value = app.config.invRate;
 
@@ -2481,6 +2533,10 @@
             if (id) {
                 const o = app.data.find(x => x.id === id);
                 if (o) {
+                    // [START] បន្ថែមថ្មី
+    document.getElementById('track-no').value = o.trackingNo || '';
+    document.getElementById('prod-img').value = o.prodImg || '';
+    // [END]
                     // 🔥 កំណត់អក្សរសម្រាប់ "កែប្រែ"
                     if (modalTitle) modalTitle.innerText = 'កែប្រែទិន្នន័យ';
                     if (modalSubtitle) modalSubtitle.innerText = 'EDIT ORDER DETAILS';
@@ -2517,6 +2573,10 @@
                     const curRate = parseInt(document.getElementById('inv-rate-input').value) || 4100; app.config.invRate = curRate; app.saveConfig();
                     const payload = {
                         id: idStr ? parseInt(idStr) : Date.now(), updatedAt: new Date().toISOString(), exchangeRate: curRate,
+                        // [START] បន្ថែមថ្មី
+    trackingNo: document.getElementById('track-no').value,
+    prodImg: document.getElementById('prod-img').value,
+    // [END]
                         fbLink: document.getElementById('cust-fb').value, // <--- ដាក់បន្ទាត់នេះចូល
                         custName: custName, custPhone: document.getElementById('cust-phone').value, custAddr: document.getElementById('cust-addr').value,
                         prodName: prodName, prodSize: document.getElementById('prod-size').value, prodQty: document.getElementById('prod-qty').value,
