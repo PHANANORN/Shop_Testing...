@@ -1713,8 +1713,14 @@
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fas fa-barcode text-gray-400"></i>
             </div>
-            <input type="text" id="track-no" placeholder="លេខ Tracking (J&T...)" 
-                class="oled-input h-[44px] w-full rounded-xl text-gray-800 dark:text-gray-200 text-sm font-bold pl-9 outline-none placeholder:font-normal">
+            
+            <input type="text" id="track-no" inputmode="numeric" placeholder="លេខ Tracking" 
+                class="oled-input h-[44px] w-full rounded-xl text-gray-800 dark:text-gray-200 text-sm font-bold pl-9 pr-10 outline-none placeholder:font-normal">
+            
+            <button onclick="navigator.clipboard.readText().then(t => { document.getElementById('track-no').value = t; ui.showToast('បាន Paste'); }).catch(() => ui.showToast('សូមចុចជាប់ដើម្បី Paste'));" 
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500 active:scale-90 transition z-30">
+                <i class="fas fa-paste"></i>
+            </button>
         </div>
             
         <div class="relative z-20">
@@ -2382,7 +2388,14 @@
             renderHome: () => {
                 const container = document.getElementById('order-list'); const search = document.getElementById('search-input').value.toLowerCase(); container.innerHTML = '';
                 let activeData = app.data.filter(o => !o.isDeleted);
-                if (app.filter !== 'all') activeData = activeData.filter(o => o.status === app.filter);
+                // Logic ស្វែងរក (ដាក់នៅផ្នែកខាងលើនៃ ui.renderHome)
+        if (search) activeData = activeData.filter(o => 
+            o.custName.toLowerCase().includes(search) || 
+            o.custPhone.includes(search) || 
+            o.prodName.toLowerCase().includes(search) ||
+            // បន្ថែមបន្ទាត់ខាងក្រោមនេះ ដើម្បីឱ្យវាស្គាល់លេខ Tracking
+            (o.trackingNo && o.trackingNo.toString().toLowerCase().includes(search)) 
+        );
                 if (search) activeData = activeData.filter(o => o.custName.toLowerCase().includes(search) || o.custPhone.includes(search) || o.prodName.toLowerCase().includes(search));
 
                 let realP = 0, pendP = 0;
