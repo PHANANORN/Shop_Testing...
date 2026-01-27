@@ -1769,10 +1769,11 @@
                             </div>
 
                             <div class="flex flex-col gap-2 relative z-10">
-                                <input type="number" inputmode="decimal" id="val-sale" placeholder="លក់ ($)"
+                                <input type="number" step="any" inputmode="decimal" id="val-sale" placeholder="លក់ ($)"
                                     class="oled-input w-full h-[48px] rounded-2xl text-teal-800 dark:text-teal-300 font-bold text-lg text-left pl-4 outline-none placeholder:text-teal-700/30">
 
-                                <input type="number" inputmode="decimal" id="val-ship-in" placeholder="ភ្ញៀវចេញថ្លៃដឹក"
+                                <input type="number" step="any" inputmode="decimal" id="val-ship-in"
+                                    placeholder="ភ្ញៀវចេញថ្លៃដឹក"
                                     class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
 
                                 <div class="flex items-center gap-1 h-[48px]">
@@ -1805,13 +1806,16 @@
                             </div>
 
                             <div class="flex flex-col gap-2 relative z-10">
-                                <input type="number" inputmode="decimal" id="cost-buy" placeholder="ថ្លៃដើម ($)"
+                                <input type="number" step="any" inputmode="decimal" id="cost-buy"
+                                    placeholder="ថ្លៃដើម ($)"
                                     class="oled-input w-full h-[48px] rounded-2xl text-gray-900 dark:text-gray-100 font-bold text-left pl-4 outline-none placeholder:text-rose-700/30">
 
-                                <input type="number" inputmode="decimal" id="cost-ship" placeholder="ថ្លៃដឹកចេញ ($)"
+                                <input type="number" step="any" inputmode="decimal" id="cost-ship"
+                                    placeholder="ថ្លៃដឹកចេញ ($)"
                                     class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
 
-                                <input type="number" inputmode="decimal" id="cost-boost" placeholder="Boost ($)"
+                                <input type="number" step="any" inputmode="decimal" id="cost-boost"
+                                    placeholder="Boost ($)"
                                     class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
                             </div>
                         </div>
@@ -2452,18 +2456,28 @@
 
                     // បង្កើតប៊ូតុងរូបភាព (Image Button)
                     // [START] កែប្រែ Logic រូបភាព (ការពារ 404 Error)
+                    // [START] កែប្រែ Logic រូបភាព (ឆ្លាតជាងមុន - Smart Link Extractor)
                     let imgBtn = '';
                     if (o.prodImg) {
-                        // កាត់ Space មុខក្រោយចេញ
                         let link = o.prodImg.trim();
 
-                        // ឆែកមើល៖ បើអត់មាន http:// ឬ https:// ទេ ថែម https:// ឱ្យស្វ័យប្រវត្តិ
-                        if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                        // 1. ស្វែងរកមើលថាមានជាប់ http/https នៅក្នុងអក្សរដែល Paste មកដែរទេ?
+                        const urlMatch = link.match(/(https?:\/\/[^\s]+)/);
+
+                        if (urlMatch) {
+                            // បើមាន, យកតែផ្នែក Link នោះមកប្រើ (កាត់អក្សរផ្សេងៗចោល)
+                            link = urlMatch[0];
+                        } else if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                            // បើអត់មានសោះ, ទើបថែម https:// ពីមុខ (ករណី www.google.com)
                             link = 'https://' + link;
                         }
 
-                        imgBtn = `<a href="${link}" target="_blank" onclick="event.stopPropagation();" class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center hover:bg-purple-500 hover:text-white transition shadow-sm ml-2" title="មើលរូបភាព"><i class="fas fa-image text-xs"></i></a>`;
+                        // កែសម្រួល៖ បើ Link នៅតែមិនត្រឹមត្រូវ (ឧ. ឈ្មោះផលិតផលសុទ្ធ) កុំបង្ហាញប៊ូតុង
+                        if (link.includes('.')) {
+                            imgBtn = `<a href="${link}" target="_blank" onclick="event.stopPropagation();" class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center hover:bg-purple-500 hover:text-white transition shadow-sm ml-2" title="មើលរូបភាព"><i class="fas fa-image text-xs"></i></a>`;
+                        }
                     }
+                    // [END] បញ្ចប់កែប្រែ
                     // [END] បញ្ចប់កែប្រែ
 
                     // បង្កើតផ្នែក Tracking
