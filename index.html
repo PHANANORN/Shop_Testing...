@@ -88,18 +88,20 @@
         }
 
         /* GLASSMORPHISM UTILITY */
+        /* ១. កែប្រែផ្ទាំងកញ្ចក់ទូទៅ (Global Glass) */
+        /* ១. កែប្រែផ្ទាំងកញ្ចក់ទូទៅ (Global Glass) */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            /* High transparency */
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.4) !important;
+            /* ថ្លា 40% */
+            backdrop-filter: blur(25px) saturate(200%) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(200%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1) !important;
         }
 
         .dark .glass-panel {
-            background: rgba(30, 41, 59, 0.6);
-            /* Dark transparency */
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
 
         /* === 2. HEADER ADJUSTMENTS === */
@@ -358,25 +360,17 @@
             display: none;
         }
 
+        /* បន្ថែម៖ កុំឱ្យពណ៌ Header បាំង Background ជិតពេក */
         .report-header-bg {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            padding-top: max(15px, env(safe-area-inset-top));
-            padding-bottom: 20px;
-            padding-left: 16px;
-            padding-right: 16px;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
-            position: relative;
-            z-index: 40;
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(20px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
         }
 
         .dark .report-header-bg {
-            background: rgba(15, 23, 42, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.6) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
 
         .nav-container {
@@ -465,30 +459,43 @@
         }
 
         /* ORDER CARD WITH GLASS EFFECT */
+        /* === កែប្រែត្រង់ចំណុចនេះ ដើម្បីឱ្យឃើញ Background ខាងក្រោយ === */
         .order-card {
-            background: rgba(255, 255, 255, 0.7);
-            /* Glassy */
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            /* ផ្ទៃថ្លាខ្លាំង (0.4 = 40% Opacity) ដើម្បីឱ្យឃើញពណ៌ប្រដេញខាងក្រោយ */
+            background: rgba(255, 255, 255, 0.4);
+
+            /* បង្កើន Blur ដើម្បីឱ្យអក្សរនៅតែច្បាស់ ទោះបីផ្ទៃក្រោយថ្លា */
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+            /* គែមពណ៌សស្ដើងៗ ដើម្បីកាត់បន្ថយភាពរាបស្មើ */
             border: 1px solid rgba(255, 255, 255, 0.6);
 
-            border-radius: 20px;
-            box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+            /* ស្រមោលទន់ៗ */
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+
+            border-radius: 24px;
+            /* មូលគែមឱ្យស្អាត */
             margin-bottom: 16px;
             position: relative;
             cursor: pointer;
             overflow: hidden;
-            transition: transform 0.1s, box-shadow 0.1s;
+            transition: all 0.3s ease;
         }
 
+        /* Dark Mode សម្រាប់ Crystal Card */
+        .dark .order-card {
+            background: rgba(30, 41, 59, 0.4);
+            /* ពណ៌ខ្មៅថ្លា */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Effect ពេលចុច */
         .order-card:active {
             transform: scale(0.98);
-        }
-
-        .dark .order-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.6);
+            /* ពេលចុចឱ្យច្បាស់បន្តិច */
         }
 
         .card-strip {
@@ -550,19 +557,22 @@
         }
 
         /* Stat Card (Reports) Glass */
+        /* ២. កែប្រែកាតស្ថិតិធំៗ (Stat Cards) */
+        /* ២. កែប្រែកាតស្ថិតិធំៗ (Stat Cards) */
+        /* ២. កែប្រែកាតស្ថិតិធំៗ (Stat Cards) */
         .stat-card {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.35) !important;
+            /* ថ្លាជាងមុន */
+            backdrop-filter: blur(20px) saturate(180%) !important;
             border-radius: 26px;
             padding: 18px;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
         }
 
         .dark .stat-card {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            background: rgba(30, 41, 59, 0.4) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
         }
 
         .section-view {
@@ -587,17 +597,21 @@
         }
 
         /* Report Grid Items Glass */
+        /* ៣. កែប្រែកាតតូចៗ (Report Items) */
+        /* ៣. កែប្រែកាតតូចៗ (Report Items) */
         .report-item {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.4) !important;
+            /* ថ្លាខ្លាំង */
+            backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
         }
 
         .dark .report-item {
-            background: rgba(51, 65, 85, 0.4);
-            border-color: rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.4) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
         }
 
         .date-btn-active {
@@ -953,11 +967,59 @@
                 display: none !important;
             }
         }
+
+        /* === STICKER ANIMATIONS === */
+        @keyframes float-sticker {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-6px) rotate(6deg);
+            }
+
+            /* អណ្តែតឡើងបន្តិច ហើយងាកក្បាល */
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(13, 148, 136, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+            }
+        }
+
+        .sticker-float {
+            animation: float-sticker 4s ease-in-out infinite;
+            /* អណ្តែតយឺតៗ */
+        }
+
+        .sticker-pulse {
+            animation: pulse-ring 2s infinite;
+            /* ភាយពន្លឺ */
+        }
     </style>
 </head>
 
 <body>
-
+    <div class="fixed inset-0 -z-50 overflow-hidden pointer-events-none">
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-teal-500/20 dark:bg-teal-500/10 rounded-full blur-[100px] animate-pulse-slow">
+        </div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-500/20 dark:bg-purple-500/10 rounded-full blur-[100px] animate-pulse-slow"
+            style="animation-delay: 2s;"></div>
+        <div
+            class="absolute top-[40%] left-[40%] w-[300px] h-[300px] bg-blue-400/10 dark:bg-blue-400/5 rounded-full blur-[80px]">
+        </div>
+    </div>
     <div id="app-loader">
         <div class="text-center">
             <div class="relative w-16 h-16 mx-auto mb-4">
@@ -1455,209 +1517,297 @@
         }
     </style>
     <style>
-    /* === 4K OLED GLASS EFFECT === */
-    .oled-glass-bg {
-        /* ផ្ទៃខាងក្រោយកញ្ចក់គុណភាពខ្ពស់ */
-        background: rgba(255, 255, 255, 0.70); /* កាត់បន្ថយភាពស្រអាប់ */
-        backdrop-filter: blur(40px) saturate(200%) contrast(110%); /* បង្កើន Saturation & Contrast ឱ្យច្បាស់ */
-        -webkit-backdrop-filter: blur(40px) saturate(200%) contrast(110%);
-        border: 1px solid rgba(255, 255, 255, 0.6); /* គែមច្បាស់ */
-        border-top: 1px solid rgba(255, 255, 255, 0.9); /* គែមខាងលើភ្លឺជាង (ពន្លឺចាំង) */
-        box-shadow: 
-            0 20px 50px -12px rgba(0, 0, 0, 0.15), /* ស្រមោលធំ */
-            inset 0 0 0 1px rgba(255, 255, 255, 0.2); /* ស្រមោលខាងក្នុង */
-    }
+        /* === 4K OLED GLASS EFFECT === */
+        .oled-glass-bg {
+            /* ផ្ទៃខាងក្រោយកញ្ចក់គុណភាពខ្ពស់ */
+            background: rgba(255, 255, 255, 0.70);
+            /* កាត់បន្ថយភាពស្រអាប់ */
+            backdrop-filter: blur(40px) saturate(200%) contrast(110%);
+            /* បង្កើន Saturation & Contrast ឱ្យច្បាស់ */
+            -webkit-backdrop-filter: blur(40px) saturate(200%) contrast(110%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            /* គែមច្បាស់ */
+            border-top: 1px solid rgba(255, 255, 255, 0.9);
+            /* គែមខាងលើភ្លឺជាង (ពន្លឺចាំង) */
+            box-shadow:
+                0 20px 50px -12px rgba(0, 0, 0, 0.15),
+                /* ស្រមោលធំ */
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            /* ស្រមោលខាងក្នុង */
+        }
 
-    .dark .oled-glass-bg {
-        background: rgba(15, 23, 42, 0.75);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-top: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(40px) saturate(150%);
-        -webkit-backdrop-filter: blur(40px) saturate(150%);
-    }
+        .dark .oled-glass-bg {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(40px) saturate(150%);
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
+        }
 
-    /* កាតខាងក្នុង (Inner Cards) */
-    .crystal-card {
-        background: linear-gradient(145deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.4) 100%);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.7);
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
-    }
-    
-    .dark .crystal-card {
-        background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.4) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }
+        /* កាតខាងក្នុង (Inner Cards) */
+        .crystal-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.4) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+        }
 
-    /* Input Fields ដែលច្បាស់ល្អ */
-    .oled-input {
-        background: rgba(255, 255, 255, 0.6) !important;
-        border: 1px solid rgba(203, 213, 225, 0.6) !important;
-        backdrop-filter: blur(5px);
-        transition: all 0.3s ease;
-        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-    }
-    .oled-input:focus {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-color: #0d9488 !important;
-        box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15), inset 0 1px 2px rgba(0,0,0,0.05);
-        transform: translateY(-1px);
-    }
-    .dark .oled-input {
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: rgba(71, 85, 105, 0.6) !important;
-        color: white !important;
-    }
-    .dark .oled-input:focus {
-        background: rgba(30, 41, 59, 0.9) !important;
-    }
-</style>
+        .dark .crystal-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.4) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Input Fields ដែលច្បាស់ល្អ */
+        .oled-input {
+            background: rgba(255, 255, 255, 0.6) !important;
+            border: 1px solid rgba(203, 213, 225, 0.6) !important;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .oled-input:focus {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-color: #0d9488 !important;
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
+        }
+
+        .dark .oled-input {
+            background: rgba(15, 23, 42, 0.6) !important;
+            border-color: rgba(71, 85, 105, 0.6) !important;
+            color: white !important;
+        }
+
+        .dark .oled-input:focus {
+            background: rgba(30, 41, 59, 0.9) !important;
+        }
+    </style>
 
     <div id="modal-order"
-    class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 z-50 hidden flex items-end sm:items-center justify-center backdrop-blur-[8px] transition-all duration-300">
-    
-    <div class="relative w-full sm:w-[480px] h-[92vh] sm:h-[85vh] rounded-t-[40px] sm:rounded-[40px] overflow-hidden animate-slide-up flex flex-col oled-glass-bg">
-        
-        <div class="absolute top-[-10%] left-[-10%] w-[200px] h-[200px] bg-teal-400/30 rounded-full blur-[80px] pointer-events-none"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[200px] h-[200px] bg-purple-400/30 rounded-full blur-[80px] pointer-events-none"></div>
+        class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 z-50 hidden flex items-end sm:items-center justify-center backdrop-blur-[8px] transition-all duration-300">
 
-        <div class="flex justify-between items-center px-6 py-6 z-20 shrink-0 border-b border-white/40 dark:border-white/5 bg-white/20 dark:bg-black/20 backdrop-blur-xl">
-            <div>
-                <h3 class="text-2xl font-black font-serif-kh tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-blue-700 dark:from-teal-300 dark:to-blue-400 drop-shadow-sm" id="modal-title">
-                    ការលក់ថ្មី
-                </h3>
+        <div
+            class="relative w-full sm:w-[480px] h-[92vh] sm:h-[85vh] rounded-t-[40px] sm:rounded-[40px] overflow-hidden animate-slide-up flex flex-col oled-glass-bg">
+
+            <div
+                class="absolute top-[-10%] left-[-10%] w-[200px] h-[200px] bg-teal-400/30 rounded-full blur-[80px] pointer-events-none">
             </div>
-            <div class="flex gap-2">
-                <div id="invoice-btn-group" class="hidden gap-2">
-                    <button onclick="ui.openInvoice('customer')" class="w-10 h-10 rounded-full bg-blue-50/80 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i class="fas fa-file-invoice"></i></button>
-                    <button onclick="ui.openInvoice('admin')" class="w-10 h-10 rounded-full bg-purple-50/80 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i class="fas fa-user-shield"></i></button>
-                </div>
-                <button onclick="ui.shareTextOrder()" class="w-10 h-10 rounded-full bg-teal-50/80 text-teal-600 dark:bg-teal-900/50 dark:text-teal-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i class="fas fa-share-alt"></i></button>
-                <button onclick="ui.closeModal('modal-order')" class="w-10 h-10 rounded-full bg-gray-100/80 text-gray-500 dark:bg-gray-800/50 dark:text-gray-400 hover:text-red-500 hover:bg-red-50 transition flex items-center justify-center active:scale-95 backdrop-blur-md"><i class="fas fa-times"></i></button>
+            <div
+                class="absolute bottom-[-10%] right-[-10%] w-[200px] h-[200px] bg-purple-400/30 rounded-full blur-[80px] pointer-events-none">
             </div>
-        </div>
 
-        <div class="overflow-y-auto p-5 space-y-5 flex-1 custom-scrollbar pb-32">
-            <form id="form-order" class="space-y-5" onsubmit="return false;">
-                <input type="hidden" id="entry-id">
-
-                <div class="relative group p-5 rounded-[28px] crystal-card">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl text-blue-600 pointer-events-none transform rotate-12"><i class="fas fa-user"></i></div>
-                    
-                    <div class="relative z-10">
-                        <span class="text-[11px] font-extrabold text-blue-700 dark:text-blue-300 uppercase tracking-widest mb-3 block flex items-center gap-2 drop-shadow-sm">
-                            <span class="w-2 h-2 rounded-full bg-blue-500 box-shadow-glow"></span> អតិថិជន (Customer)
-                        </span>
-                        <div class="space-y-3">
-                            <input type="text" id="cust-name" placeholder="ឈ្មោះអតិថិជន" required
-                                class="oled-input w-full h-[52px] rounded-2xl text-gray-900 dark:text-white font-bold text-lg text-left pl-5 outline-none">
-                            <div class="grid grid-cols-2 gap-3">
-                                <input type="tel" inputmode="numeric" id="cust-phone" placeholder="លេខទូរស័ព្ទ"
-                                    class="oled-input h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-5 outline-none">
-                                <input type="text" id="cust-addr" placeholder="ទីតាំង" 
-                                    class="oled-input h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-5 outline-none">
-                            </div>
-                        </div>
+            <div
+                class="flex justify-between items-center px-5 py-4 z-20 shrink-0 border-b border-white/40 dark:border-white/5 bg-white/30 dark:bg-black/20 backdrop-blur-xl">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <div
+                        class="sticker-float w-10 h-10 shrink-0 rounded-xl bg-gradient-to-tr from-teal-400 to-emerald-500 shadow-lg shadow-teal-500/30 flex items-center justify-center text-white border border-white/30">
+                        <i class="fas fa-edit text-sm"></i>
+                    </div>
+                    <div class="min-w-0 flex flex-col justify-center">
+                        <h3 class="text-xl font-black font-serif-kh tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-teal-800 to-blue-800 dark:from-white dark:to-teal-200 drop-shadow-sm whitespace-nowrap overflow-hidden text-ellipsis leading-tight"
+                            id="modal-title">
+                            ការលក់ថ្មី
+                        </h3>
+                        <p class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.15em] opacity-80 truncate leading-tight mt-0.5"
+                            id="modal-subtitle">
+                            CREATE NEW ORDER
+                        </p>
                     </div>
                 </div>
 
-                <div class="relative group p-5 rounded-[28px] crystal-card">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl text-purple-600 pointer-events-none transform -rotate-12"><i class="fas fa-box-open"></i></div>
-                    
-                    <div class="relative z-10">
-                        <span class="text-[11px] font-extrabold text-purple-700 dark:text-purple-300 uppercase tracking-widest mb-3 block flex items-center gap-2 drop-shadow-sm">
-                            <span class="w-2 h-2 rounded-full bg-purple-500 box-shadow-glow"></span> ទំនិញ (Product)
-                        </span>
-                        <div class="space-y-3">
-                            <input type="text" id="prod-name" placeholder="ឈ្មោះទំនិញ / កូដ" required
-                                class="oled-input w-full h-[52px] rounded-2xl text-gray-900 dark:text-white font-bold text-xl text-left pl-5 outline-none">
-                            <div class="grid grid-cols-2 gap-3">
-                                <input type="text" id="prod-size" placeholder="Size" 
-                                    class="oled-input h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-left pl-5 outline-none">
-                                <input type="number" id="prod-qty" value="1" placeholder="Qty" 
-                                    class="oled-input h-[48px] rounded-2xl text-gray-900 dark:text-white font-bold text-left pl-5 outline-none">
-                            </div>
-                        </div>
+                <div class="flex gap-2 shrink-0">
+                    <div id="invoice-btn-group" class="hidden gap-2">
+                        <button onclick="ui.openInvoice('customer')"
+                            class="w-9 h-9 rounded-full bg-blue-50/80 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                                class="fas fa-file-invoice text-xs"></i></button>
+                        <button onclick="ui.openInvoice('admin')"
+                            class="w-9 h-9 rounded-full bg-purple-50/80 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                                class="fas fa-user-shield text-xs"></i></button>
                     </div>
+                    <button onclick="ui.shareTextOrder()"
+                        class="w-9 h-9 rounded-full bg-teal-50/80 text-teal-600 dark:bg-teal-900/50 dark:text-teal-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                            class="fas fa-share-alt text-xs"></i></button>
+                    <button onclick="ui.closeModal('modal-order')"
+                        class="w-9 h-9 rounded-full bg-red-50/80 text-red-500 dark:bg-red-900/50 dark:text-red-300 hover:bg-red-500 hover:text-white transition flex items-center justify-center active:scale-95 backdrop-blur-md shadow-sm border border-white/50"><i
+                            class="fas fa-times text-xs"></i></button>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    
-                    <div class="relative p-3 rounded-[28px] bg-gradient-to-br from-teal-50/80 to-teal-100/50 dark:from-teal-900/30 dark:to-teal-800/20 border border-white/60 dark:border-white/10 shadow-sm flex flex-col gap-3 backdrop-blur-md">
-                        
-                        <div class="text-center pb-1 pt-1">
-                            <span class="text-[10px] sm:text-[11px] font-black text-teal-800 dark:text-teal-300 uppercase tracking-widest whitespace-nowrap drop-shadow-sm">ចំណូល (Income)</span>
+            <div class="overflow-y-auto p-5 space-y-5 flex-1 custom-scrollbar pb-32">
+                <form id="form-order" class="space-y-5" onsubmit="return false;">
+                    <input type="hidden" id="entry-id">
+
+                    <div class="relative group p-1 rounded-[24px] crystal-card overflow-hidden">
+
+                        <div
+                            class="absolute top-[-10px] right-[-10px] p-4 opacity-[0.05] text-8xl text-blue-600 pointer-events-none transform rotate-12 z-0">
+                            <i class="fas fa-user"></i>
                         </div>
-                        
-                        <div class="flex flex-col gap-2 relative z-10">
-                            <input type="number" inputmode="decimal" id="val-sale" placeholder="លក់ ($)" 
-                                   class="oled-input w-full h-[48px] rounded-2xl text-teal-800 dark:text-teal-300 font-bold text-lg text-left pl-4 outline-none placeholder:text-teal-700/30">
-                            
-                            <input type="number" inputmode="decimal" id="val-ship-in" placeholder="ភ្ញៀវចេញថ្លៃដឹក" 
-                                   class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
-                            
-                            <div class="flex items-center gap-1 h-[48px]">
-                                <div class="w-[50%] flex flex-col items-center justify-center leading-none flex-shrink-0">
-                                    <span class="text-[10px] sm:text-[11px] font-bold text-teal-800 dark:text-teal-300 whitespace-nowrap">អត្រាប្ដូរប្រាក់</span>
-                                    <span class="text-[8px] sm:text-[9px] text-red-500 font-bold mt-1 scale-90 whitespace-nowrap">(សម្រាប់តែភ្ញៀវ)</span>
+
+                        <div class="p-4 relative z-10">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 shadow-md shadow-blue-500/30 flex items-center justify-center text-white sticker-float"
+                                    style="animation-delay: 0.5s;">
+                                    <i class="fas fa-user text-xs"></i>
                                 </div>
-                                
-                                <div class="w-[50%] relative h-full">
-                                    <input type="number" inputmode="numeric" id="inv-rate-input" placeholder="4100" 
-                                           class="oled-input w-full h-full rounded-2xl text-right font-bold text-gray-900 dark:text-white outline-none pr-6 text-sm">
-                                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 pointer-events-none">៛</span>
-                                </div>
+                                <span
+                                    class="text-xs font-extrabold text-blue-800 dark:text-blue-200 uppercase tracking-widest drop-shadow-sm">
+                                    អតិថិជន (Customer)
+                                </span>
                             </div>
 
-                        </div>
-                    </div>
+                            <div class="space-y-3">
+                                <input type="text" id="cust-name" placeholder="ឈ្មោះអតិថិជន" required
+                                    class="oled-input w-full h-[48px] rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 outline-none relative z-20">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <input type="tel" inputmode="numeric" id="cust-phone" placeholder="លេខទូរស័ព្ទ"
+                                        class="oled-input h-[44px] rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none relative z-20">
 
-                    <div class="relative p-3 rounded-[28px] bg-gradient-to-br from-rose-50/80 to-rose-100/50 dark:from-rose-900/30 dark:to-rose-800/20 border border-white/60 dark:border-white/10 shadow-sm flex flex-col gap-3 backdrop-blur-md">
-                        
-                        <div class="text-center pb-1 pt-1">
-                            <span class="text-[10px] sm:text-[11px] font-black text-rose-800 dark:text-rose-300 uppercase tracking-widest whitespace-nowrap drop-shadow-sm">ចំណាយ (Cost)</span>
-                        </div>
-                        
-                        <div class="flex flex-col gap-2 relative z-10">
-                            <input type="number" inputmode="decimal" id="cost-buy" placeholder="ថ្លៃដើម ($)" 
-                                   class="oled-input w-full h-[48px] rounded-2xl text-gray-900 dark:text-gray-100 font-bold text-left pl-4 outline-none placeholder:text-rose-700/30">
-                            
-                            <input type="number" inputmode="decimal" id="cost-ship" placeholder="ថ្លៃដឹកចេញ ($)" 
-                                   class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
-                            
-                            <input type="number" inputmode="decimal" id="cost-boost" placeholder="Boost ($)" 
-                                   class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-1.5 rounded-[24px] bg-gradient-to-r from-yellow-50/80 to-amber-50/80 dark:from-yellow-900/20 dark:to-amber-900/20 border border-white/50 dark:border-white/10">
-                    <input type="text" id="note" placeholder="📝 សរសេរចំណាំ (Note)..."
-                        class="w-full h-[45px] bg-transparent rounded-xl px-4 text-gray-800 dark:text-gray-200 font-sans text-left outline-none placeholder:text-gray-400 placeholder:font-normal font-medium">
-                </div>
-
-                <div class="relative pb-6">
-                     <select id="status"
-                        class="oled-input w-full h-[60px] px-5 rounded-[24px] text-base font-bold text-gray-800 dark:text-white outline-none cursor-pointer">
-                        <option value="pending">⏳ រង់ចាំ (Pending)</option>
-                        <option value="ordered">🛒 បានកុម្មង់ (Ordered)</option>
-                        <option value="shipping">🚚 កំពុងដឹក (Shipping)</option>
-                        <option value="completed">✅ ជោគជ័យ (Completed)</option>
-                        <option value="cancelled">❌ បោះបង់ (Cancelled)</option>
-                    </select>
-                </div>
-            </form>
+                                    <div class="relative z-20">
+                                        <input type="text" id="cust-addr" placeholder="ទីតាំង"
+                                            class="oled-input h-[44px] w-full rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 pr-9 outline-none truncate">
+                                        <button type="button" onclick="ui.openAddressModal()"
+                                            class="absolute right-1 top-1 bottom-1 w-8 flex items-center justify-center text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition">
+                                            <i class="fas fa-expand-alt text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="mt-3 relative z-20">
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fab fa-facebook-messenger text-blue-500"></i>
         </div>
-
-        <div class="absolute bottom-6 left-0 w-full flex justify-center z-30 pointer-events-none">
-            <button type="button" onclick="ui.saveOrder()"
-                class="pointer-events-auto w-[85%] sm:w-[400px] h-[64px] rounded-[32px] bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white font-black text-xl shadow-[0_15px_35px_rgba(13,148,136,0.4)] dark:shadow-[0_15px_35px_rgba(45,212,191,0.2)] transition-all transform active:scale-[0.95] flex justify-center items-center gap-3 border-[4px] border-white/20 backdrop-blur-md ring-1 ring-white/30">
-                <i class="fas fa-save text-2xl drop-shadow-md"></i> <span class="drop-shadow-sm tracking-wide">រក្សាទុក (SAVE)</span>
-            </button>
-        </div>
-
+        <input type="text" id="cust-fb" placeholder="ដាក់ Link Profile ភ្ញៀវ ឬ Username (FB)" 
+            class="oled-input w-full h-[44px] rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-10 outline-none">
     </div>
+    <p class="text-[9px] text-gray-400 mt-1 pl-2">* ជួយឱ្យងាយស្រួលឆាតទៅភ្ញៀវពេលឥវ៉ាន់មកដល់</p>
 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative group p-1 rounded-[24px] crystal-card overflow-hidden mt-4">
+
+                        <div
+                            class="absolute top-[-10px] right-[-10px] p-4 opacity-[0.05] text-8xl text-purple-600 pointer-events-none transform -rotate-12 z-0">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+
+                        <div class="p-4 relative z-10">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-md shadow-purple-500/30 flex items-center justify-center text-white sticker-float"
+                                    style="animation-delay: 1s;">
+                                    <i class="fas fa-gift text-xs"></i>
+                                </div>
+                                <span
+                                    class="text-xs font-extrabold text-purple-800 dark:text-purple-200 uppercase tracking-widest drop-shadow-sm">
+                                    ទំនិញ (Product)
+                                </span>
+                            </div>
+
+                            <div class="space-y-3">
+                                <input type="text" id="prod-name" placeholder="ឈ្មោះទំនិញ / កូដ" required
+                                    class="oled-input w-full h-[48px] rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 outline-none relative z-20">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <input type="text" id="prod-size" placeholder="Size"
+                                        class="oled-input h-[44px] rounded-xl text-gray-800 dark:text-gray-200 text-left pl-4 outline-none relative z-20">
+                                    <input type="number" id="prod-qty" value="1" placeholder="Qty"
+                                        class="oled-input h-[44px] rounded-xl text-gray-900 dark:text-white font-bold text-left pl-4 outline-none relative z-20">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+
+                        <div
+                            class="relative p-3 rounded-[28px] bg-gradient-to-br from-teal-50/80 to-teal-100/50 dark:from-teal-900/30 dark:to-teal-800/20 border border-white/60 dark:border-white/10 shadow-sm flex flex-col gap-3 backdrop-blur-md">
+
+                            <div class="text-center pb-1 pt-1">
+                                <span
+                                    class="text-[10px] sm:text-[11px] font-black text-teal-800 dark:text-teal-300 uppercase tracking-widest whitespace-nowrap drop-shadow-sm">ចំណូល
+                                    (Income)</span>
+                            </div>
+
+                            <div class="flex flex-col gap-2 relative z-10">
+                                <input type="number" inputmode="decimal" id="val-sale" placeholder="លក់ ($)"
+                                    class="oled-input w-full h-[48px] rounded-2xl text-teal-800 dark:text-teal-300 font-bold text-lg text-left pl-4 outline-none placeholder:text-teal-700/30">
+
+                                <input type="number" inputmode="decimal" id="val-ship-in" placeholder="ភ្ញៀវចេញថ្លៃដឹក"
+                                    class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
+
+                                <div class="flex items-center gap-1 h-[48px]">
+                                    <div
+                                        class="w-[50%] flex flex-col items-center justify-center leading-none flex-shrink-0">
+                                        <span
+                                            class="text-[10px] sm:text-[11px] font-bold text-teal-800 dark:text-teal-300 whitespace-nowrap">អត្រាប្ដូរប្រាក់</span>
+                                        <span
+                                            class="text-[8px] sm:text-[9px] text-red-500 font-bold mt-1 scale-90 whitespace-nowrap">(សម្រាប់តែភ្ញៀវ)</span>
+                                    </div>
+
+                                    <div class="w-[50%] relative h-full">
+                                        <input type="number" inputmode="numeric" id="inv-rate-input" placeholder="4100"
+                                            class="oled-input w-full h-full rounded-2xl text-right font-bold text-gray-900 dark:text-white outline-none pr-6 text-sm">
+                                        <span
+                                            class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 pointer-events-none">៛</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div
+                            class="relative p-3 rounded-[28px] bg-gradient-to-br from-rose-50/80 to-rose-100/50 dark:from-rose-900/30 dark:to-rose-800/20 border border-white/60 dark:border-white/10 shadow-sm flex flex-col gap-3 backdrop-blur-md">
+
+                            <div class="text-center pb-1 pt-1">
+                                <span
+                                    class="text-[10px] sm:text-[11px] font-black text-rose-800 dark:text-rose-300 uppercase tracking-widest whitespace-nowrap drop-shadow-sm">ចំណាយ
+                                    (Cost)</span>
+                            </div>
+
+                            <div class="flex flex-col gap-2 relative z-10">
+                                <input type="number" inputmode="decimal" id="cost-buy" placeholder="ថ្លៃដើម ($)"
+                                    class="oled-input w-full h-[48px] rounded-2xl text-gray-900 dark:text-gray-100 font-bold text-left pl-4 outline-none placeholder:text-rose-700/30">
+
+                                <input type="number" inputmode="decimal" id="cost-ship" placeholder="ថ្លៃដឹកចេញ ($)"
+                                    class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
+
+                                <input type="number" inputmode="decimal" id="cost-boost" placeholder="Boost ($)"
+                                    class="oled-input w-full h-[48px] rounded-2xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none placeholder:text-gray-400">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="p-1.5 rounded-[24px] bg-gradient-to-r from-yellow-50/80 to-amber-50/80 dark:from-yellow-900/20 dark:to-amber-900/20 border border-white/50 dark:border-white/10">
+                        <input type="text" id="note" placeholder="📝 សរសេរចំណាំ (Note)..."
+                            class="w-full h-[45px] bg-transparent rounded-xl px-4 text-gray-800 dark:text-gray-200 font-sans text-left outline-none placeholder:text-gray-400 placeholder:font-normal font-medium">
+                    </div>
+
+                    <div class="relative pb-6">
+                        <select id="status"
+                            class="oled-input w-full h-[60px] px-5 rounded-[24px] text-base font-bold text-gray-800 dark:text-white outline-none cursor-pointer">
+                            <option value="pending">⏳ រង់ចាំ (Pending)</option>
+                            <option value="ordered">🛒 បានកុម្មង់ (Ordered)</option>
+                            <option value="shipping">🚚 កំពុងដឹក (Shipping)</option>
+                            <option value="completed">✅ ជោគជ័យ (Completed)</option>
+                            <option value="cancelled">❌ បោះបង់ (Cancelled)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div class="absolute bottom-6 left-0 w-full flex justify-center z-30 pointer-events-none">
+                <button type="button" onclick="ui.saveOrder()"
+                    class="pointer-events-auto w-[85%] sm:w-[400px] h-[64px] rounded-[32px] bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white font-black text-xl shadow-[0_15px_35px_rgba(13,148,136,0.4)] dark:shadow-[0_15px_35px_rgba(45,212,191,0.2)] transition-all transform active:scale-[0.95] flex justify-center items-center gap-3 border-[4px] border-white/20 backdrop-blur-md ring-1 ring-white/30">
+                    <i class="fas fa-save text-2xl drop-shadow-md"></i> <span
+                        class="drop-shadow-sm tracking-wide">រក្សាទុក (SAVE)</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
     <div id="invoice-modal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-xl overflow-hidden shadow-2xl animate-fade-in relative">
             <div id="invoice-viewer" class="p-6 bg-white text-black font-sans relative"></div>
@@ -2235,35 +2385,129 @@
                     else paymentHtml = `<span class="text-gray-400 font-bold text-[11px]">-</span>`;
 
                     el.className = 'order-card p-0 group'; el.onclick = () => ui.openOrderModal(o.id);
-                    el.innerHTML = `<div class="card-strip ${st.strip}"></div><div class="p-5 pl-6"><div class="flex justify-between items-center mb-3"><span class="status-badge ${st.bg} ${st.text}"><i class="fas ${st.icon}"></i> ${st.label}</span><span class="text-[11px] text-gray-400 dark:text-gray-500 font-bold font-sans tracking-wide">${new Date(o.updatedAt).toLocaleDateString('km-KH')}</span></div><div class="mb-3 pb-3 border-b border-gray-100 dark:border-gray-700/50"><h4 class="font-bold text-gray-800 dark:text-white text-lg leading-tight mb-1">${o.custName}</h4><div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400"><span class="flex items-center gap-1"><i class="fas fa-phone-alt text-[10px] mt-[3px]"></i> ${o.custPhone || 'N/A'}</span><span class="flex items-center gap-1 max-w-[150px] truncate"><i class="fas fa-map-marker-alt text-[10px] mt-[3px]"></i> ${o.custAddr || 'N/A'}</span></div></div><div class="flex justify-between items-start"><div class="flex-1 pr-2"><div class="font-bold text-gray-700 dark:text-gray-200 text-sm mb-1">${o.prodName}</div><div class="flex flex-wrap gap-2">${o.prodSize ? `<span class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-700 text-[10px] font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">Size: ${o.prodSize}</span>` : ''}<span class="px-2 py-0.5 rounded-md bg-teal-50 dark:bg-teal-900/30 text-[10px] font-bold text-teal-700 dark:text-teal-400 border border-teal-100 dark:border-teal-800">Qty: ${o.prodQty}</span></div></div><div class="text-right flex flex-col items-end">
-    <div class="flex flex-col items-center"> <div class="font-bold text-xl ${f.profit >= 0 ? 'text-teal-600 dark:text-teal-400' : 'text-red-500'}">${f.profit >= 0 ? '+' : ''}$${f.profit.toFixed(2)}</div>
-        ${app.formatKHR(Math.abs(f.profit), 'sys')}
-    </div>
-</div></div><hr class="border-dashed border-gray-200 dark:border-gray-700/50 my-3"><div class="flex justify-between items-center"><div>${paymentHtml}</div><div class="flex gap-2">${o.note ? `<button onclick="event.stopPropagation(); ui.showNote('${o.note.replace(/'/g, "\\'")}')" class="w-8 h-8 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center hover:bg-yellow-100 transition border border-yellow-100"><i class="fas fa-sticky-note text-xs"></i></button>` : ''}<button onclick="event.stopPropagation(); ui.confirmDelete(${o.id})" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 flex items-center justify-center hover:bg-red-100 transition border border-red-100 dark:border-red-900/30"><i class="fas fa-trash-alt text-xs"></i></button></div></div></div>`;
+                    // --- ចាប់ផ្តើមជំនួសត្រង់នេះ ---
+        
+        // Logic បង្ហាញប៊ូតុង Messenger
+        let messengerBtn = '';
+        if (o.fbLink) {
+            // បើមាន Link (ពណ៌ខៀវ)
+            messengerBtn = `<a href="${o.fbLink}" target="_blank" onclick="event.stopPropagation();" class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition border border-blue-200"><i class="fab fa-facebook-messenger text-sm"></i></a>`;
+        } else {
+            // បើអត់មាន Link (ពណ៌ប្រផេះ)
+            messengerBtn = `<div class="w-8 h-8 rounded-full bg-gray-100 text-gray-300 flex items-center justify-center border border-gray-200"><i class="fab fa-facebook-messenger text-sm"></i></div>`;
+        }
+
+        el.innerHTML = `
+        <div class="card-strip ${st.strip}"></div>
+        <div class="p-5 pl-6">
+            <div class="flex justify-between items-center mb-3">
+                <span class="status-badge ${st.bg} ${st.text}"><i class="fas ${st.icon}"></i> ${st.label}</span>
+                <span class="text-[11px] text-gray-400 dark:text-gray-500 font-bold font-sans tracking-wide">${new Date(o.updatedAt).toLocaleDateString('km-KH')}</span>
+            </div>
+            <div class="mb-3 pb-3 border-b border-gray-100 dark:border-gray-700/50">
+                <h4 class="font-bold text-gray-800 dark:text-white text-lg leading-tight mb-1">${o.custName}</h4>
+                <div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+                    
+                    <a href="tel:${o.custPhone}" onclick="event.stopPropagation();" class="flex items-center gap-1 hover:text-green-600 px-1 py-0.5 rounded transition">
+                        <i class="fas fa-phone-alt text-[10px] mt-[3px]"></i> ${o.custPhone || 'N/A'}
+                    </a>
+
+                    <div onclick="event.stopPropagation(); ui.quickViewAddress('${o.custAddr ? o.custAddr.replace(/'/g, "\\'") : ''}')" class="flex items-center gap-1 max-w-[150px] truncate hover:text-blue-600 cursor-pointer px-1 py-0.5 rounded transition">
+                        <i class="fas fa-map-marker-alt text-[10px] mt-[3px]"></i> ${o.custAddr || 'N/A'}
+                    </div>
+
+                </div>
+            </div>
+            <div class="flex justify-between items-start">
+                <div class="flex-1 pr-2">
+                    <div class="font-bold text-gray-700 dark:text-gray-200 text-sm mb-1">${o.prodName}</div>
+                    <div class="flex flex-wrap gap-2">
+                        ${o.prodSize ? `<span class="px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-700 text-[10px] font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600">Size: ${o.prodSize}</span>` : ''}
+                        <span class="px-2 py-0.5 rounded-md bg-teal-50 dark:bg-teal-900/30 text-[10px] font-bold text-teal-700 dark:text-teal-400 border border-teal-100 dark:border-teal-800">Qty: ${o.prodQty}</span>
+                    </div>
+                </div>
+                <div class="text-right flex flex-col items-end">
+                    <div class="flex flex-col items-center"> 
+                        <div class="font-bold text-xl ${f.profit >= 0 ? 'text-teal-600 dark:text-teal-400' : 'text-red-500'}">${f.profit >= 0 ? '+' : ''}$${f.profit.toFixed(2)}</div>
+                        ${app.formatKHR(Math.abs(f.profit), 'sys')}
+                    </div>
+                </div>
+            </div>
+            <hr class="border-dashed border-gray-200 dark:border-gray-700/50 my-3">
+            <div class="flex justify-between items-center">
+                <div>${paymentHtml}</div>
+                <div class="flex gap-2">
+                    
+                    ${messengerBtn}
+
+                    ${o.note ? `<button onclick="event.stopPropagation(); ui.showNote('${o.note.replace(/'/g, "\\'")}')" class="w-8 h-8 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center hover:bg-yellow-100 transition border border-yellow-100"><i class="fas fa-sticky-note text-xs"></i></button>` : ''}
+                    <button onclick="event.stopPropagation(); ui.confirmDelete(${o.id})" class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 flex items-center justify-center hover:bg-red-100 transition border border-red-100 dark:border-red-900/30"><i class="fas fa-trash-alt text-xs"></i></button>
+                </div>
+            </div>
+        </div>`;
+        
+        // --- បញ្ចប់ការជំនួស ---
                     container.appendChild(el);
                 });
             },
 
             openOrderModal: (id = null) => {
-                history.pushState({ modal: true }, null, '');
-                const modal = document.getElementById('modal-order'); modal.classList.remove('hidden');
-                document.getElementById('status').value = 'pending'; document.getElementById('entry-id').value = ''; document.getElementById('modal-title').innerText = "បង្កើតការលក់ថ្មី"; document.getElementById('invoice-btn-group').classList.add('hidden'); document.getElementById('invoice-btn-group').classList.remove('flex');
-                ['cust-name', 'cust-phone', 'cust-addr', 'prod-name', 'prod-size', 'val-sale', 'val-ship-in', 'cost-buy', 'cost-ship', 'cost-boost', 'note'].forEach(i => document.getElementById(i).value = '');
-                document.getElementById('prod-qty').value = '1';
-                document.getElementById('inv-rate-input').value = app.config.invRate;
-                if (id) {
-                    const o = app.data.find(x => x.id === id);
-                    if (o) {
-                        document.getElementById('modal-title').innerText = "កែប្រែទិន្ន័យ"; document.getElementById('entry-id').value = o.id;
-                        document.getElementById('cust-name').value = o.custName; document.getElementById('cust-phone').value = o.custPhone; document.getElementById('cust-addr').value = o.custAddr;
-                        document.getElementById('prod-name').value = o.prodName; document.getElementById('prod-size').value = o.prodSize; document.getElementById('prod-qty').value = o.prodQty;
-                        document.getElementById('val-sale').value = o.valSale; document.getElementById('val-ship-in').value = o.valShipIn;
-                        document.getElementById('cost-buy').value = o.costBuy; document.getElementById('cost-ship').value = o.costShip; document.getElementById('cost-boost').value = o.costBoost;
-                        document.getElementById('note').value = o.note || '';
-                        document.getElementById('status').value = o.status; document.getElementById('inv-rate-input').value = o.exchangeRate || app.config.invRate; document.getElementById('invoice-btn-group').classList.remove('hidden'); document.getElementById('invoice-btn-group').classList.add('flex');
-                    }
+            // ១. កំណត់ទីតាំងអក្សរ (Header Text)
+            const modalTitle = document.getElementById('modal-title');
+            const modalSubtitle = document.getElementById('modal-subtitle');
+
+            history.pushState({ modal: true }, null, '');
+            const modal = document.getElementById('modal-order');
+            modal.classList.remove('hidden');
+
+            // ២. កំណត់តម្លៃលំនាំដើម (សម្រាប់បង្កើតថ្មី - Create Mode)
+            document.getElementById('status').value = 'pending';
+            document.getElementById('entry-id').value = '';
+            
+            // 🔥 កំណត់អក្សរសម្រាប់ "បង្កើតថ្មី"
+            if(modalTitle) modalTitle.innerText = "ការលក់ថ្មី"; 
+            if(modalSubtitle) modalSubtitle.innerText = "CREATE NEW ORDER"; 
+
+            // លាក់ប៊ូតុង Invoice
+            document.getElementById('invoice-btn-group').classList.add('hidden');
+            document.getElementById('invoice-btn-group').classList.remove('flex');
+
+            // សម្អាតទិន្នន័យចាស់ក្នុង Form
+                ['cust-name', 'cust-phone', 'cust-addr', 'cust-fb', 'prod-name', 'prod-size', 'val-sale', 'val-ship-in', 'cost-buy', 'cost-ship', 'cost-boost', 'note'].forEach(i => document.getElementById(i).value = '');
+            document.getElementById('prod-qty').value = '1';
+            document.getElementById('inv-rate-input').value = app.config.invRate;
+
+            // ៣. ករណីកែប្រែ (Edit Mode)
+            if (id) {
+                const o = app.data.find(x => x.id === id);
+                if (o) {
+                    // 🔥 កំណត់អក្សរសម្រាប់ "កែប្រែ"
+                    if (modalTitle) modalTitle.innerText = 'កែប្រែទិន្នន័យ';
+                    if (modalSubtitle) modalSubtitle.innerText = 'EDIT ORDER DETAILS';
+
+                    document.getElementById('entry-id').value = o.id;
+                    document.getElementById('cust-name').value = o.custName;
+                    document.getElementById('cust-phone').value = o.custPhone;
+                    document.getElementById('cust-addr').value = o.custAddr;
+                    document.getElementById('cust-fb').value = o.fbLink || '';
+                    document.getElementById('prod-name').value = o.prodName;
+                    document.getElementById('prod-size').value = o.prodSize;
+                    document.getElementById('prod-qty').value = o.prodQty;
+                    document.getElementById('val-sale').value = o.valSale;
+                    document.getElementById('val-ship-in').value = o.valShipIn;
+                    document.getElementById('cost-buy').value = o.costBuy;
+                    document.getElementById('cost-ship').value = o.costShip;
+                    document.getElementById('cost-boost').value = o.costBoost;
+                    document.getElementById('note').value = o.note || '';
+                    document.getElementById('status').value = o.status;
+                    document.getElementById('inv-rate-input').value = o.exchangeRate || app.config.invRate;
+                    
+                    // បង្ហាញប៊ូតុង Invoice ពេលកែប្រែ
+                    document.getElementById('invoice-btn-group').classList.remove('hidden');
+                    document.getElementById('invoice-btn-group').classList.add('flex');
                 }
-            },
+            }
+        },
             closeModal: (id) => document.getElementById(id).classList.add('hidden'),
 
             saveOrder: async () => {
@@ -2273,6 +2517,7 @@
                     const curRate = parseInt(document.getElementById('inv-rate-input').value) || 4100; app.config.invRate = curRate; app.saveConfig();
                     const payload = {
                         id: idStr ? parseInt(idStr) : Date.now(), updatedAt: new Date().toISOString(), exchangeRate: curRate,
+                        fbLink: document.getElementById('cust-fb').value, // <--- ដាក់បន្ទាត់នេះចូល
                         custName: custName, custPhone: document.getElementById('cust-phone').value, custAddr: document.getElementById('cust-addr').value,
                         prodName: prodName, prodSize: document.getElementById('prod-size').value, prodQty: document.getElementById('prod-qty').value,
                         valSale: document.getElementById('val-sale').value, valShipIn: document.getElementById('val-ship-in').value,
@@ -2369,6 +2614,7 @@
                 exportCSV: () => { const items = app.data; if (items.length === 0) { ui.showToast("⚠️ គ្មានទិន្ន័យសម្រាប់ Export"); return; } let csvContent = "\uFEFFDate,Customer,Phone,Address,Product,Size,Qty,Total Cost,Total Income,Profit,Status,Note,RawDate\n"; const q = (s) => { if (s === null || s === undefined) return '""'; return `"${s.toString().replace(/"/g, '""')}"`; }; items.forEach(o => { const f = app.calc(o); let dateStr = ""; try { dateStr = new Date(o.updatedAt).toISOString().split('T')[0]; } catch (e) { dateStr = ""; } const row = [q(dateStr), q(o.custName), q(o.custPhone), q(o.custAddr), q(o.prodName), q(o.prodSize), q(o.prodQty), q(f.expense.toFixed(2)), q(f.income.toFixed(2)), q(f.profit.toFixed(2)), q(o.status), q(o.note), q(o.updatedAt)].join(","); csvContent += row + "\n"; }); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); const today = new Date().toISOString().slice(0, 10); link.setAttribute("download", `Shop_Data_All_${today}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link); },
                 resetApp: () => { ui.askConfirm('reset_app'); }, emptyTrash: () => ui.askConfirm('empty_trash')
             }
+
         };
         ui.showImportConfirm = (count, data) => { document.getElementById('import-msg-count').innerText = `បានរកឃើញ ${count} ទិន្ន័យ`; const modal = document.getElementById('modal-import-overlay'); const btn = document.getElementById('btn-confirm-import'); const newBtn = btn.cloneNode(true); btn.parentNode.replaceChild(newBtn, btn); newBtn.onclick = () => dataManager.executeImport(data); modal.classList.remove('hidden'); };
 
@@ -2419,7 +2665,49 @@
                 wrapper.insertAdjacentHTML('beforeend', cardHtml);
             });
         }
+        // ==========================================
+        // បន្ថែមមុខងារ ADDRESS POPUP នៅទីនេះ
+        // ==========================================
 
+        ui.openAddressModal = function () {
+            // 1. យកទិន្ន័យពីប្រអប់តូច (cust-addr)
+            const smallInput = document.getElementById('cust-addr');
+            const bigTextarea = document.getElementById('expanded-addr-text');
+
+            // 2. បោះចូលទៅក្នុងប្រអប់ធំ
+            bigTextarea.value = smallInput.value;
+
+            // 3. បង្ហាញ Popup (ដែលយើងបានដាក់ z-index: 100)
+            document.getElementById('modal-address-expand').classList.remove('hidden');
+
+            // 4. ដាក់ Focus ឱ្យសរសេរបានភ្លាមៗ
+            setTimeout(() => {
+                bigTextarea.focus();
+            }, 100);
+        };
+
+        ui.saveExpandedAddress = function () {
+            // 1. យកទិន្ន័យពីប្រអប់ធំ
+            const newAddr = document.getElementById('expanded-addr-text').value;
+
+            // 2. បោះត្រឡប់ទៅប្រអប់តូចវិញ
+            document.getElementById('cust-addr').value = newAddr;
+
+            // 3. បិទ Popup
+            document.getElementById('modal-address-expand').classList.add('hidden');
+        };
+        // បន្ថែមនៅខាងក្រៅ ឬក្នុង ui object ក៏បាន
+        ui.quickViewAddress = (address) => {
+            // បញ្ឈប់ការចុចនេះកុំឱ្យវាធ្លាយទៅបើក Order Modal ធំ
+            if (event) event.stopPropagation();
+
+            // ដាក់អាសយដ្ឋានចូលក្នុងផ្ទាំង Modal
+            const textarea = document.getElementById('expanded-addr-text');
+            textarea.value = address || "មិនមានអាសយដ្ឋានត្រូវបានកត់ត្រាទេ";
+
+            // បង្ហាញ Modal
+            document.getElementById('modal-address-expand').classList.remove('hidden');
+        };
         window.onload = app.init;
     </script>
     <div id="modal-drilldown"
@@ -2442,6 +2730,57 @@
                 <button onclick="ui.generatePDFStatement()"
                     class="w-full py-3 bg-teal-600 text-white rounded-xl font-bold shadow hover:bg-teal-700 transition"><i
                         class="fas fa-print mr-2"></i> បោះពុម្ពបញ្ជីនេះ (Print)</button>
+            </div>
+        </div>
+    </div>
+    <div id="modal-address-expand"
+        class="fixed inset-0 bg-slate-900/60 z-[20000] hidden flex items-center justify-center backdrop-blur-[6px] p-4 transition-all duration-300">
+
+        <div
+            class="w-full max-w-md oled-glass-bg rounded-[28px] shadow-2xl overflow-hidden animate-slide-up relative border border-white/40 dark:border-white/10">
+
+            <div
+                class="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-teal-500/10 via-blue-500/5 to-transparent pointer-events-none">
+            </div>
+
+            <div class="px-6 pt-6 pb-2 flex justify-between items-start relative z-10">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-400 to-blue-500 shadow-lg shadow-blue-500/30 flex items-center justify-center text-white border border-white/20">
+                        <i class="fas fa-map-marked-alt text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800 dark:text-white text-lg font-serif-kh tracking-wide">
+                            អាសយដ្ឋានលម្អិត
+                        </h3>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 font-sans opacity-80">
+                            សូមបញ្ចូលទីតាំងខាងក្រោម</p>
+                    </div>
+                </div>
+
+                <button onclick="document.getElementById('modal-address-expand').classList.add('hidden')"
+                    class="text-gray-400 hover:text-red-500 transition w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/50 dark:hover:bg-white/10">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <div class="px-6 py-2 relative z-10">
+                <textarea id="expanded-addr-text"
+                    class="w-full h-[180px] bg-transparent border-none outline-none text-lg leading-relaxed resize-none text-gray-800 dark:text-white placeholder:text-gray-400 font-sans"
+                    placeholder="ផ្ទះលេខ..., ផ្លូវ..., សង្កាត់..., ខណ្ឌ... (អាច Paste ទីតាំងពី Google Maps បាន)"></textarea>
+
+                <div class="w-full h-px bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mt-2"></div>
+            </div>
+
+            <div class="px-6 py-5 flex justify-end gap-3 relative z-10">
+                <button onclick="document.getElementById('modal-address-expand').classList.add('hidden')"
+                    class="px-5 py-2.5 rounded-xl text-gray-500 dark:text-gray-400 font-bold hover:bg-gray-100/50 dark:hover:bg-white/5 transition text-sm">
+                    បោះបង់
+                </button>
+                <button onclick="ui.saveExpandedAddress()"
+                    class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition text-sm">
+                    យល់ព្រម
+                </button>
             </div>
         </div>
     </div>
