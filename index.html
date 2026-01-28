@@ -969,6 +969,38 @@
         }
 
         /* === STICKER ANIMATIONS === */
+        /* === NEW PROFESSIONAL ANIMATIONS === */
+/* ចលនាពណ៌ប្រដេញលើអក្សរ */
+@keyframes textShimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+.animate-text-shimmer {
+    animation: textShimmer 3s linear infinite;
+}
+
+/* ចលនាពន្លឺចាំងលើកញ្ចក់ */
+@keyframes shineSlow {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+.animate-shine-slow {
+    animation: shineSlow 8s ease-in-out infinite;
+}
+
+/* ចលនាលោតយឺតៗសម្រាប់ Icon */
+@keyframes bounceSlow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+.animate-bounce-slow {
+    animation: bounceSlow 2s ease-in-out infinite;
+}
+
+/* Text Shadow សម្រាប់អក្សរតូច */
+.text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
         @keyframes float-sticker {
 
             0%,
@@ -1113,55 +1145,78 @@
     </div>
 
     <div id="home-header-container" class="smart-header-anim">
-        <header class="header-bg text-white relative overflow-hidden">
+  <header class="relative bg-gradient-to-br from-blue-500 via-purple-500 to-teal-500 pb-24 pt-4 rounded-b-[35px] shadow-xl overflow-visible">
     
-    <i class="fas fa-store bg-deco-icon deco-1"></i>
-    <i class="fas fa-wallet bg-deco-icon deco-2"></i>
+    <div class="absolute inset-0 overflow-hidden rounded-b-[35px] pointer-events-none">
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-yellow-300/30 rounded-full blur-3xl opacity-40 animate-pulse-slow"></div>
+        <div class="absolute -left-20 top-20 w-64 h-64 bg-pink-400/30 rounded-full blur-3xl opacity-40 animate-pulse-slow" style="animation-delay: 1s;"></div>
+    </div>
 
-    <div class="pt-4 px-2 relative z-20 w-full h-[80px]"> <button onclick="ui.toggleTheme()" 
-            class="absolute top-4 left-4 z-50 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg active:scale-90 transition hover:bg-white/30">
-            <i id="theme-icon" class="fas fa-moon text-white"></i>
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none z-20">
+        <button onclick="ui.toggleTheme()" 
+            class="pointer-events-auto absolute top-5 left-5 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-md flex items-center justify-center text-white transition-all hover:bg-white/20 active:scale-95">
+            <i id="theme-icon" class="fas fa-moon text-sm"></i>
         </button>
-
-        <div id="header-home-title" class="w-full h-full flex flex-col items-center justify-start px-16 pointer-events-none">
-            <div class="relative inline-block"> 
-                <i class="fas fa-shop absolute -right-5 -top-3 text-teal-200 text-lg drop-shadow-md" 
-                   style="animation: floatIcon 4s ease-in-out infinite;"></i>
-                
-                <h1 class="text-xl sm:text-3xl font-black text-white drop-shadow-md tracking-wide whitespace-nowrap">
-                    MY SMALL SHOP TRACKER
-                </h1>
-            </div>
-            <p class="text-teal-100 text-xs sm:text-sm font-medium mt-0.5 opacity-90 tracking-wider">
-                Professional by Norn
-            </p>
-        </div>
-
         <button onclick="dataManager.downloadBackup()" 
-            class="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg active:scale-90 transition hover:bg-white/30">
-            <i class="fas fa-cloud-download-alt text-white"></i>
+            class="pointer-events-auto absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-md flex items-center justify-center text-white transition-all hover:bg-white/20 active:scale-95">
+            <i class="fas fa-cloud-download-alt text-sm"></i>
         </button>
+    </div>
+
+    <div class="relative z-10 flex flex-col items-center justify-center pt-3 px-4">
+        
+        <div class="p-4 px-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg text-center relative overflow-hidden">
+            
+            <div class="absolute top-0 left-[-50%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 pointer-events-none animate-shine-slow"></div>
+
+            <h1 class="text-2xl sm:text-3xl font-black tracking-wider drop-shadow-lg font-sans
+                       bg-clip-text text-transparent bg-gradient-to-r from-white via-yellow-100 to-white
+                       animate-text-shimmer bg-[length:200%_auto]">
+                MY SMALL SHOP TRACKER
+            </h1>
+            
+            <div class="flex items-center justify-center gap-2 mt-2 opacity-90">
+                <div class="h-[1px] w-6 bg-white/50"></div>
+                <span class="text-[10px] font-bold text-white uppercase tracking-[0.2em] text-shadow-sm">Professional by Norn/span>
+                <div class="h-[1px] w-6 bg-white/50"></div>
+            </div>
+
+        </div>
 
     </div>
 
-    <div class="floating-stats-container">
-        <div class="home-stat-card card-real">
+    <div class="floating-stats-container" style="bottom: -45px;"> 
+        <div class="home-stat-card card-real shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
             <div class="card-icon-box icon-green">
                 <i class="fas fa-wallet"></i>
             </div>
             <span class="stat-label">ចំណេញជាក់ស្ដែង</span>
-            <h2 class="stat-value" id="dash-real-profit">$0.00</h2>
+            <h2 class="stat-value text-lg" id="dash-real-profit">$0.00</h2>
         </div>
 
-        <div class="home-stat-card card-pending">
+        <div class="home-stat-card card-pending shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
             <div class="card-icon-box icon-orange">
                 <i class="fas fa-hourglass-half"></i>
             </div>
             <span class="stat-label">ចំណេញរំពឹងទុក</span>
-            <h2 class="stat-value" id="dash-pending-profit">$0.00</h2>
+            <h2 class="stat-value text-lg" id="dash-pending-profit">$0.00</h2>
         </div>
     </div>
+
 </header>
+
+<style>
+    @keyframes float-slow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+    .animate-float-slow {
+        animation: float-slow 3s ease-in-out infinite;
+    }
+    .text-shadow-sm {
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+</style>
     </div>
     <div id="report-header-container" class="smart-header-anim">
         <div class="report-header-bg">
