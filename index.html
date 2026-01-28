@@ -193,7 +193,7 @@
         .floating-stats-container {
             position: absolute;
             /* ADJUSTMENT 2: Moved cards further down relative to header bottom */
-            bottom: -20px;
+            bottom: -30px;
             left: 0;
             width: 100%;
             padding: 0 20px;
@@ -1128,13 +1128,12 @@
                             class="fas fa-shop absolute -right-6 -top-4 text-teal-200 text-2xl drop-shadow-md"
                             style="animation: floatIcon 4s ease-in-out infinite;"></i>
 
-                        <h1
-                            class="text-xl font-extrabold font-serif-kh tracking-wide drop-shadow-lg leading-tight text-white">
-                            MY SMALL SHOP TRACKER
-                        </h1>
-                        <p class="text-[11px] text-teal-50 font-bold tracking-widest mt-1 opacity-90">
-                            Professional by Norn🤣
-                        </p>
+                        <h1 class="text-xl sm:text-3xl md:text-4xl font-black text-white drop-shadow-md tracking-wide whitespace-nowrap">
+    MY SMALL SHOP TRACKER
+</h1>
+<p class="text-teal-100 text-sm sm:text-base font-medium mt-1 opacity-90">
+    Professional by Norn 
+</p>
                     </div>
                 </div>
 
@@ -1607,29 +1606,25 @@
                     <div class="min-w-0 flex flex-col justify-center">
                         <h3 class="text-xl font-black font-serif-kh tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-teal-800 to-blue-800 dark:from-white dark:to-teal-200 drop-shadow-sm whitespace-nowrap overflow-hidden text-ellipsis leading-tight"
                             id="modal-title">
-                            ការលក់ថ្មី
+                            បង្កើតការលក់ថ្មី
                         </h3>
-                        <p class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.15em] opacity-80 truncate leading-tight mt-0.5"
-                            id="modal-subtitle">
-                            CREATE NEW ORDER
-                        </p>
                     </div>
                 </div>
 
                 <div class="flex gap-2 shrink-0">
                     <div id="invoice-btn-group" class="hidden gap-2">
                         <button onclick="ui.openInvoice('customer')"
-                            class="w-9 h-9 rounded-full bg-blue-50/80 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                            class="w-10 h-10 rounded-full bg-blue-50/80 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
                                 class="fas fa-file-invoice text-xs"></i></button>
                         <button onclick="ui.openInvoice('admin')"
-                            class="w-9 h-9 rounded-full bg-purple-50/80 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                            class="w-10 h-10 rounded-full bg-purple-50/80 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
                                 class="fas fa-user-shield text-xs"></i></button>
                     </div>
                     <button onclick="ui.shareTextOrder()"
-                        class="w-9 h-9 rounded-full bg-teal-50/80 text-teal-600 dark:bg-teal-900/50 dark:text-teal-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                        class="w-10 h-10 rounded-full bg-teal-50/80 text-teal-600 dark:bg-teal-900/50 dark:text-teal-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
                             class="fas fa-share-alt text-xs"></i></button>
                     <button onclick="ui.closeModal('modal-order')"
-                        class="w-9 h-9 rounded-full bg-red-50/80 text-red-500 dark:bg-red-900/50 dark:text-red-300 hover:bg-red-500 hover:text-white transition flex items-center justify-center active:scale-95 backdrop-blur-md shadow-sm border border-white/50"><i
+                        class="w-10 h-10 rounded-full bg-red-50/80 text-red-500 dark:bg-red-900/50 dark:text-red-300 hover:bg-red-500 hover:text-white transition flex items-center justify-center active:scale-95 backdrop-blur-md shadow-sm border border-white/50"><i
                             class="fas fa-times text-xs"></i></button>
                 </div>
             </div>
@@ -2403,15 +2398,27 @@
 
             renderHome: () => {
                 const container = document.getElementById('order-list'); const search = document.getElementById('search-input').value.toLowerCase(); container.innerHTML = '';
+                // នៅក្នុង ui.renderHome :
+
+                // ... កូដពីលើនៅដដែល ...
                 let activeData = app.data.filter(o => !o.isDeleted);
-                // Logic ស្វែងរក (ដាក់នៅផ្នែកខាងលើនៃ ui.renderHome)
-                if (search) activeData = activeData.filter(o =>
-                    o.custName.toLowerCase().includes(search) ||
-                    o.custPhone.includes(search) ||
-                    o.prodName.toLowerCase().includes(search) ||
-                    // បន្ថែមបន្ទាត់ខាងក្រោមនេះ ដើម្បីឱ្យវាស្គាល់លេខ Tracking
-                    (o.trackingNo && o.trackingNo.toString().toLowerCase().includes(search))
-                );
+
+                // [START] កែប្រែត្រង់នេះ (SEARCH LOGIC)
+                if (search) {
+                    activeData = activeData.filter(o =>
+                        // ១. ស្វែងរកលើឈ្មោះអតិថិជន
+                        (o.custName && o.custName.toLowerCase().includes(search)) ||
+                        // ២. ស្វែងរកលើលេខទូរស័ព្ទ
+                        (o.custPhone && o.custPhone.includes(search)) ||
+                        // ៣. ស្វែងរកលើឈ្មោះទំនិញ
+                        (o.prodName && o.prodName.toLowerCase().includes(search)) ||
+                        // ៤. ស្វែងរកលើលេខ Tracking (ថែមថ្មី)
+                        (o.trackingNo && o.trackingNo.toString().toLowerCase().includes(search))
+                    );
+                }
+                // [END] បញ្ចប់កែប្រែ
+
+                // ... កូដខាងក្រោមនៅដដែល (let realP = 0...) ...
                 let realP = 0, pendP = 0;
                 app.data.filter(o => !o.isDeleted).forEach(o => { const f = app.calc(o); if (o.status === 'completed') realP += f.profit; else if (o.status !== 'cancelled') pendP += f.profit; });
                 document.getElementById('dash-real-profit').innerHTML = `$${realP.toFixed(2)} ${app.formatKHR(realP)}`; document.getElementById('dash-pending-profit').innerHTML = `$${pendP.toFixed(2)} ${app.formatKHR(pendP)}`;
@@ -2477,7 +2484,6 @@
                             imgBtn = `<a href="${link}" target="_blank" onclick="event.stopPropagation();" class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center hover:bg-purple-500 hover:text-white transition shadow-sm ml-2" title="មើលរូបភាព"><i class="fas fa-image text-xs"></i></a>`;
                         }
                     }
-                    // [END] បញ្ចប់កែប្រែ
                     // [END] បញ្ចប់កែប្រែ
 
                     // បង្កើតផ្នែក Tracking
@@ -2564,7 +2570,7 @@
                 document.getElementById('entry-id').value = '';
 
                 // 🔥 កំណត់អក្សរសម្រាប់ "បង្កើតថ្មី"
-                if (modalTitle) modalTitle.innerText = "ការលក់ថ្មី";
+                if (modalTitle) modalTitle.innerText = "បង្កើតការលក់ថ្មី";
                 if (modalSubtitle) modalSubtitle.innerText = "CREATE NEW ORDER";
 
                 // លាក់ប៊ូតុង Invoice
@@ -2586,7 +2592,7 @@
                         // [END]
                         // 🔥 កំណត់អក្សរសម្រាប់ "កែប្រែ"
                         if (modalTitle) modalTitle.innerText = 'កែប្រែទិន្នន័យ';
-                        if (modalSubtitle) modalSubtitle.innerText = 'EDIT ORDER DETAILS';
+                        // if (modalSubtitle) modalSubtitle.innerText = 'EDIT ORDER DETAILS';
 
                         document.getElementById('entry-id').value = o.id;
                         document.getElementById('cust-name').value = o.custName;
