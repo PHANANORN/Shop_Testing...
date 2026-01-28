@@ -1113,55 +1113,55 @@
     </div>
 
     <div id="home-header-container" class="smart-header-anim">
-        <header class="header-bg text-white">
+        <header class="header-bg text-white relative overflow-hidden">
+    
+    <i class="fas fa-store bg-deco-icon deco-1"></i>
+    <i class="fas fa-wallet bg-deco-icon deco-2"></i>
 
-            <i class="fas fa-store bg-deco-icon deco-1"></i>
-            <i class="fas fa-wallet bg-deco-icon deco-2"></i>
+    <div class="pt-4 px-2 relative z-20 w-full h-[80px]"> <button onclick="ui.toggleTheme()" 
+            class="absolute top-4 left-4 z-50 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg active:scale-90 transition hover:bg-white/30">
+            <i id="theme-icon" class="fas fa-moon text-white"></i>
+        </button>
 
-            <div class="px-5 pt-3 flex justify-between items-start relative z-20">
-                <button onclick="ui.toggleTheme()" class="header-icon-btn">
-                    <i id="theme-icon" class="fas fa-moon"></i>
-                </button>
-
-                <div id="header-home-title" class="flex-1 text-center px-2 z-20 pt-1">
-                    <div class="relative inline-block mb-3"> <i
-                            class="fas fa-shop absolute -right-6 -top-4 text-teal-200 text-2xl drop-shadow-md"
-                            style="animation: floatIcon 4s ease-in-out infinite;"></i>
-
-                        <h1 class="text-xl sm:text-3xl md:text-4xl font-black text-white drop-shadow-md tracking-wide whitespace-nowrap">
-    MY SMALL SHOP TRACKER
-</h1>
-<p class="text-teal-100 text-sm sm:text-base font-medium mt-1 opacity-90">
-    Professional by Norn 
-</p>
-                    </div>
-                </div>
-                <div class="absolute top-4 right-4 z-50">
-    <button onclick="dataManager.downloadBackup()" 
-        class="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/30 transition-all shadow-lg border border-white/10">
-        <i class="fas fa-cloud-download-alt text-base"></i>
-    </button>
-</div>
+        <div id="header-home-title" class="w-full h-full flex flex-col items-center justify-start px-16 pointer-events-none">
+            <div class="relative inline-block"> 
+                <i class="fas fa-shop absolute -right-5 -top-3 text-teal-200 text-lg drop-shadow-md" 
+                   style="animation: floatIcon 4s ease-in-out infinite;"></i>
+                
+                <h1 class="text-xl sm:text-3xl font-black text-white drop-shadow-md tracking-wide whitespace-nowrap">
+                    MY SMALL SHOP TRACKER
+                </h1>
             </div>
+            <p class="text-teal-100 text-xs sm:text-sm font-medium mt-0.5 opacity-90 tracking-wider">
+                Professional by Norn
+            </p>
+        </div>
 
-            <div class="floating-stats-container">
-                <div class="home-stat-card card-real">
-                    <div class="card-icon-box icon-green">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <span class="stat-label">ចំណេញជាក់ស្ដែង</span>
-                    <h2 class="stat-value" id="dash-real-profit">$0.00</h2>
-                </div>
+        <button onclick="dataManager.downloadBackup()" 
+            class="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10 shadow-lg active:scale-90 transition hover:bg-white/30">
+            <i class="fas fa-cloud-download-alt text-white"></i>
+        </button>
 
-                <div class="home-stat-card card-pending">
-                    <div class="card-icon-box icon-orange">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                    <span class="stat-label">ចំណេញរំពឹងទុក</span>
-                    <h2 class="stat-value" id="dash-pending-profit">$0.00</h2>
-                </div>
+    </div>
+
+    <div class="floating-stats-container">
+        <div class="home-stat-card card-real">
+            <div class="card-icon-box icon-green">
+                <i class="fas fa-wallet"></i>
             </div>
-        </header>
+            <span class="stat-label">ចំណេញជាក់ស្ដែង</span>
+            <h2 class="stat-value" id="dash-real-profit">$0.00</h2>
+        </div>
+
+        <div class="home-stat-card card-pending">
+            <div class="card-icon-box icon-orange">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <span class="stat-label">ចំណេញរំពឹងទុក</span>
+            <h2 class="stat-value" id="dash-pending-profit">$0.00</h2>
+        </div>
+    </div>
+</header>
     </div>
     <div id="report-header-container" class="smart-header-anim">
         <div class="report-header-bg">
