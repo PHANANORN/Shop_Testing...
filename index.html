@@ -193,10 +193,10 @@
         .floating-stats-container {
             position: absolute;
             /* ADJUSTMENT 2: Moved cards further down relative to header bottom */
-            bottom: -25px;
+            bottom: -30px;
             left: 0;
             width: 100%;
-            padding: 0 15px;
+            padding: 0 12px;
             z-index: 100;
             display: flex;
             gap: 10px;
@@ -969,6 +969,38 @@
         }
 
         /* === STICKER ANIMATIONS === */
+        /* === NEW PROFESSIONAL ANIMATIONS === */
+/* ចលនាពណ៌ប្រដេញលើអក្សរ */
+@keyframes textShimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+.animate-text-shimmer {
+    animation: textShimmer 3s linear infinite;
+}
+
+/* ចលនាពន្លឺចាំងលើកញ្ចក់ */
+@keyframes shineSlow {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+.animate-shine-slow {
+    animation: shineSlow 8s ease-in-out infinite;
+}
+
+/* ចលនាលោតយឺតៗសម្រាប់ Icon */
+@keyframes bounceSlow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+.animate-bounce-slow {
+    animation: bounceSlow 2s ease-in-out infinite;
+}
+
+/* Text Shadow សម្រាប់អក្សរតូច */
+.text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
         @keyframes float-sticker {
 
             0%,
@@ -1113,54 +1145,78 @@
     </div>
 
     <div id="home-header-container" class="smart-header-anim">
-        <header class="header-bg text-white">
+  <header class="relative bg-gradient-to-br from-blue-500 via-purple-500 to-teal-500 pb-24 pt-4 rounded-b-[35px] shadow-xl overflow-visible">
+    
+    <div class="absolute inset-0 overflow-hidden rounded-b-[35px] pointer-events-none">
+        <div class="absolute -right-20 -top-20 w-64 h-64 bg-yellow-300/30 rounded-full blur-3xl opacity-40 animate-pulse-slow"></div>
+        <div class="absolute -left-20 top-20 w-64 h-64 bg-pink-400/30 rounded-full blur-3xl opacity-40 animate-pulse-slow" style="animation-delay: 1s;"></div>
+    </div>
 
-            <i class="fas fa-store bg-deco-icon deco-1"></i>
-            <i class="fas fa-wallet bg-deco-icon deco-2"></i>
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none z-20">
+        <button onclick="ui.toggleTheme()" 
+            class="pointer-events-auto absolute top-5 left-5 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-md flex items-center justify-center text-white transition-all hover:bg-white/20 active:scale-95">
+            <i id="theme-icon" class="fas fa-moon text-sm"></i>
+        </button>
+        <button onclick="dataManager.downloadBackup()" 
+            class="pointer-events-auto absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-md flex items-center justify-center text-white transition-all hover:bg-white/20 active:scale-95">
+            <i class="fas fa-cloud-download-alt text-sm"></i>
+        </button>
+    </div>
 
-            <div class="px-5 pt-3 flex justify-between items-start relative z-20">
-                <button onclick="ui.toggleTheme()" class="header-icon-btn">
-                    <i id="theme-icon" class="fas fa-moon"></i>
-                </button>
+    <div class="relative z-10 flex flex-col items-center justify-center pt-3 px-4">
+        
+        <div class="p-4 px-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg text-center relative overflow-hidden">
+            
+            <div class="absolute top-0 left-[-50%] w-[200%] h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 pointer-events-none animate-shine-slow"></div>
 
-                <div id="header-home-title" class="flex-1 text-center px-2 z-20 pt-1">
-                    <div class="relative inline-block mb-3"> <i
-                            class="fas fa-shop absolute -right-6 -top-4 text-teal-200 text-2xl drop-shadow-md"
-                            style="animation: floatIcon 4s ease-in-out infinite;"></i>
-
-                        <h1
-                            class="text-xl font-extrabold font-serif-kh tracking-wide drop-shadow-lg leading-tight text-white">
-                            MY SMALL SHOP
-                        </h1>
-                        <p class="text-[11px] text-teal-50 font-bold tracking-widest mt-1 opacity-90">
-                            Professional by Norn
-                        </p>
-                    </div>
-                </div>
-
-                <button onclick="dataManager.downloadBackup()" class="header-icon-btn">
-                    <i class="fas fa-cloud-download-alt"></i>
-                </button>
+            <h1 class="text-1.5xl sm:text-3xl font-black tracking-wider drop-shadow-lg font-sans
+                       bg-clip-text text-transparent bg-gradient-to-r from-white via-yellow-100 to-white
+                       animate-text-shimmer bg-[length:150%_auto]">
+                MY SMALL SHOP TRACKER
+            </h1>
+            
+            <div class="flex items-center justify-center gap-5 mt-5 opacity-90">
+                <div class="h-[1px] w-6 bg-white/50"></div>
+                <span class="text-[6px] font-bold text-white uppercase tracking-[0.1em] text-shadow-sm">Professional by Norn </span>
+                <div class="h-[1px] w-6 bg-white/50"></div>
             </div>
 
-            <div class="floating-stats-container">
-                <div class="home-stat-card card-real">
-                    <div class="card-icon-box icon-green">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <span class="stat-label">ចំណេញជាក់ស្ដែង</span>
-                    <h2 class="stat-value" id="dash-real-profit">$0.00</h2>
-                </div>
+        </div>
 
-                <div class="home-stat-card card-pending">
-                    <div class="card-icon-box icon-orange">
-                        <i class="fas fa-hourglass-half"></i>
-                    </div>
-                    <span class="stat-label">ចំណេញរំពឹងទុក</span>
-                    <h2 class="stat-value" id="dash-pending-profit">$0.00</h2>
-                </div>
+    </div>
+
+    <div class="floating-stats-container" style="bottom: -55px;"> 
+        <div class="home-stat-card card-real shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
+            <div class="card-icon-box icon-green">
+                <i class="fas fa-wallet"></i>
             </div>
-        </header>
+            <span class="stat-label">ចំណេញជាក់ស្ដែង</span>
+            <h2 class="stat-value text-lg" id="dash-real-profit">$0.00</h2>
+        </div>
+
+        <div class="home-stat-card card-pending shadow-[0_8px_20px_rgba(0,0,0,0.15)]">
+            <div class="card-icon-box icon-orange">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <span class="stat-label">ចំណេញរំពឹងទុក</span>
+            <h2 class="stat-value text-lg" id="dash-pending-profit">$0.00</h2>
+        </div>
+    </div>
+
+</header>
+
+<style>
+    @keyframes float-slow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+    .animate-float-slow {
+        animation: float-slow 3s ease-in-out infinite;
+    }
+    .text-shadow-sm {
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+</style>
     </div>
     <div id="report-header-container" class="smart-header-anim">
         <div class="report-header-bg">
@@ -1607,29 +1663,25 @@
                     <div class="min-w-0 flex flex-col justify-center">
                         <h3 class="text-xl font-black font-serif-kh tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-teal-800 to-blue-800 dark:from-white dark:to-teal-200 drop-shadow-sm whitespace-nowrap overflow-hidden text-ellipsis leading-tight"
                             id="modal-title">
-                            ការលក់ថ្មី
+                            បង្កើតការលក់ថ្មី
                         </h3>
-                        <p class="text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-[0.15em] opacity-80 truncate leading-tight mt-0.5"
-                            id="modal-subtitle">
-                            CREATE NEW ORDER
-                        </p>
                     </div>
                 </div>
 
                 <div class="flex gap-2 shrink-0">
                     <div id="invoice-btn-group" class="hidden gap-2">
                         <button onclick="ui.openInvoice('customer')"
-                            class="w-9 h-9 rounded-full bg-blue-50/80 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                            class="w-10 h-10 rounded-full bg-blue-50/80 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
                                 class="fas fa-file-invoice text-xs"></i></button>
                         <button onclick="ui.openInvoice('admin')"
-                            class="w-9 h-9 rounded-full bg-purple-50/80 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                            class="w-10 h-10 rounded-full bg-purple-50/80 text-purple-600 dark:bg-purple-900/50 dark:text-purple-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
                                 class="fas fa-user-shield text-xs"></i></button>
                     </div>
                     <button onclick="ui.shareTextOrder()"
-                        class="w-9 h-9 rounded-full bg-teal-50/80 text-teal-600 dark:bg-teal-900/50 dark:text-teal-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
+                        class="w-10 h-10 rounded-full bg-teal-50/80 text-teal-600 dark:bg-teal-900/50 dark:text-teal-300 flex items-center justify-center border border-white/60 dark:border-white/10 shadow-sm active:scale-95 transition backdrop-blur-md"><i
                             class="fas fa-share-alt text-xs"></i></button>
                     <button onclick="ui.closeModal('modal-order')"
-                        class="w-9 h-9 rounded-full bg-red-50/80 text-red-500 dark:bg-red-900/50 dark:text-red-300 hover:bg-red-500 hover:text-white transition flex items-center justify-center active:scale-95 backdrop-blur-md shadow-sm border border-white/50"><i
+                        class="w-10 h-10 rounded-full bg-red-50/80 text-red-500 dark:bg-red-900/50 dark:text-red-300 hover:bg-red-500 hover:text-white transition flex items-center justify-center active:scale-95 backdrop-blur-md shadow-sm border border-white/50"><i
                             class="fas fa-times text-xs"></i></button>
                 </div>
             </div>
@@ -2405,25 +2457,39 @@
                 const container = document.getElementById('order-list'); const search = document.getElementById('search-input').value.toLowerCase(); container.innerHTML = '';
                 // នៅក្នុង ui.renderHome :
 
-// ... កូដពីលើនៅដដែល ...
-let activeData = app.data.filter(o => !o.isDeleted);
+                // ... កូដពីលើនៅដដែល ...
+                let activeData = app.data.filter(o => !o.isDeleted);
 
-// [START] កែប្រែត្រង់នេះ (SEARCH LOGIC)
-if (search) {
-    activeData = activeData.filter(o => 
-        // ១. ស្វែងរកលើឈ្មោះអតិថិជន
-        (o.custName && o.custName.toLowerCase().includes(search)) || 
-        // ២. ស្វែងរកលើលេខទូរស័ព្ទ
-        (o.custPhone && o.custPhone.includes(search)) || 
-        // ៣. ស្វែងរកលើឈ្មោះទំនិញ
-        (o.prodName && o.prodName.toLowerCase().includes(search)) ||
-        // ៤. ស្វែងរកលើលេខ Tracking (ថែមថ្មី)
-        (o.trackingNo && o.trackingNo.toString().toLowerCase().includes(search))
-    );
-}
-// [END] បញ្ចប់កែប្រែ
+                // [START] កែប្រែត្រង់នេះ (SEARCH LOGIC)
+                if (search) {
+                    activeData = activeData.filter(o =>
+                        // ១. ស្វែងរកលើឈ្មោះអតិថិជន
+                        (o.custName && o.custName.toLowerCase().includes(search)) ||
+                        // ២. ស្វែងរកលើលេខទូរស័ព្ទ
+                        (o.custPhone && o.custPhone.includes(search)) ||
+                        // ៣. ស្វែងរកលើឈ្មោះទំនិញ
+                        (o.prodName && o.prodName.toLowerCase().includes(search)) ||
+                        // ៤. ស្វែងរកលើលេខ Tracking (ថែមថ្មី)
+                        (o.trackingNo && o.trackingNo.toString().toLowerCase().includes(search))
+                    );
+                }
+                // [END] បញ្ចប់កែប្រែ
 
-// ... កូដខាងក្រោមនៅដដែល (let realP = 0...) ...
+                // ... កូដខាងក្រោមនៅដដែល (let realP = 0...) ...
+                let realP = 0, pendP = 0;
+                app.data.filter(o => !o.isDeleted).forEach(o => { const f = app.calc(o); if (o.status === 'completed') realP += f.profit; else if (o.status !== 'cancelled') pendP += f.profit; });
+                document.getElementById('dash-real-profit').innerHTML = `$${realP.toFixed(2)} ${app.formatKHR(realP)}`; document.getElementById('dash-pending-profit').innerHTML = `$${pendP.toFixed(2)} ${app.formatKHR(pendP)}`;
+                if (activeData.length === 0) { container.innerHTML = `<div class="text-center mt-20 opacity-40"><i class="fas fa-box-open text-5xl mb-3 text-gray-300 dark:text-gray-600"></i><p class="text-sm text-gray-400 dark:text-gray-500">មិនមានទិន្ន័យ</p></div>`; return; }
+
+                // [START] កូដបង្ហាញកាតថ្មី (Tracking & Image Search)
+
+                // 1. Logic ស្វែងរក (Search Logic) - ដាក់ជំនួស Logic Search ចាស់
+                if (search) activeData = activeData.filter(o =>
+                    o.custName.toLowerCase().includes(search) ||
+                    o.custPhone.includes(search) ||
+                    o.prodName.toLowerCase().includes(search) ||
+                    (o.trackingNo && o.trackingNo.toLowerCase().includes(search)) // ស្វែងរកតាម Tracking
+                );
 
                 // 2. ការបង្កើតកាត
                 if (activeData.length === 0) { container.innerHTML = `<div class="text-center mt-20 opacity-40"><i class="fas fa-box-open text-5xl mb-3 text-gray-300 dark:text-gray-600"></i><p class="text-sm text-gray-400 dark:text-gray-500">មិនមានទិន្ន័យ</p></div>`; return; }
@@ -2475,7 +2541,6 @@ if (search) {
                             imgBtn = `<a href="${link}" target="_blank" onclick="event.stopPropagation();" class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center hover:bg-purple-500 hover:text-white transition shadow-sm ml-2" title="មើលរូបភាព"><i class="fas fa-image text-xs"></i></a>`;
                         }
                     }
-                    // [END] បញ្ចប់កែប្រែ
                     // [END] បញ្ចប់កែប្រែ
 
                     // បង្កើតផ្នែក Tracking
@@ -2562,7 +2627,7 @@ if (search) {
                 document.getElementById('entry-id').value = '';
 
                 // 🔥 កំណត់អក្សរសម្រាប់ "បង្កើតថ្មី"
-                if (modalTitle) modalTitle.innerText = "ការលក់ថ្មី";
+                if (modalTitle) modalTitle.innerText = "បង្កើតការលក់ថ្មី";
                 if (modalSubtitle) modalSubtitle.innerText = "CREATE NEW ORDER";
 
                 // លាក់ប៊ូតុង Invoice
@@ -2584,7 +2649,7 @@ if (search) {
                         // [END]
                         // 🔥 កំណត់អក្សរសម្រាប់ "កែប្រែ"
                         if (modalTitle) modalTitle.innerText = 'កែប្រែទិន្នន័យ';
-                        if (modalSubtitle) modalSubtitle.innerText = 'EDIT ORDER DETAILS';
+                        // if (modalSubtitle) modalSubtitle.innerText = 'EDIT ORDER DETAILS';
 
                         document.getElementById('entry-id').value = o.id;
                         document.getElementById('cust-name').value = o.custName;
