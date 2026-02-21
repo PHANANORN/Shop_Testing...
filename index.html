@@ -1195,20 +1195,57 @@
     <main class="main-content">
         <div id="view-home" class="section-view active">
             <div class="px-1 mb-3">
-                <div class="relative glass-panel rounded-2xl shadow-glass dark:shadow-glass-dark">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-teal-600"><i
-                            class="fas fa-filter text-lg"></i></div>
-                    <select id="filter-dropdown" onchange="ui.filterList(this.value)"
-                        class="w-full py-3.5 pl-10 pr-10 bg-transparent text-base font-bold text-gray-700 dark:text-white outline-none appearance-none rounded-2xl">
-                        <option value="all">📑 បង្ហាញទាំងអស់ (All)</option>
-                        <option value="pending">⏳ រង់ចាំ (Pending)</option>
-                        <option value="ordered">🛒 បានកុម្មង់ (Ordered)</option>
-                        <option value="shipping">🚚 កំពុងដឹក (Shipping)</option>
-                        <option value="completed">✅ ជោគជ័យ (Completed)</option>
-                        <option value="cancelled">❌ បោះបង់ (Cancelled)</option>
-                    </select>
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400"><i
-                            class="fas fa-chevron-down"></i></div>
+                <div class="relative w-full mb-4 z-30" id="customFilterContainer">
+                    <button id="filterToggleBtn"
+                        class="w-full h-12 glass-panel rounded-2xl px-4 flex justify-between items-center border border-white/40 shadow-sm transition-all active:scale-[0.98]">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-filter text-teal-500"></i>
+                            <span id="currentFilterText" class="text-gray-700 font-semibold text-sm">ប​ង្ហាញទាំងអស់
+                                (All)</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"
+                            id="filterIcon"></i>
+                    </button>
+
+                    <div id="filterDropdownMenu"
+                        class="hidden absolute top-full left-0 right-0 mt-2 p-2 glass-panel rounded-2xl border border-white/50 shadow-xl flex-col gap-1 max-h-60 overflow-y-auto z-40">
+                        <button
+                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
+                            data-status="all">
+                            <span class="text-xl">📄</span> <span
+                                class="text-sm font-medium text-gray-700">បង្ហាញទាំងអស់ (All)</span>
+                        </button>
+                        <button
+                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
+                            data-status="pending">
+                            <span class="text-xl">⏳</span> <span class="text-sm font-medium text-gray-700">រង់ចាំ
+                                (Pending)</span>
+                        </button>
+                        <button
+                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
+                            data-status="ordered">
+                            <span class="text-xl">🛒</span> <span class="text-sm font-medium text-gray-700">បានកុម្ម៉ង់
+                                (Ordered)</span>
+                        </button>
+                        <button
+                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
+                            data-status="shipping">
+                            <span class="text-xl">🚚</span> <span class="text-sm font-medium text-gray-700">កំពុងដឹក
+                                (Shipping)</span>
+                        </button>
+                        <button
+                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
+                            data-status="completed">
+                            <span class="text-xl">✅</span> <span class="text-sm font-medium text-gray-700">ជោគជ័យ
+                                (Completed)</span>
+                        </button>
+                        <button
+                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
+                            data-status="cancelled">
+                            <span class="text-xl">❌</span> <span class="text-sm font-medium text-gray-700">បោះបង់
+                                (Cancelled)</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div class="search-box-container px-1">
@@ -1599,9 +1636,9 @@
 
             <div
                 class="flex justify-between items-center px-5 py-4 z-20 shrink-0 border-b border-white/40 dark:border-white/5 bg-white/30 dark:bg-black/20 backdrop-blur-xl">
-            <div class="flex items-center overflow-hidden">
+                <div class="flex items-center overflow-hidden ml-4">
                     <div class="min-w-0 flex flex-col justify-center">
-                <h3 class="text-xl font-black font-serif-kh tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-teal-800 to-blue-800 dark:from-white dark:to-teal-200 drop-shadow-sm whitespace-nowrap overflow-hidden text-ellipsis leading-tight"
+                        <h3 class="text-xl font-black font-serif-kh tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-teal-800 to-blue-800 dark:from-white dark:to-teal-200 drop-shadow-sm whitespace-nowrap overflow-hidden text-ellipsis leading-tight"
                             id="modal-title">
                             ការលក់ថ្មី
                         </h3>
@@ -1647,7 +1684,7 @@
                                     style="animation-delay: 0.5s;">
                                     <i class="fas fa-user text-[10px]"></i>
                                 </div>
-                            <span
+                                <span
                                     class="text-xs font-extrabold text-blue-800 dark:text-blue-200 uppercase tracking-widest drop-shadow-sm">
                                     អតិថិជន (Customer)
                                 </span>
@@ -1699,7 +1736,7 @@
                                     style="animation-delay: 1s;">
                                     <i class="fas fa-gift text-[10px]"></i>
                                 </div>
-                            <span
+                                <span
                                     class="text-xs font-extrabold text-purple-800 dark:text-purple-200 uppercase tracking-widest drop-shadow-sm">
                                     ទំនិញ (Product)
                                 </span>
@@ -2412,27 +2449,33 @@
                         pendingProfit += f.profit;
                     }
                 });
-                
+
                 const dashReal = document.getElementById('dash-real-profit');
                 const dashPending = document.getElementById('dash-pending-profit');
                 if (dashReal) dashReal.innerText = `$${realProfit.toFixed(2)}`;
                 if (dashPending) dashPending.innerText = `$${pendingProfit.toFixed(2)}`;
                 // === [បញ្ចប់កូដបន្ថែមថ្មី] ===
                 // Logic ស្វែងរក (ដាក់នៅផ្នែកខាងលើនៃ ui.renderHome)
-                if (search) {
-    activeData = activeData.filter(o => 
-        // ១. ស្វែងរកលើឈ្មោះអតិថិជន
-        (o.custName && o.custName.toLowerCase().includes(search)) || 
-        // ២. ស្វែងរកលើលេខទូរស័ព្ទ
-        (o.custPhone && o.custPhone.includes(search)) || 
-        // ៣. ស្វែងរកលើឈ្មោះទំនិញ
-        (o.prodName && o.prodName.toLowerCase().includes(search)) ||
-        // ៤. ស្វែងរកលើលេខ Tracking (ថែមថ្មី)
-        (o.trackingNo && o.trackingNo.toString().toLowerCase().includes(search))
-    );
-}
-// [END] បញ្ចប់កែប្រែ
-
+                // [START] Logic ច្រោះទិន្នន័យ (Search + Status Filter ធ្វើការព្រមគ្នា)
+                // [START] Logic ច្រោះទិន្នន័យ (Search + Status Filter ធ្វើការព្រមគ្នា)
+                const currentStatus = app.filter || 'all'; // ទាញយក Status ពីប្រព័ន្ធដែលបានរើស
+                
+                activeData = activeData.filter(o => {
+                    // ១. ឆែកលក្ខខណ្ឌ Search
+                    const matchSearch = !search || 
+                        (o.custName && o.custName.toLowerCase().includes(search)) ||
+                        (o.custPhone && o.custPhone.includes(search)) ||
+                        (o.prodName && o.prodName.toLowerCase().includes(search)) ||
+                        (o.trackingNo && o.trackingNo.toString().toLowerCase().includes(search));
+                        
+                    // ២. ឆែកលក្ខខណ្ឌ Status
+                    const matchStatus = (currentStatus === 'all') || (o.status === currentStatus);
+                    
+                    // ត្រូវតែត្រូវទាំង ២ លក្ខខណ្ឌ ទើបយកមកបង្ហាញ
+                    return matchSearch && matchStatus;
+                });
+                // [END] បញ្ចប់កែប្រែ
+                // [END] បញ្ចប់កែប្រែ
                 // 2. ការបង្កើតកាត
                 if (activeData.length === 0) { container.innerHTML = `<div class="text-center mt-20 opacity-40"><i class="fas fa-box-open text-5xl mb-3 text-gray-300 dark:text-gray-600"></i><p class="text-sm text-gray-400 dark:text-gray-500">មិនមានទិន្ន័យ</p></div>`; return; }
 
@@ -2723,18 +2766,18 @@
                 },
                 prepareImport: (input) => { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const content = e.target.result; let importedData = []; if (file.name.toLowerCase().endsWith('.json')) importedData = JSON.parse(content); else if (file.name.toLowerCase().endsWith('.csv')) importedData = dataManager.parseCSV(content); else throw new Error("Format not supported"); if (!Array.isArray(importedData) || importedData.length === 0) throw new Error("No data found"); ui.showImportConfirm(importedData.length, importedData); input.value = ''; } catch (err) { alert("Error: " + err.message); } }; reader.readAsText(file); },
                 executeImport: async (data) => { document.getElementById('modal-import-overlay').classList.add('hidden'); const loader = document.getElementById('app-loader'); loader.style.display = 'flex'; document.getElementById('loader-text').innerText = "កំពុងបញ្ចូលទិន្ន័យ..."; try { const tx = dbConn.transaction(DB_CONFIG.store, 'readwrite'); const store = tx.objectStore(DB_CONFIG.store); data.forEach(item => store.put(item)); tx.oncomplete = async () => { await app.refresh(); loader.style.display = 'none'; ui.showToast(`✅ បញ្ចូល ${data.length} ទិន្ន័យជោគជ័យ!`); }; tx.onerror = (e) => { throw new Error(e.target.error); }; } catch (err) { loader.style.display = 'none'; alert("Import Failed: " + err); } },
-                parseCSV: (text) => { 
-                    const lines = text.split('\n').filter(l => l.trim() !== ''); 
-                    const data = []; 
-                    
+                parseCSV: (text) => {
+                    const lines = text.split('\n').filter(l => l.trim() !== '');
+                    const data = [];
+
                     const headerLine = lines[0].toLowerCase();
                     const isNewFormat = headerLine.includes('date(iso)') && headerLine.includes('tracking no');
 
-                    for (let i = 1; i < lines.length; i++) { 
-                        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g); 
-                        if (!values) continue; 
-                        const cleanVal = (val) => val ? val.replace(/^"|"$/g, '').replace(/""/g, '"').trim() : ''; 
-                        
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                        if (!values) continue;
+                        const cleanVal = (val) => val ? val.replace(/^"|"$/g, '').replace(/""/g, '"').trim() : '';
+
                         if (isNewFormat && values.length >= 18) {
                             const rawDate = cleanVal(values[1]);
                             let parsedDate = new Date().toISOString();
@@ -2743,101 +2786,101 @@
                                 if (!isNaN(d.getTime())) parsedDate = d.toISOString();
                             }
 
-                            const row = { 
-                                id: cleanVal(values[0]) ? parseInt(cleanVal(values[0])) : (Date.now() + Math.random()), 
-                                updatedAt: parsedDate, 
-                                custName: cleanVal(values[2]), 
-                                custPhone: cleanVal(values[3]), 
-                                custAddr: cleanVal(values[4]), 
+                            const row = {
+                                id: cleanVal(values[0]) ? parseInt(cleanVal(values[0])) : (Date.now() + Math.random()),
+                                updatedAt: parsedDate,
+                                custName: cleanVal(values[2]),
+                                custPhone: cleanVal(values[3]),
+                                custAddr: cleanVal(values[4]),
                                 fbLink: cleanVal(values[5]),
-                                prodName: cleanVal(values[6]), 
-                                prodSize: cleanVal(values[7]), 
-                                prodQty: parseInt(cleanVal(values[8])) || 1, 
+                                prodName: cleanVal(values[6]),
+                                prodSize: cleanVal(values[7]),
+                                prodQty: parseInt(cleanVal(values[8])) || 1,
                                 trackingNo: cleanVal(values[9]),
                                 prodImg: cleanVal(values[10]),
-                                valSale: parseFloat(cleanVal(values[11])) || 0, 
-                                valShipIn: parseFloat(cleanVal(values[12])) || 0, 
+                                valSale: parseFloat(cleanVal(values[11])) || 0,
+                                valShipIn: parseFloat(cleanVal(values[12])) || 0,
                                 costBuy: parseFloat(cleanVal(values[13])) || 0,
-                                costShip: parseFloat(cleanVal(values[14])) || 0, 
-                                costBoost: parseFloat(cleanVal(values[15])) || 0, 
+                                costShip: parseFloat(cleanVal(values[14])) || 0,
+                                costBoost: parseFloat(cleanVal(values[15])) || 0,
                                 exchangeRate: parseInt(cleanVal(values[16])) || 4100,
-                                status: cleanVal(values[17]) || 'pending', 
-                                note: cleanVal(values[18]) || '', 
-                                isDeleted: false 
-                            }; 
-                            data.push(row); 
+                                status: cleanVal(values[17]) || 'pending',
+                                note: cleanVal(values[18]) || '',
+                                isDeleted: false
+                            };
+                            data.push(row);
                         } else {
                             let parsedDate = new Date().toISOString();
                             if (values[12]) {
                                 const d = new Date(cleanVal(values[12]));
                                 if (!isNaN(d.getTime())) parsedDate = d.toISOString();
                             }
-                            const row = { 
-                                id: Date.now() + Math.random(), 
-                                updatedAt: parsedDate, 
-                                custName: cleanVal(values[1]), 
-                                custPhone: cleanVal(values[2]), 
-                                custAddr: cleanVal(values[3]), 
-                                prodName: cleanVal(values[4]), 
-                                prodSize: cleanVal(values[5]), 
-                                prodQty: parseInt(cleanVal(values[6])) || 1, 
-                                valSale: parseFloat(cleanVal(values[8])) || 0, 
+                            const row = {
+                                id: Date.now() + Math.random(),
+                                updatedAt: parsedDate,
+                                custName: cleanVal(values[1]),
+                                custPhone: cleanVal(values[2]),
+                                custAddr: cleanVal(values[3]),
+                                prodName: cleanVal(values[4]),
+                                prodSize: cleanVal(values[5]),
+                                prodQty: parseInt(cleanVal(values[6])) || 1,
+                                valSale: parseFloat(cleanVal(values[8])) || 0,
                                 valShipIn: 0, costBuy: 0, costShip: 0, costBoost: 0,
-                                status: cleanVal(values[10]) || 'pending', 
-                                note: cleanVal(values[11]) || '', 
-                                isDeleted: false 
-                            }; 
+                                status: cleanVal(values[10]) || 'pending',
+                                note: cleanVal(values[11]) || '',
+                                isDeleted: false
+                            };
                             data.push(row);
                         }
-                    } 
-                    return data; 
+                    }
+                    return data;
                 },
-                
-                exportCSV: () => { 
-                    const items = app.data; 
-                    if (items.length === 0) { ui.showToast("⚠️ គ្មានទិន្ន័យសម្រាប់ Export"); return; } 
-                    
-                    let csvContent = "\uFEFFID,Date(ISO),Customer,Phone,Address,FB Link,Product,Size,Qty,Tracking No,Image URL,Sale Price,Shipping In,Cost Buy,Shipping Out,Boost Ads,Exchange Rate,Status,Note\n"; 
-                    
-                    const q = (s) => { 
-                        if (s === null || s === undefined) return '""'; 
-                        return `"${s.toString().replace(/"/g, '""')}"`; 
-                    }; 
-                    
-                    items.forEach(o => { 
+
+                exportCSV: () => {
+                    const items = app.data;
+                    if (items.length === 0) { ui.showToast("⚠️ គ្មានទិន្ន័យសម្រាប់ Export"); return; }
+
+                    let csvContent = "\uFEFFID,Date(ISO),Customer,Phone,Address,FB Link,Product,Size,Qty,Tracking No,Image URL,Sale Price,Shipping In,Cost Buy,Shipping Out,Boost Ads,Exchange Rate,Status,Note\n";
+
+                    const q = (s) => {
+                        if (s === null || s === undefined) return '""';
+                        return `"${s.toString().replace(/"/g, '""')}"`;
+                    };
+
+                    items.forEach(o => {
                         const row = [
-                            q(o.id), 
+                            q(o.id),
                             q(o.updatedAt),
-                            q(o.custName), 
-                            q(o.custPhone), 
-                            q(o.custAddr), 
+                            q(o.custName),
+                            q(o.custPhone),
+                            q(o.custAddr),
                             q(o.fbLink || ''),
-                            q(o.prodName), 
-                            q(o.prodSize), 
-                            q(o.prodQty), 
+                            q(o.prodName),
+                            q(o.prodSize),
+                            q(o.prodQty),
                             q(o.trackingNo || ''),
                             q(o.prodImg || ''),
-                            q(o.valSale || 0), 
-                            q(o.valShipIn || 0), 
-                            q(o.costBuy || 0), 
+                            q(o.valSale || 0),
+                            q(o.valShipIn || 0),
+                            q(o.costBuy || 0),
                             q(o.costShip || 0),
                             q(o.costBoost || 0),
                             q(o.exchangeRate || app.config.sysRate),
-                            q(o.status), 
+                            q(o.status),
                             q(o.note || '')
-                        ].join(","); 
-                        csvContent += row + "\n"; 
-                    }); 
-                    
-                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); 
-                    const link = document.createElement("a"); 
-                    const url = URL.createObjectURL(blob); 
-                    link.setAttribute("href", url); 
-                    const today = new Date().toISOString().slice(0, 10); 
-                    link.setAttribute("download", `Shop_Data_Backup_${today}.csv`); 
-                    document.body.appendChild(link); 
-                    link.click(); 
-                    document.body.removeChild(link); 
+                        ].join(",");
+                        csvContent += row + "\n";
+                    });
+
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement("a");
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    const today = new Date().toISOString().slice(0, 10);
+                    link.setAttribute("download", `Shop_Data_Backup_${today}.csv`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 },
                 resetApp: () => { ui.askConfirm('reset_app'); }, emptyTrash: () => ui.askConfirm('empty_trash')
             }
@@ -2936,6 +2979,51 @@
             document.getElementById('modal-address-expand').classList.remove('hidden');
         };
         window.onload = app.init;
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterBtn = document.getElementById('filterToggleBtn');
+            const filterMenu = document.getElementById('filterDropdownMenu');
+            const filterIcon = document.getElementById('filterIcon');
+            const currentText = document.getElementById('currentFilterText');
+            const options = document.querySelectorAll('.filter-option');
+
+            // បើក/បិទ Dropdown ពេលចុច
+            if (filterBtn) {
+                filterBtn.addEventListener('click', () => {
+                    filterMenu.classList.toggle('hidden');
+                    filterMenu.classList.toggle('flex');
+                    filterIcon.classList.toggle('rotate-180');
+                });
+            }
+
+            // ពេលរើសស្ថានភាពណាមួយ វានឹងបិទខ្លួនឯង និងរៀបចំទិន្នន័យ
+    // ពេលរើសស្ថានភាពណាមួយ វានឹងបិទខ្លួនឯង និងរៀបចំទិន្នន័យ
+            options.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    const statusValue = option.getAttribute('data-status');
+                    const statusText = option.querySelector('span:nth-child(2)').innerText;
+                    const statusIcon = option.querySelector('span:nth-child(1)').innerText;
+
+                    currentText.innerText = `${statusIcon} ${statusText}`;
+                    filterMenu.classList.add('hidden');
+                    filterMenu.classList.remove('flex');
+                    filterIcon.classList.remove('rotate-180');
+
+                    // ហៅ Function ដែលមានស្រាប់របស់ប្រព័ន្ធ ដើម្បីច្រោះ និង Refresh ទិន្នន័យ
+                    if(typeof ui !== 'undefined' && typeof ui.filterList === 'function') {
+                        ui.filterList(statusValue);
+                    }
+                });
+            });;
+
+            // ចុចកន្លែងផ្សេងដើម្បីបិទវា
+            document.addEventListener('click', (e) => {
+                if (filterBtn && !document.getElementById('customFilterContainer').contains(e.target)) {
+                    filterMenu.classList.add('hidden');
+                    filterMenu.classList.remove('flex');
+                    filterIcon.classList.remove('rotate-180');
+                }
+            });
+        });
     </script>
     <div id="modal-drilldown"
         class="fixed inset-0 bg-black/60 z-[100] hidden flex items-end sm:items-center justify-center backdrop-blur-sm">
