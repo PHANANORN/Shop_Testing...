@@ -2404,6 +2404,24 @@
             renderHome: () => {
                 const container = document.getElementById('order-list'); const search = document.getElementById('search-input').value.toLowerCase(); container.innerHTML = '';
                 let activeData = app.data.filter(o => !o.isDeleted);
+
+                // === [ចាប់ផ្ដើមកូដបន្ថែមថ្មី៖ គណនាចំណេញជាក់ស្ដែង និងរំពឹងទុក] ===
+                let realProfit = 0;
+                let pendingProfit = 0;
+                activeData.forEach(o => {
+                    const f = app.calc(o);
+                    if (o.status === 'completed') {
+                        realProfit += f.profit;
+                    } else if (o.status !== 'cancelled') {
+                        pendingProfit += f.profit;
+                    }
+                });
+                
+                const dashReal = document.getElementById('dash-real-profit');
+                const dashPending = document.getElementById('dash-pending-profit');
+                if (dashReal) dashReal.innerText = `$${realProfit.toFixed(2)}`;
+                if (dashPending) dashPending.innerText = `$${pendingProfit.toFixed(2)}`;
+                // === [បញ្ចប់កូដបន្ថែមថ្មី] ===
                 // Logic ស្វែងរក (ដាក់នៅផ្នែកខាងលើនៃ ui.renderHome)
                 if (search) {
     activeData = activeData.filter(o => 
@@ -2709,8 +2727,122 @@
                 },
                 prepareImport: (input) => { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const content = e.target.result; let importedData = []; if (file.name.toLowerCase().endsWith('.json')) importedData = JSON.parse(content); else if (file.name.toLowerCase().endsWith('.csv')) importedData = dataManager.parseCSV(content); else throw new Error("Format not supported"); if (!Array.isArray(importedData) || importedData.length === 0) throw new Error("No data found"); ui.showImportConfirm(importedData.length, importedData); input.value = ''; } catch (err) { alert("Error: " + err.message); } }; reader.readAsText(file); },
                 executeImport: async (data) => { document.getElementById('modal-import-overlay').classList.add('hidden'); const loader = document.getElementById('app-loader'); loader.style.display = 'flex'; document.getElementById('loader-text').innerText = "កំពុងបញ្ចូលទិន្ន័យ..."; try { const tx = dbConn.transaction(DB_CONFIG.store, 'readwrite'); const store = tx.objectStore(DB_CONFIG.store); data.forEach(item => store.put(item)); tx.oncomplete = async () => { await app.refresh(); loader.style.display = 'none'; ui.showToast(`✅ បញ្ចូល ${data.length} ទិន្ន័យជោគជ័យ!`); }; tx.onerror = (e) => { throw new Error(e.target.error); }; } catch (err) { loader.style.display = 'none'; alert("Import Failed: " + err); } },
-                parseCSV: (text) => { const lines = text.split('\n').filter(l => l.trim() !== ''); const data = []; for (let i = 1; i < lines.length; i++) { const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g); if (!values) continue; const cleanVal = (val) => val ? val.replace(/^"|"$/g, '').replace(/""/g, '"').trim() : ''; let parsedDate = new Date().toISOString(); if (values[15]) { const rawD = cleanVal(values[15]); if (rawD && rawD.length > 5) parsedDate = rawD; } else if (values[0]) { const dateStr = cleanVal(values[0]); const d = new Date(dateStr); if (!isNaN(d.getTime())) { parsedDate = d.toISOString(); } } const row = { id: Date.now() + Math.random(), updatedAt: parsedDate, custName: cleanVal(values[1]), custPhone: cleanVal(values[2]), custAddr: cleanVal(values[3]), prodName: cleanVal(values[4]), prodSize: cleanVal(values[5]), prodQty: cleanVal(values[6]) || 1, costBuy: values[12] ? cleanVal(values[12]) : (cleanVal(values[7]) || 0), valSale: values[13] ? cleanVal(values[13]) : (cleanVal(values[8]) || 0), valShipIn: values[14] ? cleanVal(values[14]) : 0, costShip: 0, costBoost: 0, status: cleanVal(values[10]) || 'pending', note: cleanVal(values[11]) || '', isDeleted: false }; data.push(row); } return data; },
-                exportCSV: () => { const items = app.data; if (items.length === 0) { ui.showToast("⚠️ គ្មានទិន្ន័យសម្រាប់ Export"); return; } let csvContent = "\uFEFFDate,Customer,Phone,Address,Product,Size,Qty,Total Cost,Total Income,Profit,Status,Note,RawDate\n"; const q = (s) => { if (s === null || s === undefined) return '""'; return `"${s.toString().replace(/"/g, '""')}"`; }; items.forEach(o => { const f = app.calc(o); let dateStr = ""; try { dateStr = new Date(o.updatedAt).toISOString().split('T')[0]; } catch (e) { dateStr = ""; } const row = [q(dateStr), q(o.custName), q(o.custPhone), q(o.custAddr), q(o.prodName), q(o.prodSize), q(o.prodQty), q(f.expense.toFixed(2)), q(f.income.toFixed(2)), q(f.profit.toFixed(2)), q(o.status), q(o.note), q(o.updatedAt)].join(","); csvContent += row + "\n"; }); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); const today = new Date().toISOString().slice(0, 10); link.setAttribute("download", `Shop_Data_All_${today}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link); },
+                parseCSV: (text) => { 
+                    const lines = text.split('\n').filter(l => l.trim() !== ''); 
+                    const data = []; 
+                    
+                    const headerLine = lines[0].toLowerCase();
+                    const isNewFormat = headerLine.includes('date(iso)') && headerLine.includes('tracking no');
+
+                    for (let i = 1; i < lines.length; i++) { 
+                        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g); 
+                        if (!values) continue; 
+                        const cleanVal = (val) => val ? val.replace(/^"|"$/g, '').replace(/""/g, '"').trim() : ''; 
+                        
+                        if (isNewFormat && values.length >= 18) {
+                            const rawDate = cleanVal(values[1]);
+                            let parsedDate = new Date().toISOString();
+                            if (rawDate) {
+                                const d = new Date(rawDate);
+                                if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                            }
+
+                            const row = { 
+                                id: cleanVal(values[0]) ? parseInt(cleanVal(values[0])) : (Date.now() + Math.random()), 
+                                updatedAt: parsedDate, 
+                                custName: cleanVal(values[2]), 
+                                custPhone: cleanVal(values[3]), 
+                                custAddr: cleanVal(values[4]), 
+                                fbLink: cleanVal(values[5]),
+                                prodName: cleanVal(values[6]), 
+                                prodSize: cleanVal(values[7]), 
+                                prodQty: parseInt(cleanVal(values[8])) || 1, 
+                                trackingNo: cleanVal(values[9]),
+                                prodImg: cleanVal(values[10]),
+                                valSale: parseFloat(cleanVal(values[11])) || 0, 
+                                valShipIn: parseFloat(cleanVal(values[12])) || 0, 
+                                costBuy: parseFloat(cleanVal(values[13])) || 0,
+                                costShip: parseFloat(cleanVal(values[14])) || 0, 
+                                costBoost: parseFloat(cleanVal(values[15])) || 0, 
+                                exchangeRate: parseInt(cleanVal(values[16])) || 4100,
+                                status: cleanVal(values[17]) || 'pending', 
+                                note: cleanVal(values[18]) || '', 
+                                isDeleted: false 
+                            }; 
+                            data.push(row); 
+                        } else {
+                            let parsedDate = new Date().toISOString();
+                            if (values[12]) {
+                                const d = new Date(cleanVal(values[12]));
+                                if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                            }
+                            const row = { 
+                                id: Date.now() + Math.random(), 
+                                updatedAt: parsedDate, 
+                                custName: cleanVal(values[1]), 
+                                custPhone: cleanVal(values[2]), 
+                                custAddr: cleanVal(values[3]), 
+                                prodName: cleanVal(values[4]), 
+                                prodSize: cleanVal(values[5]), 
+                                prodQty: parseInt(cleanVal(values[6])) || 1, 
+                                valSale: parseFloat(cleanVal(values[8])) || 0, 
+                                valShipIn: 0, costBuy: 0, costShip: 0, costBoost: 0,
+                                status: cleanVal(values[10]) || 'pending', 
+                                note: cleanVal(values[11]) || '', 
+                                isDeleted: false 
+                            }; 
+                            data.push(row);
+                        }
+                    } 
+                    return data; 
+                },
+                
+                exportCSV: () => { 
+                    const items = app.data; 
+                    if (items.length === 0) { ui.showToast("⚠️ គ្មានទិន្ន័យសម្រាប់ Export"); return; } 
+                    
+                    let csvContent = "\uFEFFID,Date(ISO),Customer,Phone,Address,FB Link,Product,Size,Qty,Tracking No,Image URL,Sale Price,Shipping In,Cost Buy,Shipping Out,Boost Ads,Exchange Rate,Status,Note\n"; 
+                    
+                    const q = (s) => { 
+                        if (s === null || s === undefined) return '""'; 
+                        return `"${s.toString().replace(/"/g, '""')}"`; 
+                    }; 
+                    
+                    items.forEach(o => { 
+                        const row = [
+                            q(o.id), 
+                            q(o.updatedAt),
+                            q(o.custName), 
+                            q(o.custPhone), 
+                            q(o.custAddr), 
+                            q(o.fbLink || ''),
+                            q(o.prodName), 
+                            q(o.prodSize), 
+                            q(o.prodQty), 
+                            q(o.trackingNo || ''),
+                            q(o.prodImg || ''),
+                            q(o.valSale || 0), 
+                            q(o.valShipIn || 0), 
+                            q(o.costBuy || 0), 
+                            q(o.costShip || 0),
+                            q(o.costBoost || 0),
+                            q(o.exchangeRate || app.config.sysRate),
+                            q(o.status), 
+                            q(o.note || '')
+                        ].join(","); 
+                        csvContent += row + "\n"; 
+                    }); 
+                    
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); 
+                    const link = document.createElement("a"); 
+                    const url = URL.createObjectURL(blob); 
+                    link.setAttribute("href", url); 
+                    const today = new Date().toISOString().slice(0, 10); 
+                    link.setAttribute("download", `Shop_Data_Backup_${today}.csv`); 
+                    document.body.appendChild(link); 
+                    link.click(); 
+                    document.body.removeChild(link); 
+                },
                 resetApp: () => { ui.askConfirm('reset_app'); }, emptyTrash: () => ui.askConfirm('empty_trash')
             }
 
