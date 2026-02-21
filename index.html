@@ -1129,7 +1129,7 @@
                             style="animation: floatIcon 4s ease-in-out infinite;"></i>
 
                         <h1
-                            class="text-xl font-extrabold font-serif-kh tracking-wide drop-shadow-lg leading-tight text-white">
+                            class="whitespace-nowrap text-[clamp(14px,4.5vw,20px)] font-extrabold font-serif-kh tracking-wide drop-shadow-lg leading-tight text-white">
                             MY SMALL SHOP TRACKER
                         </h1>
                         <p class="text-[11px] text-teal-50 font-bold tracking-widest mt-1 opacity-90">
@@ -1195,57 +1195,20 @@
     <main class="main-content">
         <div id="view-home" class="section-view active">
             <div class="px-1 mb-3">
-                <div class="relative w-full mb-4 z-30" id="customFilterContainer">
-                    <button id="filterToggleBtn"
-                        class="w-full h-12 glass-panel rounded-2xl px-4 flex justify-between items-center border border-white/40 shadow-sm transition-all active:scale-[0.98]">
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-filter text-teal-500"></i>
-                            <span id="currentFilterText" class="text-gray-700 font-semibold text-sm">ប​ង្ហាញទាំងអស់
-                                (All)</span>
-                        </div>
-                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"
-                            id="filterIcon"></i>
-                    </button>
-
-                    <div id="filterDropdownMenu"
-                        class="hidden absolute top-full left-0 right-0 mt-2 p-2 glass-panel rounded-2xl border border-white/50 shadow-xl flex-col gap-1 max-h-60 overflow-y-auto z-40">
-                        <button
-                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
-                            data-status="all">
-                            <span class="text-xl">📄</span> <span
-                                class="text-sm font-medium text-gray-700">បង្ហាញទាំងអស់ (All)</span>
-                        </button>
-                        <button
-                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
-                            data-status="pending">
-                            <span class="text-xl">⏳</span> <span class="text-sm font-medium text-gray-700">រង់ចាំ
-                                (Pending)</span>
-                        </button>
-                        <button
-                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
-                            data-status="ordered">
-                            <span class="text-xl">🛒</span> <span class="text-sm font-medium text-gray-700">បានកុម្ម៉ង់
-                                (Ordered)</span>
-                        </button>
-                        <button
-                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
-                            data-status="shipping">
-                            <span class="text-xl">🚚</span> <span class="text-sm font-medium text-gray-700">កំពុងដឹក
-                                (Shipping)</span>
-                        </button>
-                        <button
-                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
-                            data-status="completed">
-                            <span class="text-xl">✅</span> <span class="text-sm font-medium text-gray-700">ជោគជ័យ
-                                (Completed)</span>
-                        </button>
-                        <button
-                            class="filter-option w-full p-3 rounded-xl flex items-center gap-3 hover:bg-white/50 transition-colors text-left"
-                            data-status="cancelled">
-                            <span class="text-xl">❌</span> <span class="text-sm font-medium text-gray-700">បោះបង់
-                                (Cancelled)</span>
-                        </button>
+                <div id="statusFilterBtn"
+                    class="bg-white/60 backdrop-blur-md border border-white/50 px-5 py-3.5 rounded-2xl shadow-sm flex justify-between items-center cursor-pointer mb-4 hover:bg-white/80 transition-all z-30 relative">
+                    <div class="flex items-center gap-3 text-gray-700 font-medium">
+                        <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                            </path>
+                        </svg>
+                        <span id="currentStatusText" class="text-[15px] font-semibold text-gray-700">📄 បង្ហាញទាំងអស់
+                            (All)</span>
                     </div>
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
                 </div>
             </div>
             <div class="search-box-container px-1">
@@ -2459,18 +2422,18 @@
                 // [START] Logic ច្រោះទិន្នន័យ (Search + Status Filter ធ្វើការព្រមគ្នា)
                 // [START] Logic ច្រោះទិន្នន័យ (Search + Status Filter ធ្វើការព្រមគ្នា)
                 const currentStatus = app.filter || 'all'; // ទាញយក Status ពីប្រព័ន្ធដែលបានរើស
-                
+
                 activeData = activeData.filter(o => {
                     // ១. ឆែកលក្ខខណ្ឌ Search
-                    const matchSearch = !search || 
+                    const matchSearch = !search ||
                         (o.custName && o.custName.toLowerCase().includes(search)) ||
                         (o.custPhone && o.custPhone.includes(search)) ||
                         (o.prodName && o.prodName.toLowerCase().includes(search)) ||
                         (o.trackingNo && o.trackingNo.toString().toLowerCase().includes(search));
-                        
+
                     // ២. ឆែកលក្ខខណ្ឌ Status
                     const matchStatus = (currentStatus === 'all') || (o.status === currentStatus);
-                    
+
                     // ត្រូវតែត្រូវទាំង ២ លក្ខខណ្ឌ ទើបយកមកបង្ហាញ
                     return matchSearch && matchStatus;
                 });
@@ -2980,49 +2943,60 @@
         };
         window.onload = app.init;
         document.addEventListener('DOMContentLoaded', () => {
-            const filterBtn = document.getElementById('filterToggleBtn');
-            const filterMenu = document.getElementById('filterDropdownMenu');
-            const filterIcon = document.getElementById('filterIcon');
-            const currentText = document.getElementById('currentFilterText');
-            const options = document.querySelectorAll('.filter-option');
+            const statusFilterBtn = document.getElementById('statusFilterBtn');
+            const statusModal = document.getElementById('statusModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const statusOptions = document.querySelectorAll('.status-option');
+            const currentStatusText = document.getElementById('currentStatusText');
 
-            // បើក/បិទ Dropdown ពេលចុច
-            if (filterBtn) {
-                filterBtn.addEventListener('click', () => {
-                    filterMenu.classList.toggle('hidden');
-                    filterMenu.classList.toggle('flex');
-                    filterIcon.classList.toggle('rotate-180');
+            // បើកផ្ទាំង Popup
+            if (statusFilterBtn && statusModal) {
+                statusFilterBtn.addEventListener('click', () => {
+                    statusModal.classList.remove('hidden');
+                    statusModal.classList.add('flex');
                 });
             }
 
-            // ពេលរើសស្ថានភាពណាមួយ វានឹងបិទខ្លួនឯង និងរៀបចំទិន្នន័យ
-    // ពេលរើសស្ថានភាពណាមួយ វានឹងបិទខ្លួនឯង និងរៀបចំទិន្នន័យ
-            options.forEach(option => {
-                option.addEventListener('click', (e) => {
-                    const statusValue = option.getAttribute('data-status');
-                    const statusText = option.querySelector('span:nth-child(2)').innerText;
-                    const statusIcon = option.querySelector('span:nth-child(1)').innerText;
+            // បិទផ្ទាំង Popup (ពេលចុចសញ្ញាខ្វែង)
+            if (closeModalBtn && statusModal) {
+                closeModalBtn.addEventListener('click', () => {
+                    statusModal.classList.add('hidden');
+                    statusModal.classList.remove('flex');
+                });
+            }
 
-                    currentText.innerText = `${statusIcon} ${statusText}`;
-                    filterMenu.classList.add('hidden');
-                    filterMenu.classList.remove('flex');
-                    filterIcon.classList.remove('rotate-180');
-
-                    // ហៅ Function ដែលមានស្រាប់របស់ប្រព័ន្ធ ដើម្បីច្រោះ និង Refresh ទិន្នន័យ
-                    if(typeof ui !== 'undefined' && typeof ui.filterList === 'function') {
-                        ui.filterList(statusValue);
+            // បិទផ្ទាំង Popup (ពេលចុចផ្ទៃខាងក្រៅ)
+            if (statusModal) {
+                statusModal.addEventListener('click', (e) => {
+                    if (e.target === statusModal) {
+                        statusModal.classList.add('hidden');
+                        statusModal.classList.remove('flex');
                     }
                 });
-            });;
+            }
 
-            // ចុចកន្លែងផ្សេងដើម្បីបិទវា
-            document.addEventListener('click', (e) => {
-                if (filterBtn && !document.getElementById('customFilterContainer').contains(e.target)) {
-                    filterMenu.classList.add('hidden');
-                    filterMenu.classList.remove('flex');
-                    filterIcon.classList.remove('rotate-180');
-                }
-            });
+            // ពេលជ្រើសរើស Status ណាមួយ
+            if (statusOptions && statusModal) {
+                statusOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        const statusValue = option.getAttribute('data-status');
+                        const icon = option.querySelector('span:nth-child(1)').innerText;
+                        const text = option.querySelector('span:nth-child(2)').innerText;
+
+                        // ប្ដូរអក្សរលើប៊ូតុងខាងក្រៅ
+                        if (currentStatusText) currentStatusText.innerText = `${icon} ${text}`;
+
+                        // បិទ Popup
+                        statusModal.classList.add('hidden');
+                        statusModal.classList.remove('flex');
+
+                        // ហៅមុខងារច្រោះទិន្នន័យ ដែលអ្នកមានស្រាប់
+                        if (typeof ui !== 'undefined' && typeof ui.filterList === 'function') {
+                            ui.filterList(statusValue);
+                        }
+                    });
+                });
+            }
         });
     </script>
     <div id="modal-drilldown"
@@ -3096,6 +3070,54 @@
                     class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition text-sm">
                     យល់ព្រម
                 </button>
+            </div>
+        </div>
+    </div>
+    <div id="statusModal"
+        class="fixed inset-0 z-[100] hidden items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+        <div
+            class="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-transform pb-4 sm:pb-0">
+            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
+                <h3 class="text-lg font-bold text-gray-800">ជ្រើសរើសស្ថានភាព</h3>
+                <button id="closeModalBtn"
+                    class="p-1.5 bg-gray-200/60 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-3 space-y-1">
+                <div class="status-option flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 rounded-2xl cursor-pointer transition-colors"
+                    data-status="all">
+                    <span class="text-xl">📄</span><span class="font-medium text-gray-700 text-[16px]">បង្ហាញទាំងអស់
+                        (All)</span>
+                </div>
+                <div class="status-option flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 rounded-2xl cursor-pointer transition-colors"
+                    data-status="pending">
+                    <span class="text-xl">⏳</span><span class="font-medium text-gray-700 text-[16px]">រង់ចាំ
+                        (Pending)</span>
+                </div>
+                <div class="status-option flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 rounded-2xl cursor-pointer transition-colors"
+                    data-status="ordered">
+                    <span class="text-xl">🛒</span><span class="font-medium text-gray-700 text-[16px]">បានកុម្ម៉ង់
+                        (Ordered)</span>
+                </div>
+                <div class="status-option flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 rounded-2xl cursor-pointer transition-colors"
+                    data-status="shipping">
+                    <span class="text-xl">🚚</span><span class="font-medium text-gray-700 text-[16px]">កំពុងដឹក
+                        (Shipping)</span>
+                </div>
+                <div class="status-option flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 rounded-2xl cursor-pointer transition-colors"
+                    data-status="completed">
+                    <span class="text-xl">✅</span><span class="font-medium text-gray-700 text-[16px]">ជោគជ័យ
+                        (Completed)</span>
+                </div>
+                <div class="status-option flex items-center gap-4 px-4 py-3.5 hover:bg-red-50 rounded-2xl cursor-pointer transition-colors"
+                    data-status="cancelled">
+                    <span class="text-xl">❌</span><span class="font-medium text-gray-700 text-[16px]">បោះបង់
+                        (Cancelled)</span>
+                </div>
             </div>
         </div>
     </div>
