@@ -2675,30 +2675,72 @@
 
             saveOrder: async () => {
                 try {
-                    const idStr = document.getElementById('entry-id').value; const custName = document.getElementById('cust-name').value; const prodName = document.getElementById('prod-name').value;
-                    if (!custName || !prodName) { alert("សូមបញ្ចូលឈ្មោះអតិថិជន និងឈ្មោះទំនិញ!"); return; }
-                    const curRate = parseInt(document.getElementById('inv-rate-input').value) || 4100; app.config.invRate = curRate; app.saveConfig();
+                    const idStr = document.getElementById('entry-id').value; 
+                    const custName = document.getElementById('cust-name').value; 
+                    const prodName = document.getElementById('prod-name').value;
+                    
+                    if (!custName || !prodName) { 
+                        alert("សូមបញ្ចូលឈ្មោះអតិថិជន និងឈ្មោះទំនិញ!"); 
+                        return; 
+                    }
+                    
+                    const curRate = parseInt(document.getElementById('inv-rate-input').value) || 4100; 
+                    app.config.invRate = curRate; 
+                    app.saveConfig();
+
+                    // === [ចំណុចកែប្រែសំខាន់] ===
+                    // រក្សាទុកកាលបរិច្ឆេទចាស់ប្រសិនបើវាជាការកែប្រែទិន្នន័យ (Edit)
+                    let orderDate = new Date().toISOString(); 
+                    if (idStr) {
+                        const existingOrder = app.data.find(x => x.id === parseInt(idStr));
+                        if (existingOrder && existingOrder.updatedAt) {
+                            orderDate = existingOrder.updatedAt; // ទាញយកកាលបរិច្ឆេទដើមមកប្រើវិញ
+                        }
+                    }
+
                     const payload = {
-                        id: idStr ? parseInt(idStr) : Date.now(), updatedAt: new Date().toISOString(), exchangeRate: curRate,
-                        // [START] បន្ថែមថ្មី
+                        id: idStr ? parseInt(idStr) : Date.now(), 
+                        updatedAt: orderDate, // ប្រើកាលបរិច្ឆេទដែលបានកំណត់ត្រឹមត្រូវ
+                        exchangeRate: curRate,
                         trackingNo: document.getElementById('track-no').value,
                         prodImg: document.getElementById('prod-img').value,
-                        // [END]
-                        fbLink: document.getElementById('cust-fb').value, // <--- ដាក់បន្ទាត់នេះចូល
-                        custName: custName, custPhone: document.getElementById('cust-phone').value, custAddr: document.getElementById('cust-addr').value,
-                        prodName: prodName, prodSize: document.getElementById('prod-size').value, prodQty: document.getElementById('prod-qty').value,
-                        valSale: document.getElementById('val-sale').value, valShipIn: document.getElementById('val-ship-in').value,
-                        costBuy: document.getElementById('cost-buy').value, costShip: document.getElementById('cost-ship').value, costBoost: document.getElementById('cost-boost').value,
-                        note: document.getElementById('note').value, status: document.getElementById('status').value, isDeleted: false
+                        fbLink: document.getElementById('cust-fb').value,
+                        custName: custName, 
+                        custPhone: document.getElementById('cust-phone').value, 
+                        custAddr: document.getElementById('cust-addr').value,
+                        prodName: prodName, 
+                        prodSize: document.getElementById('prod-size').value, 
+                        // បំប្លែងចំនួនទំនិញជាលេខជានិច្ច ដើម្បីការពារ Error ពេលបូករបាយការណ៍
+                        prodQty: parseInt(document.getElementById('prod-qty').value) || 1, 
+                        valSale: document.getElementById('val-sale').value, 
+                        valShipIn: document.getElementById('val-ship-in').value,
+                        costBuy: document.getElementById('cost-buy').value, 
+                        costShip: document.getElementById('cost-ship').value, 
+                        costBoost: document.getElementById('cost-boost').value,
+                        note: document.getElementById('note').value, 
+                        status: document.getElementById('status').value, 
+                        isDeleted: false
                     };
 
                     const existingIdx = app.data.findIndex(x => x.id === payload.id);
-                    if (existingIdx > -1) { app.data[existingIdx] = payload; } else { app.data.unshift(payload); }
+                    if (existingIdx > -1) { 
+                        app.data[existingIdx] = payload; 
+                    } else { 
+                        app.data.unshift(payload); 
+                    }
+                    
                     app.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
-                    ui.renderHome(); ui.renderStats(); ui.closeModal('modal-order'); ui.showToast('✅ រក្សាទុកជោគជ័យ');
-                    await db.put(payload); if (!idStr) await app.logActivity(`បានបង្កើត: ${payload.prodName}`);
-                } catch (e) { alert("Error: " + e); }
+                    ui.renderHome(); 
+                    ui.renderStats(); 
+                    ui.closeModal('modal-order'); 
+                    ui.showToast('✅ រក្សាទុកជោគជ័យ');
+                    
+                    await db.put(payload); 
+                    if (!idStr) await app.logActivity(`បានបង្កើត: ${payload.prodName}`);
+                } catch (e) { 
+                    alert("Error: " + e); 
+                }
             },
 
             confirmType: null, confirmId: null,
