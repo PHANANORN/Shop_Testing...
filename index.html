@@ -1657,34 +1657,57 @@
                             </div>
 
                             <div class="space-y-3">
-                                <input type="text" id="cust-name" placeholder="ឈ្មោះអតិថិជន" required
-                                    class="oled-input w-full h-[48px] rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 outline-none relative z-20">
+                                <div class="relative z-20">
+                                    <input type="text" id="cust-name" placeholder="ឈ្មោះអតិថិជន" required
+                                        class="oled-input w-full h-[48px] rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 pr-10 outline-none">
+                                    <button type="button"
+                                        onclick="navigator.clipboard.readText().then(t => { document.getElementById('cust-name').value = t; ui.showToast('បាន Paste ឈ្មោះ'); }).catch(() => ui.showToast('សូមចុចជាប់ដើម្បី Paste'));"
+                                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-500 active:scale-90 transition z-30">
+                                        <i class="fas fa-paste"></i>
+                                    </button>
+                                </div>
                                 <div class="grid grid-cols-2 gap-3">
-                                    <input type="tel" inputmode="numeric" id="cust-phone" placeholder="លេខទូរស័ព្ទ"
-                                        class="oled-input h-[44px] rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 outline-none relative z-20">
+                                    <div class="relative z-20">
+                                        <input type="tel" inputmode="numeric" id="cust-phone" placeholder="លេខទូរស័ព្ទ"
+                                            class="oled-input h-[44px] w-full rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 pr-10 outline-none">
+                                        <button type="button"
+                                            onclick="navigator.clipboard.readText().then(t => { document.getElementById('cust-phone').value = t; ui.showToast('បាន Paste លេខទូរស័ព្ទ'); }).catch(() => ui.showToast('សូមចុចជាប់ដើម្បី Paste'));"
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500 active:scale-90 transition z-30">
+                                            <i class="fas fa-paste"></i>
+                                        </button>
+                                    </div>
 
                                     <div class="relative z-20">
                                         <input type="text" id="cust-addr" placeholder="ទីតាំង"
-                                            class="oled-input h-[44px] w-full rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 pr-9 outline-none truncate">
+                                            class="oled-input h-[44px] w-full rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-4 pr-16 outline-none truncate">
+
+                                        <button type="button"
+                                            onclick="navigator.clipboard.readText().then(t => { document.getElementById('cust-addr').value = t; ui.showToast('បាន Paste ទីតាំង'); }).catch(() => ui.showToast('សូមចុចជាប់ដើម្បី Paste'));"
+                                            class="absolute inset-y-0 right-8 pr-2 flex items-center text-gray-400 hover:text-blue-500 active:scale-90 transition z-30">
+                                            <i class="fas fa-paste"></i>
+                                        </button>
+
                                         <button type="button" onclick="ui.openAddressModal()"
-                                            class="absolute right-1 top-1 bottom-1 w-8 flex items-center justify-center text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition">
+                                            class="absolute right-1 top-1 bottom-1 w-8 flex items-center justify-center text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition z-30">
                                             <i class="fas fa-expand-alt text-xs"></i>
                                         </button>
                                     </div>
                                 </div>
-                                <div class="mt-3 relative z-20">
-                                    <div class="relative">
-                                        <div
-                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <i class="fab fa-facebook-messenger text-blue-500"></i>
-                                        </div>
-                                        <input type="text" id="cust-fb"
-                                            placeholder="ដាក់ Link Profile ភ្ញៀវ ឬ Username (FB)"
-                                            class="oled-input w-full h-[44px] rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-10 outline-none">
+                                <div class="relative z-20 mt-3">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fab fa-facebook-messenger text-blue-500"></i>
                                     </div>
-                                    <p class="text-[9px] text-gray-400 mt-1 pl-2">*
-                                        ជួយឱ្យងាយស្រួលឆាតទៅភ្ញៀវពេលឥវ៉ាន់មកដល់</p>
+                                    <input type="text" id="cust-fb"
+                                        placeholder="ដាក់ Link Profile ភ្ញៀវ ឬ Username (FB)"
+                                        class="oled-input w-full h-[44px] rounded-xl text-gray-800 dark:text-gray-200 text-sm text-left pl-10 pr-10 outline-none">
+                                    <button type="button"
+                                        onclick="navigator.clipboard.readText().then(t => { document.getElementById('cust-fb').value = t; ui.showToast('បាន Paste Link Facebook'); }).catch(() => ui.showToast('សូមចុចជាប់ដើម្បី Paste'));"
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-500 active:scale-90 transition z-30">
+                                        <i class="fas fa-paste"></i>
+                                    </button>
                                 </div>
+                                <p class="text-[9px] text-gray-400 mt-1 pl-2">* ជួយឱ្យងាយស្រួលឆាតទៅភ្ញៀវពេលឥវ៉ាន់មកដល់
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -1743,8 +1766,15 @@
                                     </div>
                                 </div>
 
-                                <input type="text" id="prod-name" placeholder="ឈ្មោះទំនិញ (Product Name)" required
-                                    class="oled-input w-full h-[48px] rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 outline-none relative z-20">
+                                <div class="relative z-20">
+                                    <input type="text" id="prod-name" placeholder="ឈ្មោះទំនិញ (Product Name)" required
+                                        class="oled-input w-full h-[48px] rounded-xl text-gray-900 dark:text-white font-bold text-lg text-left pl-4 pr-10 outline-none">
+                                    <button type="button"
+                                        onclick="navigator.clipboard.readText().then(t => { document.getElementById('prod-name').value = t; ui.showToast('បាន Paste ឈ្មោះទំនិញ'); }).catch(() => ui.showToast('សូមចុចជាប់ដើម្បី Paste'));"
+                                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-blue-500 active:scale-90 transition z-30">
+                                        <i class="fas fa-paste"></i>
+                                    </button>
+                                </div>
 
                                 <div class="grid grid-cols-2 gap-3">
                                     <input type="text" id="prod-size" placeholder="Size"
@@ -1827,14 +1857,17 @@
                     </div>
 
                     <div class="relative pb-6">
-                        <select id="status"
-                            class="oled-input w-full h-[60px] px-5 rounded-[24px] text-base font-bold text-gray-800 dark:text-white outline-none cursor-pointer">
-                            <option value="pending">⏳ រង់ចាំ (Pending)</option>
-                            <option value="ordered">🛒 បានកុម្មង់ (Ordered)</option>
-                            <option value="shipping">🚚 កំពុងដឹក (Shipping)</option>
-                            <option value="completed">✅ ជោគជ័យ (Completed)</option>
-                            <option value="cancelled">❌ បោះបង់ (Cancelled)</option>
-                        </select>
+                        <input type="hidden" id="status" value="pending">
+
+                        <div id="formStatusBtn"
+                            class="oled-input w-full h-[60px] px-5 rounded-[24px] flex justify-between items-center cursor-pointer transition-all active:scale-95">
+                            <div class="flex items-center gap-3">
+                                <span id="formStatusIcon" class="text-xl">⏳</span>
+                                <span id="formStatusText"
+                                    class="text-base font-bold text-gray-800 dark:text-white">រង់ចាំ (Pending)</span>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-400"></i>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -2577,6 +2610,8 @@
                 // ២. កំណត់តម្លៃលំនាំដើម (សម្រាប់បង្កើតថ្មី - Create Mode)
                 document.getElementById('status').value = 'pending';
                 document.getElementById('entry-id').value = '';
+                document.getElementById('formStatusIcon').innerText = '⏳';
+                document.getElementById('formStatusText').innerText = 'រង់ចាំ (Pending)';
 
                 // 🔥 កំណត់អក្សរសម្រាប់ "បង្កើតថ្មី"
                 if (modalTitle) modalTitle.innerText = "ការលក់ថ្មី";
@@ -2617,7 +2652,17 @@
                         document.getElementById('cost-ship').value = o.costShip;
                         document.getElementById('cost-boost').value = o.costBoost;
                         document.getElementById('note').value = o.note || '';
+                        const sMap = {
+                            'pending': { icon: '⏳', text: 'រង់ចាំ (Pending)' },
+                            'ordered': { icon: '🛒', text: 'បានកុម្មង់ (Ordered)' },
+                            'shipping': { icon: '🚚', text: 'កំពុងដឹក (Shipping)' },
+                            'completed': { icon: '✅', text: 'ជោគជ័យ (Completed)' },
+                            'cancelled': { icon: '❌', text: 'បោះបង់ (Cancelled)' }
+                        };
+                        const curS = sMap[o.status] || sMap['pending'];
                         document.getElementById('status').value = o.status;
+                        document.getElementById('formStatusIcon').innerText = curS.icon;
+                        document.getElementById('formStatusText').innerText = curS.text;
                         document.getElementById('inv-rate-input').value = o.exchangeRate || app.config.invRate;
 
                         // បង្ហាញប៊ូតុង Invoice ពេលកែប្រែ
@@ -3001,6 +3046,70 @@
                 });
             }
         });
+        // ===================================================================
+        // កូដថ្មីសម្រាប់បញ្ជា Popup Status នៅក្នុងផ្ទាំង "បង្កើតការលក់ថ្មី/កែប្រែ"
+        // ===================================================================
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // ចាប់យកឈ្មោះ ID របស់កូដ HTML ដែលយើងបានបង្កើតនៅជំហានទី១ និងទី២
+            const formStatusBtn = document.getElementById('formStatusBtn');
+            const formStatusModal = document.getElementById('formStatusModal');
+            const closeFormStatusModalBtn = document.getElementById('closeFormStatusModalBtn');
+            const formStatusItems = document.querySelectorAll('.form-status-item');
+            const hiddenStatusInput = document.getElementById('status');
+            const formStatusIcon = document.getElementById('formStatusIcon');
+            const formStatusText = document.getElementById('formStatusText');
+
+            // ១. ពេលចុចលើប្រអប់ Status ថ្មី => វានឹងបើកផ្ទាំង Popup លោតឡើងមក
+            if (formStatusBtn && formStatusModal) {
+                formStatusBtn.addEventListener('click', function () {
+                    formStatusModal.classList.remove('hidden');
+                    formStatusModal.classList.add('flex');
+                });
+            }
+
+            // ២. Function សម្រាប់បិទផ្ទាំង Popup វិញ
+            function closeFormStatusModal() {
+                if (formStatusModal) {
+                    formStatusModal.classList.add('hidden');
+                    formStatusModal.classList.remove('flex');
+                }
+            }
+
+            // ពេលចុចសញ្ញាខ្វែង (X) ឬចុចលើផ្ទៃទទេខាងក្រៅ => បិទ Popup វិញ
+            if (closeFormStatusModalBtn) {
+                closeFormStatusModalBtn.addEventListener('click', closeFormStatusModal);
+            }
+            if (formStatusModal) {
+                formStatusModal.addEventListener('click', function (e) {
+                    if (e.target === formStatusModal) {
+                        closeFormStatusModal();
+                    }
+                });
+            }
+
+            // ៣. ពេលចុចជ្រើសរើសស្ថានភាពណាមួយ (ឧ. ជោគជ័យ, រង់ចាំ, កំពុងដឹក...)
+            if (formStatusItems.length > 0) {
+                formStatusItems.forEach(function (item) {
+                    item.addEventListener('click', function () {
+                        // ទាញយកតម្លៃ (Value), Icon និងអក្សរ ពីជម្រើសដែលបានចុច
+                        const val = this.getAttribute('data-status');
+                        const icon = this.getAttribute('data-icon');
+                        const text = this.getAttribute('data-text');
+
+                        // [សំខាន់បំផុត] លាក់ទិន្នន័យ (Value) ទុក ដើម្បីឲ្យប្រព័ន្ធចាប់យកទៅ Save បានធម្មតា
+                        if (hiddenStatusInput) hiddenStatusInput.value = val;
+
+                        // ប្តូររូប Icon និងអក្សរនៅលើផ្ទាំង Form ឲ្យឃើញស្អាត
+                        if (formStatusIcon) formStatusIcon.innerText = icon;
+                        if (formStatusText) formStatusText.innerText = text;
+
+                        // រើសរួចរាល់ហើយ => បិទ Popup វិញភ្លាមដោយមិនបាច់ចុច OK
+                        closeFormStatusModal();
+                    });
+                });
+            }
+        });
     </script>
     <div id="modal-drilldown"
         class="fixed inset-0 bg-black/60 z-[100] hidden flex items-end sm:items-center justify-center backdrop-blur-sm">
@@ -3127,6 +3236,47 @@
                     <span class="text-xl">❌</span><span
                         class="font-medium text-gray-700 dark:text-gray-300 text-[16px]">បោះបង់
                         (Cancelled)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="formStatusModal"
+        class="fixed inset-0 z-[10000] hidden items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+        <div
+            class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-transform pb-4 sm:pb-0 border border-transparent dark:border-slate-700 animate-slide-up">
+            <div
+                class="px-6 py-4 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center bg-gray-50/80 dark:bg-slate-800/80">
+                <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 font-serif-kh">កំណត់ស្ថានភាព</h3>
+                <button id="closeFormStatusModalBtn"
+                    class="p-1.5 bg-gray-200/60 dark:bg-slate-700/60 rounded-full text-gray-500 dark:text-gray-400 hover:bg-red-100 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times w-5 h-5 flex items-center justify-center"></i>
+                </button>
+            </div>
+            <div class="p-3 space-y-1">
+                <div class="form-status-item flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-2xl cursor-pointer transition-colors"
+                    data-status="pending" data-icon="⏳" data-text="រង់ចាំ (Pending)">
+                    <span class="text-xl">⏳</span><span
+                        class="font-medium text-gray-700 dark:text-gray-300 text-[16px]">រង់ចាំ (Pending)</span>
+                </div>
+                <div class="form-status-item flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-2xl cursor-pointer transition-colors"
+                    data-status="ordered" data-icon="🛒" data-text="បានកុម្មង់ (Ordered)">
+                    <span class="text-xl">🛒</span><span
+                        class="font-medium text-gray-700 dark:text-gray-300 text-[16px]">បានកុម្មង់ (Ordered)</span>
+                </div>
+                <div class="form-status-item flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-2xl cursor-pointer transition-colors"
+                    data-status="shipping" data-icon="🚚" data-text="កំពុងដឹក (Shipping)">
+                    <span class="text-xl">🚚</span><span
+                        class="font-medium text-gray-700 dark:text-gray-300 text-[16px]">កំពុងដឹក (Shipping)</span>
+                </div>
+                <div class="form-status-item flex items-center gap-4 px-4 py-3.5 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-2xl cursor-pointer transition-colors"
+                    data-status="completed" data-icon="✅" data-text="ជោគជ័យ (Completed)">
+                    <span class="text-xl">✅</span><span
+                        class="font-medium text-gray-700 dark:text-gray-300 text-[16px]">ជោគជ័យ (Completed)</span>
+                </div>
+                <div class="form-status-item flex items-center gap-4 px-4 py-3.5 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl cursor-pointer transition-colors"
+                    data-status="cancelled" data-icon="❌" data-text="បោះបង់ (Cancelled)">
+                    <span class="text-xl">❌</span><span
+                        class="font-medium text-gray-700 dark:text-gray-300 text-[16px]">បោះបង់ (Cancelled)</span>
                 </div>
             </div>
         </div>
