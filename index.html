@@ -2050,7 +2050,7 @@
             },
             refresh: async (skipStats = false) => {
                 const all = await db.getAll();
-                app.data = all.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+                app.data = all.sort((a, b) => (b.id) - (a.id));
                 ui.renderHome();
                 if (!skipStats) ui.renderStats();
                 ui.renderHistory();
@@ -2602,7 +2602,10 @@
                 <div class="p-5 pl-6">
                     <div class="flex justify-between items-center mb-3">
                         <span class="status-badge ${st.bg} ${st.text}"><i class="fas ${st.icon}"></i> ${st.label}</span>
-                        <span class="text-[11px] text-gray-400 dark:text-gray-500 font-bold font-sans tracking-wide" title="ថ្ងៃ Order">${new Date(o.createdAt || o.id).toLocaleDateString('km-KH')}</span>
+                        <div class="flex flex-col items-end gap-0.5">
+                        <span class="text-[11px] text-gray-400 dark:text-gray-500 font-bold font-sans">${new Date(o.createdAt || o.id).toLocaleDateString('km-KH')}</span>
+                        ${o.updatedAt && new Date(o.updatedAt).toDateString() !== new Date(o.createdAt || o.id).toDateString() ? `<span class="text-[9px] text-blue-400 font-sans">Updated: ${new Date(o.updatedAt).toLocaleDateString('km-KH')}</span>` : ''}
+                    </div>
                     </div>
                     
                     <div class="mb-3 pb-3 border-b border-gray-100 dark:border-gray-700/50">
@@ -3121,7 +3124,7 @@
         function renderProfessionalHistory() {
             const container = document.getElementById('history-list-container');
             const countBadge = document.getElementById('hist-total-count');
-            const allData = app.data || []; const activeData = allData.filter(x => !x.isDeleted); const sorted = [...activeData].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            const allData = app.data || []; const activeData = allData.filter(x => !x.isDeleted);             const sorted = [...activeData].sort((a, b) => b.id - a.id);
             if (countBadge) countBadge.innerText = `${sorted.length} ប្រតិបត្តិការ`;
 
             if (sorted.length === 0) {
