@@ -2377,7 +2377,7 @@
                         const f = app.calc(o); tInc += (f.sale + f.shipIn); tCogs += f.cogs; tExp += (f.shipExp + f.boost); nProf += f.profit;
                     });
                     if (tInc === 0) { content.innerHTML = '<div class="text-center text-gray-400 mt-10 p-4"><i class="fas fa-chart-pie text-4xl mb-3 opacity-30"></i><p>គ្មានចំណូលក្នុងរយៈពេលនេះ</p></div>'; return; }
-                    const pP = Math.round((nProf / tInc) * 100); const pC = Math.round((tCogs / tInc) * 100); const pE = Math.round((tExp / tInc) * 100);
+                    const pP = parseFloat(((nProf / tInc) * 100).toFixed(1)); const pC = parseFloat(((tCogs / tInc) * 100).toFixed(1)); const pE = parseFloat(((tExp / tInc) * 100).toFixed(1));
                     const chartStyle = `background: conic-gradient(#0d9488 0% ${pP}%, #ef4444 ${pP}% ${pP + pC}%, #f97316 ${pP + pC}% 100%);`;
                     content.innerHTML = `<div class="flex flex-col items-center justify-center pt-4"><div class="relative w-48 h-48 rounded-full shadow-inner mb-6" style="${chartStyle}"><div class="absolute inset-4 bg-white dark:bg-gray-800 rounded-full flex flex-col items-center justify-center shadow-lg"><span class="text-gray-400 text-xs uppercase font-bold">Margin</span><span class="text-4xl font-extrabold text-teal-600">${pP}%</span></div></div><div class="w-full bg-gray-50 dark:bg-gray-700/30 rounded-2xl p-4 space-y-3"><div class="flex justify-between"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-teal-600"></div><span class="text-sm">ចំណេញ (Profit)</span></div><span class="font-bold text-teal-600">${pP}%</span></div><div class="flex justify-between"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-red-500"></div><span class="text-sm">ថ្លៃដើម (COGS)</span></div><span class="font-bold text-red-500">${pC}%</span></div><div class="flex justify-between"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-orange-500"></div><span class="text-sm">ចំណាយ (Exp)</span></div><span class="font-bold text-orange-500">${pE}%</span></div></div></div>`;
                 }
@@ -2468,8 +2468,10 @@
                     const f = app.calc(o);
                     if (o.status === 'completed' || o.status === 'cancelled') {
                         tSale += f.income; tExp += f.expense; tProf += f.profit;
+                        tQty += parseInt(o.prodQty);
+                    } else {
+                        return; // ❌ Pending/Shipping → Skip ចេញពី Table ផង
                     }
-                    tQty += parseInt(o.prodQty);
                     const profitClass = f.profit >= 0 ? 'print-text-teal' : 'print-text-red';
                     let statusBadge = '';
                     if (o.status === 'pending') statusBadge = '<span style="font-size:8px; padding:2px 4px; background:#fff7ed; color:#c2410c; border-radius:3px; border:1px solid #ffedd5;">PENDING</span>';
