@@ -2372,7 +2372,10 @@
                 } else if (type === 'margin') {
                     title.innerHTML = '<i class="fas fa-chart-pie text-purple-600 mr-2"></i> វិភាគ Margin %';
                     let tInc = 0, tCogs = 0, tExp = 0, nProf = 0;
-                    data.forEach(o => { const f = app.calc(o); tInc += (f.sale + f.shipIn); tCogs += f.cogs; tExp += (f.shipExp + f.boost); nProf += f.profit; });
+                    data.forEach(o => {
+                        if (o.status !== 'completed' && o.status !== 'cancelled') return;
+                        const f = app.calc(o); tInc += (f.sale + f.shipIn); tCogs += f.cogs; tExp += (f.shipExp + f.boost); nProf += f.profit;
+                    });
                     if (tInc === 0) { content.innerHTML = '<div class="text-center text-gray-400 mt-10 p-4"><i class="fas fa-chart-pie text-4xl mb-3 opacity-30"></i><p>គ្មានចំណូលក្នុងរយៈពេលនេះ</p></div>'; return; }
                     const pP = Math.round((nProf / tInc) * 100); const pC = Math.round((tCogs / tInc) * 100); const pE = Math.round((tExp / tInc) * 100);
                     const chartStyle = `background: conic-gradient(#0d9488 0% ${pP}%, #ef4444 ${pP}% ${pP + pC}%, #f97316 ${pP + pC}% 100%);`;
@@ -2462,7 +2465,11 @@
                 const start = document.getElementById('date-start').value; const end = document.getElementById('date-end').value; const genDate = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' });
                 let tSale = 0, tExp = 0, tProf = 0, tQty = 0; let tableRows = '';
                 data.forEach(o => {
-                    const f = app.calc(o); tSale += f.income; tExp += f.expense; tProf += f.profit; tQty += parseInt(o.prodQty);
+                    const f = app.calc(o);
+                    if (o.status === 'completed' || o.status === 'cancelled') {
+                        tSale += f.income; tExp += f.expense; tProf += f.profit;
+                    }
+                    tQty += parseInt(o.prodQty);
                     const profitClass = f.profit >= 0 ? 'print-text-teal' : 'print-text-red';
                     let statusBadge = '';
                     if (o.status === 'pending') statusBadge = '<span style="font-size:8px; padding:2px 4px; background:#fff7ed; color:#c2410c; border-radius:3px; border:1px solid #ffedd5;">PENDING</span>';
@@ -3124,7 +3131,7 @@
         function renderProfessionalHistory() {
             const container = document.getElementById('history-list-container');
             const countBadge = document.getElementById('hist-total-count');
-            const allData = app.data || []; const activeData = allData.filter(x => !x.isDeleted);             const sorted = [...activeData].sort((a, b) => b.id - a.id);
+            const allData = app.data || []; const activeData = allData.filter(x => !x.isDeleted); const sorted = [...activeData].sort((a, b) => b.id - a.id);
             if (countBadge) countBadge.innerText = `${sorted.length} ប្រតិបត្តិការ`;
 
             if (sorted.length === 0) {
