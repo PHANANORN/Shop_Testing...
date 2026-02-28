@@ -2739,23 +2739,81 @@
                         };
                         const log = o.statusLog || [];
                         if (log.length > 0 && logWrapper && logContainer) {
-                            let html = '';
                             // តម្រៀបពី Pending→Completed (ចាស់ → ថ្មី)
                             const sortedLog = [...log].sort((a, b) => new Date(a.time) - new Date(b.time));
-                            // បង្ហាញតែ 3 ចុងក្រោយ ប្រសិនបើច្រើន
-                            const showAll = log.length <= 4;
-                            const displayLog = showAll ? sortedLog : sortedLog.slice(-3);
-                            const hiddenCount = sortedLog.length - displayLog.length;
-                            if (!showAll) {
-                                html += `<div class="text-[11px] text-gray-400 font-bold text-center py-2 mb-1 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition" onclick="this.parentElement.innerHTML = this.parentElement.getAttribute('data-full')">${hiddenCount} ស្ថានភាពចាស់ (ចុចដើម្បីមើល)</div>`;
-                            }
-                            displayLog.forEach((entry, i) => {
-                                const s = sLabels[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
-                                const t = new Date(entry.time);
-                                const dateStr = t.toLocaleDateString('km-KH');
-                                const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                                const isLast = i === log.length - 1;
-                                html += `
+
+                            // Function: Build HTML សម្រាប់ Log entries
+                            const buildLogHTML = (entries, allEntries) => {
+                                const sL = sLabels;
+                                let h = '';
+                                entries.forEach((entry, i) => {
+                                    const s = sL[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
+                                    const t = new Date(entry.time);
+                                    const dateStr = t.toLocaleDateString('km-KH');
+                                    const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                    const isLast = i === entries.length - 1;
+                                    h += `<div class="flex gap-3 items-start"><div class="flex flex-col items-center flex-shrink-0"><div class="w-8 h-8 rounded-full ${s.badge} border flex items-center justify-center text-sm shadow-sm">${s.icon}</div>${!isLast ? `<div class="w-0.5 min-h-[24px] bg-gradient-to-b from-gray-300 to-gray-100 dark:from-gray-600 dark:to-gray-800 mt-1"></div>` : ''}</div><div class="${!isLast ? 'pb-4' : ''} flex-1 pt-1"><div class="flex justify-between items-center flex-wrap gap-1"><span class="text-sm font-bold text-gray-700 dark:text-gray-200">${s.text}</span><span class="text-[10px] text-gray-400 font-mono bg-white/60 dark:bg-gray-800 px-2 py-0.5 rounded-md border border-gray-100 dark:border-gray-700">${dateStr} · ${timeStr}</span></div></div></div>`;
+                                });
+                                return h;
+                            };
+
+                            const needCollapse = sortedLog.length > 3;
+                            const collapsed = sortedLog.slice(-3);
+                            const hiddenCount = sortedLog.length - 3;
+
+                            const renderLog = (expanded) => {
+                                const entries = expanded ? sortedLog : collapsed;
+                                let html = '';
+                                // ปุ่ม Toggle
+                                if (needCollapse) {
+                                    if (!expanded) {
+                                        html += `<button onclick="(function(btn){const lc=btn.closest('[id=\\'status-log-container\\']')||btn.parentElement; renderStatusLogToggle(lc, true);})(this)" class="w-full text-[11px] text-teal-600 dark:text-teal-400 font-bold text-center py-2 mb-3 bg-teal-50/80 dark:bg-teal-900/20 rounded-xl border border-teal-100 dark:border-teal-800 flex items-center justify-center gap-1.5 hover:bg-teal-100 dark:hover:bg-teal-900/40 transition active:scale-95"><i class="fas fa-chevron-up text-[9px]"></i> មើលទាំងអស់ (${sortedLog.length}) <i class="fas fa-chevron-up text-[9px]"></i></button>`;
+                                    } else {
+                                        html += `<button onclick="(function(btn){const lc=btn.closest('[id=\\'status-log-container\\']')||btn.parentElement; renderStatusLogToggle(lc, false);})(this)" class="w-full text-[11px] text-gray-400 font-bold text-center py-2 mb-3 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 flex items-center justify-center gap-1.5 hover:bg-gray-100 transition active:scale-95"><i class="fas fa-chevron-down text-[9px]"></i> បង្រួម (Collapse) <i class="fas fa-chevron-down text-[9px]"></i></button>`;
+                                    }
+                                }
+                                html += buildLogHTML(entries, sortedLog);
+                                return html;
+                            };
+
+                            // Store data on container for toggle
+                            logContainer._sortedLog = sortedLog;
+                            logContainer._sLabels = sLabels;
+                            logContainer._buildLogHTML = buildLogHTML;
+
+                            window.renderStatusLogToggle = (container, expanded) => {
+                                const sl = container._sortedLog;
+                                const needC = sl.length > 3;
+                                const col = sl.slice(-3);
+                                const entries = expanded ? sl : col;
+                                const sL = container._sLabels;
+                                let html = '';
+                                if (needC) {
+                                    if (!expanded) {
+                                        html += `<button onclick="(function(btn){const lc=document.getElementById('status-log-container'); renderStatusLogToggle(lc, true);})(this)" class="w-full text-[11px] text-teal-600 dark:text-teal-400 font-bold text-center py-2 mb-3 bg-teal-50/80 dark:bg-teal-900/20 rounded-xl border border-teal-100 dark:border-teal-800 flex items-center justify-center gap-1.5 hover:bg-teal-100 dark:hover:bg-teal-900/40 transition active:scale-95"><i class="fas fa-chevron-up text-[9px]"></i> មើលទាំងអស់ (${sl.length}) <i class="fas fa-chevron-up text-[9px]"></i></button>`;
+                                    } else {
+                                        html += `<button onclick="(function(btn){const lc=document.getElementById('status-log-container'); renderStatusLogToggle(lc, false);})(this)" class="w-full text-[11px] text-gray-400 font-bold text-center py-2 mb-3 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 flex items-center justify-center gap-1.5 hover:bg-gray-100 transition active:scale-95"><i class="fas fa-chevron-down text-[9px]"></i> បង្រួម (Collapse) <i class="fas fa-chevron-down text-[9px]"></i></button>`;
+                                    }
+                                }
+                                entries.forEach((entry, i) => {
+                                    const s = sL[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
+                                    const t = new Date(entry.time);
+                                    const dateStr = t.toLocaleDateString('km-KH');
+                                    const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                    const isLast = i === entries.length - 1;
+                                    html += `<div class="flex gap-3 items-start"><div class="flex flex-col items-center flex-shrink-0"><div class="w-8 h-8 rounded-full ${s.badge} border flex items-center justify-center text-sm shadow-sm">${s.icon}</div>${!isLast ? `<div class="w-0.5 min-h-[24px] bg-gradient-to-b from-gray-300 to-gray-100 dark:from-gray-600 dark:to-gray-800 mt-1"></div>` : ''}</div><div class="${!isLast ? 'pb-4' : ''} flex-1 pt-1"><div class="flex justify-between items-center flex-wrap gap-1"><span class="text-sm font-bold text-gray-700 dark:text-gray-200">${s.text}</span><span class="text-[10px] text-gray-400 font-mono bg-white/60 dark:bg-gray-800 px-2 py-0.5 rounded-md border border-gray-100 dark:border-gray-700">${dateStr} · ${timeStr}</span></div></div></div>`;
+                                });
+                                container.innerHTML = html;
+                            };
+
+                            logContainer.innerHTML = renderLog(false);
+                            logWrapper.classList.remove('hidden');
+                            const s = sLabels[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
+                            const t = new Date(entry.time);
+                            const dateStr = t.toLocaleDateString('km-KH');
+                            const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                            const isLast = i === log.length - 1;
+                            html += `
                                     <div class="flex gap-3 items-start">
                                         <div class="flex flex-col items-center flex-shrink-0">
                                             <div class="w-8 h-8 rounded-full ${s.badge} border flex items-center justify-center text-sm shadow-sm">${s.icon}</div>
@@ -2768,310 +2826,310 @@
                                             </div>
                                         </div>
                                     </div>`;
-                            });
-                            // Build full HTML for expand
-                            let fullHtml = '';
-                            sortedLog.forEach((entry, i) => {
-                                const s = sLabels[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
-                                const t = new Date(entry.time);
-                                const dateStr = t.toLocaleDateString('km-KH');
-                                const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                                const isLast = i === sortedLog.length - 1;
-                                fullHtml += `<div class="flex gap-3 items-start"><div class="flex flex-col items-center flex-shrink-0"><div class="w-8 h-8 rounded-full ${s.badge} border flex items-center justify-center text-sm shadow-sm">${s.icon}</div>${!isLast ? `<div class="w-0.5 min-h-[24px] bg-gradient-to-b from-gray-300 to-gray-100 dark:from-gray-600 dark:to-gray-800 mt-1"></div>` : ''}</div><div class="${!isLast ? 'pb-4' : ''} flex-1 pt-1"><div class="flex justify-between items-center flex-wrap gap-1"><span class="text-sm font-bold text-gray-700 dark:text-gray-200">${s.text}</span><span class="text-[10px] text-gray-400 font-mono bg-white/60 dark:bg-gray-800 px-2 py-0.5 rounded-md border border-gray-100 dark:border-gray-700">${dateStr} · ${timeStr}</span></div></div></div>`;
-                            });
-                            logContainer.setAttribute('data-full', fullHtml);
-                            logContainer.innerHTML = html;
-                            logWrapper.classList.remove('hidden');
-                        } else if (logWrapper) {
-                            logWrapper.classList.add('hidden');
-                        }
+                        });
+                        // Build full HTML for expand
+                        let fullHtml = '';
+                        sortedLog.forEach((entry, i) => {
+                            const s = sLabels[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
+                            const t = new Date(entry.time);
+                            const dateStr = t.toLocaleDateString('km-KH');
+                            const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                            const isLast = i === sortedLog.length - 1;
+                            fullHtml += `<div class="flex gap-3 items-start"><div class="flex flex-col items-center flex-shrink-0"><div class="w-8 h-8 rounded-full ${s.badge} border flex items-center justify-center text-sm shadow-sm">${s.icon}</div>${!isLast ? `<div class="w-0.5 min-h-[24px] bg-gradient-to-b from-gray-300 to-gray-100 dark:from-gray-600 dark:to-gray-800 mt-1"></div>` : ''}</div><div class="${!isLast ? 'pb-4' : ''} flex-1 pt-1"><div class="flex justify-between items-center flex-wrap gap-1"><span class="text-sm font-bold text-gray-700 dark:text-gray-200">${s.text}</span><span class="text-[10px] text-gray-400 font-mono bg-white/60 dark:bg-gray-800 px-2 py-0.5 rounded-md border border-gray-100 dark:border-gray-700">${dateStr} · ${timeStr}</span></div></div></div>`;
+                        });
+                        logContainer.setAttribute('data-full', fullHtml);
+                        logContainer.innerHTML = html;
+                        logWrapper.classList.remove('hidden');
+                    } else if (logWrapper) {
+                        logWrapper.classList.add('hidden');
                     }
                 }
-            },
+            }
+        },
             closeModal: (id) => document.getElementById(id).classList.add('hidden'),
 
-            saveOrder: async () => {
-                try {
-                    const idStr = document.getElementById('entry-id').value;
-                    const custName = document.getElementById('cust-name').value;
-                    const prodName = document.getElementById('prod-name').value;
+                saveOrder: async () => {
+                    try {
+                        const idStr = document.getElementById('entry-id').value;
+                        const custName = document.getElementById('cust-name').value;
+                        const prodName = document.getElementById('prod-name').value;
 
-                    if (!custName || !prodName) {
-                        alert("សូមបញ្ចូលឈ្មោះអតិថិជន និងឈ្មោះទំនិញ!");
-                        return;
-                    }
-
-                    const curRate = parseInt(document.getElementById('inv-rate-input').value) || 4100;
-                    app.config.invRate = curRate;
-                    app.saveConfig();
-
-                    // === [ចំណុចកែប្រែសំខាន់] ===
-                    // រក្សាទុកកាលបរិច្ឆេទចាស់ប្រសិនបើវាជាការកែប្រែទិន្នន័យ (Edit)
-                    const now = new Date().toISOString();
-                    let createdAt = now;
-                    let statusLog = [];
-                    const newStatus = document.getElementById('status').value;
-
-                    if (idStr) {
-                        const existingOrder = app.data.find(x => x.id === parseInt(idStr));
-                        if (existingOrder) {
-                            // createdAt មិនផ្លាស់ប្ដូរ — ប្រើ id ជា fallback សម្រាប់ Order ចាស់
-                            createdAt = existingOrder.createdAt || new Date(existingOrder.id).toISOString();
-                            statusLog = Array.isArray(existingOrder.statusLog) ? [...existingOrder.statusLog] : [];
-                            // បន្ថែម Log តែ ពេល Status ផ្លាស់ប្ដូរ
-                            const lastLogStatus = statusLog.length > 0 ? statusLog[statusLog.length - 1].status : null;
-                            if (newStatus !== lastLogStatus) {
-                                statusLog.push({ status: newStatus, time: now });
-                            }
+                        if (!custName || !prodName) {
+                            alert("សូមបញ្ចូលឈ្មោះអតិថិជន និងឈ្មោះទំនិញ!");
+                            return;
                         }
-                    } else {
-                        // Order ថ្មី — Log ដំបូង
-                        statusLog = [{ status: newStatus, time: now }];
-                    }
 
-                    const payload = {
-                        id: idStr ? parseInt(idStr) : Date.now(),
-                        createdAt: createdAt,
-                        updatedAt: now,
-                        exchangeRate: curRate,
-                        trackingNo: document.getElementById('track-no').value,
-                        prodImg: document.getElementById('prod-img').value,
-                        fbLink: document.getElementById('cust-fb').value,
-                        custName: custName,
-                        custPhone: document.getElementById('cust-phone').value,
-                        custAddr: document.getElementById('cust-addr').value,
-                        prodName: prodName,
-                        prodSize: document.getElementById('prod-size').value,
-                        // បំប្លែងចំនួនទំនិញជាលេខជានិច្ច ដើម្បីការពារ Error ពេលបូករបាយការណ៍
-                        prodQty: parseInt(document.getElementById('prod-qty').value) || 1,
-                        valSale: document.getElementById('val-sale').value,
-                        valShipIn: document.getElementById('val-ship-in').value,
-                        costBuy: document.getElementById('cost-buy').value,
-                        costShip: document.getElementById('cost-ship').value,
-                        costBoost: document.getElementById('cost-boost').value,
-                        note: document.getElementById('note').value,
-                        status: document.getElementById('status').value,
-                        statusLog: statusLog,
-                        statusLog: statusLog,
-                        isDeleted: false
-                    };
+                        const curRate = parseInt(document.getElementById('inv-rate-input').value) || 4100;
+                        app.config.invRate = curRate;
+                        app.saveConfig();
 
-                    const existingIdx = app.data.findIndex(x => x.id === payload.id);
-                    if (existingIdx > -1) {
-                        app.data[existingIdx] = payload;
-                    } else {
-                        app.data.unshift(payload);
-                    }
+                        // === [ចំណុចកែប្រែសំខាន់] ===
+                        // រក្សាទុកកាលបរិច្ឆេទចាស់ប្រសិនបើវាជាការកែប្រែទិន្នន័យ (Edit)
+                        const now = new Date().toISOString();
+                        let createdAt = now;
+                        let statusLog = [];
+                        const newStatus = document.getElementById('status').value;
 
-                    app.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-
-                    ui.renderHome();
-                    ui.renderStats();
-                    ui.renderHistory();
-                    ui.closeModal('modal-order');
-                    ui.showToast('✅ រក្សាទុកជោគជ័យ');
-
-                    await db.put(payload);
-                    if (!idStr) await app.logActivity(`បានបង្កើត: ${payload.prodName}`);
-                } catch (e) {
-                    alert("Error: " + e);
-                }
-            },
-
-            confirmType: null, confirmId: null,
-            askConfirm: (type, id = null) => {
-                ui.confirmType = type; ui.confirmId = id;
-                const modal = document.getElementById('modal-confirm-overlay');
-                const title = document.getElementById('confirm-title'); const desc = document.getElementById('confirm-desc'); const iconBox = document.getElementById('confirm-icon-box'); const icon = document.getElementById('confirm-icon'); const btn = document.getElementById('btn-confirm-yes');
-                iconBox.className = 'w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4';
-
-                if (type === 'delete') { title.innerText = 'លុបការលក់នេះ?'; desc.innerText = 'ទិន្ន័យនឹងត្រូវបានផ្លាស់ទីទៅធុងសំរាម។'; icon.className = 'fas fa-trash-alt text-2xl'; iconBox.classList.add('bg-red-100', 'text-red-500', 'dark:bg-red-900/30'); btn.className = 'flex-1 py-3 rounded-xl bg-red-600 text-white font-bold text-sm shadow-lg shadow-red-200 dark:shadow-none hover:bg-red-700 transition'; btn.innerText = 'យល់ព្រម'; }
-                else if (type === 'restore') { title.innerText = 'ស្តារទិន្ន័យវិញ?'; desc.innerText = 'ទិន្ន័យនឹងត្រឡប់ទៅបញ្ជីការលក់វិញ។'; icon.className = 'fas fa-undo text-2xl'; iconBox.classList.add('bg-teal-100', 'text-teal-600', 'dark:bg-teal-900/30'); btn.className = 'flex-1 py-3 rounded-xl bg-teal-600 text-white font-bold text-sm shadow-lg shadow-teal-200 dark:shadow-none hover:bg-teal-700 transition'; btn.innerText = 'ស្តារវិញ'; }
-                else if (type === 'empty_trash') { title.innerText = 'សម្អាតធុងសំរាម?'; desc.innerText = 'ទិន្ន័យទាំងអស់នឹងបាត់បង់ជាស្ថាពរ! មិនអាចយកវិញបានទេ។'; icon.className = 'fas fa-fire text-2xl'; iconBox.classList.add('bg-orange-100', 'text-orange-600', 'dark:bg-orange-900/30'); btn.className = 'flex-1 py-3 rounded-xl bg-orange-600 text-white font-bold text-sm shadow-lg shadow-orange-200 dark:shadow-none hover:bg-orange-700 transition'; btn.innerText = 'សម្អាត'; }
-                else if (type === 'reset_app') { title.innerText = '⚠️ RESET APPLICATION?'; desc.innerHTML = 'សកម្មភាពនេះនឹងលុបចោលទិន្ន័យទាំងអស់!<br>ហើយមិនអាចត្រឡប់ក្រោយបានទេ។'; icon.className = 'fas fa-radiation text-3xl animate-pulse'; iconBox.classList.add('bg-red-600', 'text-white', 'shadow-xl', 'shadow-red-400'); btn.className = 'flex-1 py-3 rounded-xl bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-300 dark:shadow-none hover:bg-red-700 transition border-2 border-white'; btn.innerText = 'លុបចោលទាំងអស់'; }
-                modal.classList.remove('hidden');
-            },
-            closeConfirm: () => { ui.confirmType = null; ui.confirmId = null; document.getElementById('modal-confirm-overlay').classList.add('hidden'); },
-            onConfirmYes: async () => {
-                const type = ui.confirmType; const id = ui.confirmId; ui.closeConfirm();
-                if (type === 'delete' && id) { const item = app.data.find(x => x.id === id); if (item) { item.isDeleted = true; ui.renderHome(); ui.showToast('🗑️ បានលុបទៅធុងសំរាម'); await db.put(item); await app.logActivity(`បានលុប: ${item.prodName}`); ui.closeModal('modal-order'); } }
-                else if (type === 'restore' && id) { const item = app.data.find(x => x.id === id); if (item) { item.isDeleted = false; ui.renderTrashList(); ui.renderHome(); ui.renderStats(); ui.showToast('♻️ បានយកមកវិញ'); await db.put(item); await app.logActivity(`បាន Restore: ${item.prodName}`); } }
-                else if (type === 'empty_trash') { const trash = app.data.filter(x => x.isDeleted); app.data = app.data.filter(x => !x.isDeleted); ui.renderTrashList(); ui.showToast('🧹 សម្អាតធុងសំរាមរួចរាល់!'); for (let t of trash) { await db.delete(t.id); } await app.logActivity('បានសម្អាតធុងសំរាម'); }
-                else if (type === 'reset_app') { document.getElementById('app-loader').style.display = 'flex'; document.getElementById('loader-text').innerText = "កំពុងលុបចោលទិន្ន័យ..."; await db.clear(); await db.clear('logs'); localStorage.clear(); setTimeout(() => { location.reload(); }, 1500); }
-            },
-
-            confirmDelete: (id) => ui.askConfirm('delete', id),
-            openTrashModal: async (fetchFromDB = false) => { history.pushState({ modal: true }, null, ''); if (fetchFromDB) await app.refresh(); document.getElementById('modal-trash').classList.remove('hidden'); ui.renderTrashList(); },
-            renderTrashList: () => {
-                const list = document.getElementById('trash-list'); list.innerHTML = ''; const deleted = app.data.filter(o => o.isDeleted);
-                if (deleted.length === 0) list.innerHTML = '<div class="text-center mt-20 text-gray-400"><i class="fas fa-trash-alt text-4xl mb-2"></i><p>ធុងសំរាមស្អាត</p></div>';
-                deleted.forEach(o => { const d = document.createElement('div'); d.className = 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex justify-between items-center'; d.innerHTML = `<div><h4 class="font-bold text-gray-700 dark:text-gray-200 text-lg mb-1">${o.prodName}</h4><p class="text-sm text-gray-500 font-sans">${new Date(o.updatedAt).toLocaleDateString()}</p></div><button onclick="ui.restore(${o.id})" class="px-4 py-2 bg-teal-100 text-teal-800 text-sm font-bold rounded-lg hover:bg-teal-200 transition"><i class="fas fa-undo mr-1"></i> Restore</button>`; list.appendChild(d); });
-            },
-            restore: (id) => ui.askConfirm('restore', id),
-
-            openInvoice: (type) => {
-                history.pushState({ modal: true }, null, '');
-                const id = parseInt(document.getElementById('entry-id').value); const o = app.data.find(x => x.id === id); if (!o) return;
-                const f = app.calc(o); const rate = o.exchangeRate || app.config.invRate;
-                const khrText = new Intl.NumberFormat('km-KH').format(Math.round(f.income * rate)); const viewer = document.getElementById('invoice-viewer');
-
-                const signatureSection = type === 'admin' ? '' : `<div class="flex justify-between items-end mt-14 px-4"><div class="text-center"><div class="border-b border-gray-300 w-24 mb-2"></div><span class="text-[9px] font-bold text-gray-600">អ្នកទទួល</span></div><div class="text-center"><div class="border-b border-gray-300 w-24 mb-2"></div><span class="text-[9px] font-bold text-gray-600">អ្នកលក់</span></div></div>`;
-
-                let html = `<div id="invoice-capture" class="bg-white p-6 relative overflow-hidden" style="font-family: 'Battambang', sans-serif;"><div class="absolute top-0 left-0 w-full h-1.5 bg-teal-600"></div><div class="text-center mb-6 border-b border-teal-500 pb-3"><h2 class="text-xl font-bold text-teal-700">វិក្កយបត្រ</h2><p class="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5">INVOICE #${o.id.toString().slice(-6)}</p><p class="text-[9px] text-gray-400 mt-0.5">${new Date().toLocaleString('km-KH')}</p></div><div class="flex justify-between text-[10px] mb-6 gap-2"><div class="text-left flex-1 pr-2"><span class="text-teal-600 font-bold block text-[8px] uppercase mb-0.5">Bill To:</span><span class="font-bold text-gray-800 text-[10px] block mb-0.5 line-clamp-1">${o.custName}</span><div class="text-gray-500 leading-tight text-[9px]">${o.custPhone}</div><div class="text-gray-500 leading-tight mt-0.5 break-words text-[9px]">${o.custAddr || '-'}</div></div><div class="text-right w-auto pl-2 whitespace-nowrap"><span class="text-teal-600 font-bold block text-[8px] uppercase mb-0.5">From:</span><span class="font-bold text-gray-800 text-[10px] block mb-0.5">Bosba Ladies Dress</span><div class="text-gray-500 leading-tight text-[9px]">Phnom Penh, Cambodia</div></div></div><div class="mb-4"><div class="flex justify-between bg-teal-50 p-1.5 rounded-t border-b border-teal-100"><span class="text-[9px] font-bold text-teal-700 uppercase">បរិយាយ (Description)</span><span class="text-[9px] font-bold text-teal-700 uppercase">តម្លៃ (Price)</span></div><div class="flex justify-between items-start p-2 border-b border-gray-100"><div><div class="text-[10px] font-bold text-gray-800">${o.prodName}</div><div class="text-[9px] text-gray-500 mt-0.5">Size: ${o.prodSize || '-'} | Qty: ${o.prodQty}</div></div><div class="text-[10px] font-bold text-gray-800">$${f.sale.toFixed(2)}</div></div></div><div class="flex justify-end mb-4"><div class="w-1/2 space-y-1 text-right"><div class="flex justify-between text-[9px] text-gray-600 px-1"><span>សរុបរង:</span><span class="font-medium">$${f.sale.toFixed(2)}</span></div><div class="flex justify-between text-[9px] text-gray-600 px-1"><span>ថ្លៃដឹក:</span><span class="font-medium">$${f.shipIn.toFixed(2)}</span></div><div class="flex justify-between items-center text-[11px] font-bold text-teal-800 mt-1 pt-1 border-t border-teal-100 bg-teal-50 px-2 py-1 rounded"><span>សរុបរួម:</span><span>$${f.income.toFixed(2)}</span></div><div class="text-right text-[9px] text-gray-500 font-bold" style="line-height:1; margin-top:2px;">(${khrText} ៛)</div></div></div></div>${type === 'admin' ? `<div class="mt-4 pt-2 border-t border-red-100 bg-red-50 p-2 rounded border-dashed"><h4 class="text-center text-[8px] font-bold text-red-400 uppercase tracking-widest mb-1">INTERNAL USE ONLY</h4><div class="grid grid-cols-2 gap-1 text-[9px] text-gray-600"><div>ថ្លៃដើម: <b>$${f.cogs.toFixed(2)}</b></div><div>ដឹកចេញ: <b>$${f.shipExp.toFixed(2)}</b></div><div>Ads: <b>$${f.boost.toFixed(2)}</b></div><div>ចំណាយសរុប: <b class="text-red-500">$${f.expense.toFixed(2)}</b></div></div><div class="mt-1 text-center border-t border-red-200 pt-1"><span class="text-[9px] font-bold text-gray-500">ប្រាក់ចំណេញ</span><div class="text-xs font-bold ${f.profit >= 0 ? 'text-green-600' : 'text-red-600'}">$${f.profit.toFixed(2)}</div></div></div>` : `${signatureSection}<div class="text-center mt-10 pt-4 border-t border-gray-100"><p class="text-[9px] text-gray-500 font-serif-kh">អរគុណដែលបានគាំទ្រអាជីវកម្មពួកយើង!</p></div>`}</div>`;
-                viewer.innerHTML = html; document.getElementById('invoice-modal').classList.remove('hidden');
-            },
-
-            shareTextOrder: async () => { const cName = document.getElementById('cust-name').value; const cPhone = document.getElementById('cust-phone').value; const cAddr = document.getElementById('cust-addr').value; const pName = document.getElementById('prod-name').value; const pSize = document.getElementById('prod-size').value; const pQty = document.getElementById('prod-qty').value; const vSale = parseFloat(document.getElementById('val-sale').value) || 0; const vShip = parseFloat(document.getElementById('val-ship-in').value) || 0; const total = vSale + vShip; const text = `📦 វិក្កយបត្រ / ORDER DETAIL\n------------------------\n👤 អតិថិជន: ${cName}\n📞 ទូរស័ព្ទ: ${cPhone}\n📍 ទីតាំង: ${cAddr}\n------------------------\n🛍️ ទំនិញ: ${pName} ${pSize ? '(' + pSize + ')' : ''}\n🔢 ចំនួន: ${pQty}\n------------------------\n💰 តម្លៃទំនិញ: $${vSale.toFixed(2)}\n🚚 ថ្លៃដឹក: $${vShip.toFixed(2)}\n💵 សរុប: $${total.toFixed(2)}\n------------------------\nអរគុណ! Thank you! 🙏`; if (navigator.share) { try { await navigator.share({ title: 'Order Details', text: text }); } catch (e) { } } else { navigator.clipboard.writeText(text); ui.showToast("📋 បានចម្លងអក្សរវិក្កយបត្រ!"); } },
-            renderSettingsRate: () => {
-                const el = document.getElementById('sys-rate-input');
-                if (el) {
-                    el.value = app.config.sysRate;
-                    document.getElementById('sys-rate-mode').checked = (app.config.sysMode === 'auto');
-                    el.disabled = (app.config.sysMode === 'auto');
-                }
-            },
-            updateSysRate: (val) => {
-                app.config.sysRate = parseInt(val) || 4100;
-                app.saveConfig(); app.refresh();
-            },
-            toggleSysRateMode: () => {
-                const isAuto = document.getElementById('sys-rate-mode').checked;
-                app.config.sysMode = isAuto ? 'auto' : 'manual';
-                document.getElementById('sys-rate-input').disabled = isAuto;
-                if (isAuto) {
-                    ui.showToast("🔄 Fetching...");
-                    setTimeout(() => {
-                        app.config.sysRate = 4100;
-                        app.saveConfig(); app.refresh(); ui.renderSettingsRate();
-                        ui.showToast("✅ Updated");
-                    }, 1000);
-                } else { app.saveConfig(); }
-            },
-            dataManager: {
-                downloadBackup: () => {
-                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(app.data));
-                    const dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", `shop_backup_${new Date().toISOString().slice(0, 10)}.json`); document.body.appendChild(dlAnchorElem); dlAnchorElem.click(); dlAnchorElem.remove(); ui.showToast("✅ បាន Download ឯកសារ Backup!");
-                },
-                prepareImport: (input) => { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const content = e.target.result; let importedData = []; if (file.name.toLowerCase().endsWith('.json')) importedData = JSON.parse(content); else if (file.name.toLowerCase().endsWith('.csv')) importedData = dataManager.parseCSV(content); else throw new Error("Format not supported"); if (!Array.isArray(importedData) || importedData.length === 0) throw new Error("No data found"); ui.showImportConfirm(importedData.length, importedData); input.value = ''; } catch (err) { alert("Error: " + err.message); } }; reader.readAsText(file); },
-                executeImport: async (data) => { document.getElementById('modal-import-overlay').classList.add('hidden'); const loader = document.getElementById('app-loader'); loader.style.display = 'flex'; document.getElementById('loader-text').innerText = "កំពុងបញ្ចូលទិន្ន័យ..."; try { const tx = dbConn.transaction(DB_CONFIG.store, 'readwrite'); const store = tx.objectStore(DB_CONFIG.store); data.forEach(item => store.put(item)); tx.oncomplete = async () => { await app.refresh(); loader.style.display = 'none'; ui.showToast(`✅ បញ្ចូល ${data.length} ទិន្ន័យជោគជ័យ!`); }; tx.onerror = (e) => { throw new Error(e.target.error); }; } catch (err) { loader.style.display = 'none'; alert("Import Failed: " + err); } },
-                parseCSV: (text) => {
-                    const lines = text.split('\n').filter(l => l.trim() !== '');
-                    const data = [];
-
-                    const headerLine = lines[0].toLowerCase();
-                    const isNewFormat = headerLine.includes('date(iso)') && headerLine.includes('tracking no');
-
-                    for (let i = 1; i < lines.length; i++) {
-                        const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                        if (!values) continue;
-                        const cleanVal = (val) => val ? val.replace(/^"|"$/g, '').replace(/""/g, '"').trim() : '';
-
-                        if (isNewFormat && values.length >= 18) {
-                            const rawDate = cleanVal(values[1]);
-                            let parsedDate = new Date().toISOString();
-                            if (rawDate) {
-                                const d = new Date(rawDate);
-                                if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                        if (idStr) {
+                            const existingOrder = app.data.find(x => x.id === parseInt(idStr));
+                            if (existingOrder) {
+                                // createdAt មិនផ្លាស់ប្ដូរ — ប្រើ id ជា fallback សម្រាប់ Order ចាស់
+                                createdAt = existingOrder.createdAt || new Date(existingOrder.id).toISOString();
+                                statusLog = Array.isArray(existingOrder.statusLog) ? [...existingOrder.statusLog] : [];
+                                // បន្ថែម Log តែ ពេល Status ផ្លាស់ប្ដូរ
+                                const lastLogStatus = statusLog.length > 0 ? statusLog[statusLog.length - 1].status : null;
+                                if (newStatus !== lastLogStatus) {
+                                    statusLog.push({ status: newStatus, time: now });
+                                }
                             }
-
-                            const row = {
-                                id: cleanVal(values[0]) ? parseInt(cleanVal(values[0])) : (Date.now() + Math.random()),
-                                updatedAt: parsedDate,
-                                custName: cleanVal(values[2]),
-                                custPhone: cleanVal(values[3]),
-                                custAddr: cleanVal(values[4]),
-                                fbLink: cleanVal(values[5]),
-                                prodName: cleanVal(values[6]),
-                                prodSize: cleanVal(values[7]),
-                                prodQty: parseInt(cleanVal(values[8])) || 1,
-                                trackingNo: cleanVal(values[9]),
-                                prodImg: cleanVal(values[10]),
-                                valSale: parseFloat(cleanVal(values[11])) || 0,
-                                valShipIn: parseFloat(cleanVal(values[12])) || 0,
-                                costBuy: parseFloat(cleanVal(values[13])) || 0,
-                                costShip: parseFloat(cleanVal(values[14])) || 0,
-                                costBoost: parseFloat(cleanVal(values[15])) || 0,
-                                exchangeRate: parseInt(cleanVal(values[16])) || 4100,
-                                status: cleanVal(values[17]) || 'pending',
-                                note: cleanVal(values[18]) || '',
-                                isDeleted: false
-                            };
-                            data.push(row);
                         } else {
-                            let parsedDate = new Date().toISOString();
-                            if (values[12]) {
-                                const d = new Date(cleanVal(values[12]));
-                                if (!isNaN(d.getTime())) parsedDate = d.toISOString();
-                            }
-                            const row = {
-                                id: Date.now() + Math.random(),
-                                updatedAt: parsedDate,
-                                custName: cleanVal(values[1]),
-                                custPhone: cleanVal(values[2]),
-                                custAddr: cleanVal(values[3]),
-                                prodName: cleanVal(values[4]),
-                                prodSize: cleanVal(values[5]),
-                                prodQty: parseInt(cleanVal(values[6])) || 1,
-                                valSale: parseFloat(cleanVal(values[8])) || 0,
-                                valShipIn: 0, costBuy: 0, costShip: 0, costBoost: 0,
-                                status: cleanVal(values[10]) || 'pending',
-                                note: cleanVal(values[11]) || '',
-                                isDeleted: false
-                            };
-                            data.push(row);
+                            // Order ថ្មី — Log ដំបូង
+                            statusLog = [{ status: newStatus, time: now }];
                         }
+
+                        const payload = {
+                            id: idStr ? parseInt(idStr) : Date.now(),
+                            createdAt: createdAt,
+                            updatedAt: now,
+                            exchangeRate: curRate,
+                            trackingNo: document.getElementById('track-no').value,
+                            prodImg: document.getElementById('prod-img').value,
+                            fbLink: document.getElementById('cust-fb').value,
+                            custName: custName,
+                            custPhone: document.getElementById('cust-phone').value,
+                            custAddr: document.getElementById('cust-addr').value,
+                            prodName: prodName,
+                            prodSize: document.getElementById('prod-size').value,
+                            // បំប្លែងចំនួនទំនិញជាលេខជានិច្ច ដើម្បីការពារ Error ពេលបូករបាយការណ៍
+                            prodQty: parseInt(document.getElementById('prod-qty').value) || 1,
+                            valSale: document.getElementById('val-sale').value,
+                            valShipIn: document.getElementById('val-ship-in').value,
+                            costBuy: document.getElementById('cost-buy').value,
+                            costShip: document.getElementById('cost-ship').value,
+                            costBoost: document.getElementById('cost-boost').value,
+                            note: document.getElementById('note').value,
+                            status: document.getElementById('status').value,
+                            statusLog: statusLog,
+                            statusLog: statusLog,
+                            isDeleted: false
+                        };
+
+                        const existingIdx = app.data.findIndex(x => x.id === payload.id);
+                        if (existingIdx > -1) {
+                            app.data[existingIdx] = payload;
+                        } else {
+                            app.data.unshift(payload);
+                        }
+
+                        app.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+                        ui.renderHome();
+                        ui.renderStats();
+                        ui.renderHistory();
+                        ui.closeModal('modal-order');
+                        ui.showToast('✅ រក្សាទុកជោគជ័យ');
+
+                        await db.put(payload);
+                        if (!idStr) await app.logActivity(`បានបង្កើត: ${payload.prodName}`);
+                    } catch (e) {
+                        alert("Error: " + e);
                     }
-                    return data;
                 },
 
-                exportCSV: () => {
-                    const items = app.data;
-                    if (items.length === 0) { ui.showToast("⚠️ គ្មានទិន្ន័យសម្រាប់ Export"); return; }
+                    confirmType: null, confirmId: null,
+                        askConfirm: (type, id = null) => {
+                            ui.confirmType = type; ui.confirmId = id;
+                            const modal = document.getElementById('modal-confirm-overlay');
+                            const title = document.getElementById('confirm-title'); const desc = document.getElementById('confirm-desc'); const iconBox = document.getElementById('confirm-icon-box'); const icon = document.getElementById('confirm-icon'); const btn = document.getElementById('btn-confirm-yes');
+                            iconBox.className = 'w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4';
 
-                    let csvContent = "\uFEFFID,Date(ISO),Customer,Phone,Address,FB Link,Product,Size,Qty,Tracking No,Image URL,Sale Price,Shipping In,Cost Buy,Shipping Out,Boost Ads,Exchange Rate,Status,Note\n";
+                            if (type === 'delete') { title.innerText = 'លុបការលក់នេះ?'; desc.innerText = 'ទិន្ន័យនឹងត្រូវបានផ្លាស់ទីទៅធុងសំរាម។'; icon.className = 'fas fa-trash-alt text-2xl'; iconBox.classList.add('bg-red-100', 'text-red-500', 'dark:bg-red-900/30'); btn.className = 'flex-1 py-3 rounded-xl bg-red-600 text-white font-bold text-sm shadow-lg shadow-red-200 dark:shadow-none hover:bg-red-700 transition'; btn.innerText = 'យល់ព្រម'; }
+                            else if (type === 'restore') { title.innerText = 'ស្តារទិន្ន័យវិញ?'; desc.innerText = 'ទិន្ន័យនឹងត្រឡប់ទៅបញ្ជីការលក់វិញ។'; icon.className = 'fas fa-undo text-2xl'; iconBox.classList.add('bg-teal-100', 'text-teal-600', 'dark:bg-teal-900/30'); btn.className = 'flex-1 py-3 rounded-xl bg-teal-600 text-white font-bold text-sm shadow-lg shadow-teal-200 dark:shadow-none hover:bg-teal-700 transition'; btn.innerText = 'ស្តារវិញ'; }
+                            else if (type === 'empty_trash') { title.innerText = 'សម្អាតធុងសំរាម?'; desc.innerText = 'ទិន្ន័យទាំងអស់នឹងបាត់បង់ជាស្ថាពរ! មិនអាចយកវិញបានទេ។'; icon.className = 'fas fa-fire text-2xl'; iconBox.classList.add('bg-orange-100', 'text-orange-600', 'dark:bg-orange-900/30'); btn.className = 'flex-1 py-3 rounded-xl bg-orange-600 text-white font-bold text-sm shadow-lg shadow-orange-200 dark:shadow-none hover:bg-orange-700 transition'; btn.innerText = 'សម្អាត'; }
+                            else if (type === 'reset_app') { title.innerText = '⚠️ RESET APPLICATION?'; desc.innerHTML = 'សកម្មភាពនេះនឹងលុបចោលទិន្ន័យទាំងអស់!<br>ហើយមិនអាចត្រឡប់ក្រោយបានទេ។'; icon.className = 'fas fa-radiation text-3xl animate-pulse'; iconBox.classList.add('bg-red-600', 'text-white', 'shadow-xl', 'shadow-red-400'); btn.className = 'flex-1 py-3 rounded-xl bg-red-600 text-white font-bold text-sm shadow-xl shadow-red-300 dark:shadow-none hover:bg-red-700 transition border-2 border-white'; btn.innerText = 'លុបចោលទាំងអស់'; }
+                            modal.classList.remove('hidden');
+                        },
+                            closeConfirm: () => { ui.confirmType = null; ui.confirmId = null; document.getElementById('modal-confirm-overlay').classList.add('hidden'); },
+                                onConfirmYes: async () => {
+                                    const type = ui.confirmType; const id = ui.confirmId; ui.closeConfirm();
+                                    if (type === 'delete' && id) { const item = app.data.find(x => x.id === id); if (item) { item.isDeleted = true; ui.renderHome(); ui.showToast('🗑️ បានលុបទៅធុងសំរាម'); await db.put(item); await app.logActivity(`បានលុប: ${item.prodName}`); ui.closeModal('modal-order'); } }
+                                    else if (type === 'restore' && id) { const item = app.data.find(x => x.id === id); if (item) { item.isDeleted = false; ui.renderTrashList(); ui.renderHome(); ui.renderStats(); ui.showToast('♻️ បានយកមកវិញ'); await db.put(item); await app.logActivity(`បាន Restore: ${item.prodName}`); } }
+                                    else if (type === 'empty_trash') { const trash = app.data.filter(x => x.isDeleted); app.data = app.data.filter(x => !x.isDeleted); ui.renderTrashList(); ui.showToast('🧹 សម្អាតធុងសំរាមរួចរាល់!'); for (let t of trash) { await db.delete(t.id); } await app.logActivity('បានសម្អាតធុងសំរាម'); }
+                                    else if (type === 'reset_app') { document.getElementById('app-loader').style.display = 'flex'; document.getElementById('loader-text').innerText = "កំពុងលុបចោលទិន្ន័យ..."; await db.clear(); await db.clear('logs'); localStorage.clear(); setTimeout(() => { location.reload(); }, 1500); }
+                                },
 
-                    const q = (s) => {
-                        if (s === null || s === undefined) return '""';
-                        return `"${s.toString().replace(/"/g, '""')}"`;
-                    };
+                                    confirmDelete: (id) => ui.askConfirm('delete', id),
+                                        openTrashModal: async (fetchFromDB = false) => { history.pushState({ modal: true }, null, ''); if (fetchFromDB) await app.refresh(); document.getElementById('modal-trash').classList.remove('hidden'); ui.renderTrashList(); },
+                                            renderTrashList: () => {
+                                                const list = document.getElementById('trash-list'); list.innerHTML = ''; const deleted = app.data.filter(o => o.isDeleted);
+                                                if (deleted.length === 0) list.innerHTML = '<div class="text-center mt-20 text-gray-400"><i class="fas fa-trash-alt text-4xl mb-2"></i><p>ធុងសំរាមស្អាត</p></div>';
+                                                deleted.forEach(o => { const d = document.createElement('div'); d.className = 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl flex justify-between items-center'; d.innerHTML = `<div><h4 class="font-bold text-gray-700 dark:text-gray-200 text-lg mb-1">${o.prodName}</h4><p class="text-sm text-gray-500 font-sans">${new Date(o.updatedAt).toLocaleDateString()}</p></div><button onclick="ui.restore(${o.id})" class="px-4 py-2 bg-teal-100 text-teal-800 text-sm font-bold rounded-lg hover:bg-teal-200 transition"><i class="fas fa-undo mr-1"></i> Restore</button>`; list.appendChild(d); });
+                                            },
+                                                restore: (id) => ui.askConfirm('restore', id),
 
-                    items.forEach(o => {
-                        const row = [
-                            q(o.id),
-                            q(o.updatedAt),
-                            q(o.custName),
-                            q(o.custPhone),
-                            q(o.custAddr),
-                            q(o.fbLink || ''),
-                            q(o.prodName),
-                            q(o.prodSize),
-                            q(o.prodQty),
-                            q(o.trackingNo || ''),
-                            q(o.prodImg || ''),
-                            q(o.valSale || 0),
-                            q(o.valShipIn || 0),
-                            q(o.costBuy || 0),
-                            q(o.costShip || 0),
-                            q(o.costBoost || 0),
-                            q(o.exchangeRate || app.config.sysRate),
-                            q(o.status),
-                            q(o.note || '')
-                        ].join(",");
-                        csvContent += row + "\n";
-                    });
+                                                    openInvoice: (type) => {
+                                                        history.pushState({ modal: true }, null, '');
+                                                        const id = parseInt(document.getElementById('entry-id').value); const o = app.data.find(x => x.id === id); if (!o) return;
+                                                        const f = app.calc(o); const rate = o.exchangeRate || app.config.invRate;
+                                                        const khrText = new Intl.NumberFormat('km-KH').format(Math.round(f.income * rate)); const viewer = document.getElementById('invoice-viewer');
 
-                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement("a");
-                    const url = URL.createObjectURL(blob);
-                    link.setAttribute("href", url);
-                    const today = new Date().toISOString().slice(0, 10);
-                    link.setAttribute("download", `Shop_Data_Backup_${today}.csv`);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                },
-                resetApp: () => { ui.askConfirm('reset_app'); }, emptyTrash: () => ui.askConfirm('empty_trash')
-            }
+                                                        const signatureSection = type === 'admin' ? '' : `<div class="flex justify-between items-end mt-14 px-4"><div class="text-center"><div class="border-b border-gray-300 w-24 mb-2"></div><span class="text-[9px] font-bold text-gray-600">អ្នកទទួល</span></div><div class="text-center"><div class="border-b border-gray-300 w-24 mb-2"></div><span class="text-[9px] font-bold text-gray-600">អ្នកលក់</span></div></div>`;
+
+                                                        let html = `<div id="invoice-capture" class="bg-white p-6 relative overflow-hidden" style="font-family: 'Battambang', sans-serif;"><div class="absolute top-0 left-0 w-full h-1.5 bg-teal-600"></div><div class="text-center mb-6 border-b border-teal-500 pb-3"><h2 class="text-xl font-bold text-teal-700">វិក្កយបត្រ</h2><p class="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5">INVOICE #${o.id.toString().slice(-6)}</p><p class="text-[9px] text-gray-400 mt-0.5">${new Date().toLocaleString('km-KH')}</p></div><div class="flex justify-between text-[10px] mb-6 gap-2"><div class="text-left flex-1 pr-2"><span class="text-teal-600 font-bold block text-[8px] uppercase mb-0.5">Bill To:</span><span class="font-bold text-gray-800 text-[10px] block mb-0.5 line-clamp-1">${o.custName}</span><div class="text-gray-500 leading-tight text-[9px]">${o.custPhone}</div><div class="text-gray-500 leading-tight mt-0.5 break-words text-[9px]">${o.custAddr || '-'}</div></div><div class="text-right w-auto pl-2 whitespace-nowrap"><span class="text-teal-600 font-bold block text-[8px] uppercase mb-0.5">From:</span><span class="font-bold text-gray-800 text-[10px] block mb-0.5">Bosba Ladies Dress</span><div class="text-gray-500 leading-tight text-[9px]">Phnom Penh, Cambodia</div></div></div><div class="mb-4"><div class="flex justify-between bg-teal-50 p-1.5 rounded-t border-b border-teal-100"><span class="text-[9px] font-bold text-teal-700 uppercase">បរិយាយ (Description)</span><span class="text-[9px] font-bold text-teal-700 uppercase">តម្លៃ (Price)</span></div><div class="flex justify-between items-start p-2 border-b border-gray-100"><div><div class="text-[10px] font-bold text-gray-800">${o.prodName}</div><div class="text-[9px] text-gray-500 mt-0.5">Size: ${o.prodSize || '-'} | Qty: ${o.prodQty}</div></div><div class="text-[10px] font-bold text-gray-800">$${f.sale.toFixed(2)}</div></div></div><div class="flex justify-end mb-4"><div class="w-1/2 space-y-1 text-right"><div class="flex justify-between text-[9px] text-gray-600 px-1"><span>សរុបរង:</span><span class="font-medium">$${f.sale.toFixed(2)}</span></div><div class="flex justify-between text-[9px] text-gray-600 px-1"><span>ថ្លៃដឹក:</span><span class="font-medium">$${f.shipIn.toFixed(2)}</span></div><div class="flex justify-between items-center text-[11px] font-bold text-teal-800 mt-1 pt-1 border-t border-teal-100 bg-teal-50 px-2 py-1 rounded"><span>សរុបរួម:</span><span>$${f.income.toFixed(2)}</span></div><div class="text-right text-[9px] text-gray-500 font-bold" style="line-height:1; margin-top:2px;">(${khrText} ៛)</div></div></div></div>${type === 'admin' ? `<div class="mt-4 pt-2 border-t border-red-100 bg-red-50 p-2 rounded border-dashed"><h4 class="text-center text-[8px] font-bold text-red-400 uppercase tracking-widest mb-1">INTERNAL USE ONLY</h4><div class="grid grid-cols-2 gap-1 text-[9px] text-gray-600"><div>ថ្លៃដើម: <b>$${f.cogs.toFixed(2)}</b></div><div>ដឹកចេញ: <b>$${f.shipExp.toFixed(2)}</b></div><div>Ads: <b>$${f.boost.toFixed(2)}</b></div><div>ចំណាយសរុប: <b class="text-red-500">$${f.expense.toFixed(2)}</b></div></div><div class="mt-1 text-center border-t border-red-200 pt-1"><span class="text-[9px] font-bold text-gray-500">ប្រាក់ចំណេញ</span><div class="text-xs font-bold ${f.profit >= 0 ? 'text-green-600' : 'text-red-600'}">$${f.profit.toFixed(2)}</div></div></div>` : `${signatureSection}<div class="text-center mt-10 pt-4 border-t border-gray-100"><p class="text-[9px] text-gray-500 font-serif-kh">អរគុណដែលបានគាំទ្រអាជីវកម្មពួកយើង!</p></div>`}</div>`;
+                                                        viewer.innerHTML = html; document.getElementById('invoice-modal').classList.remove('hidden');
+                                                    },
+
+                                                        shareTextOrder: async () => { const cName = document.getElementById('cust-name').value; const cPhone = document.getElementById('cust-phone').value; const cAddr = document.getElementById('cust-addr').value; const pName = document.getElementById('prod-name').value; const pSize = document.getElementById('prod-size').value; const pQty = document.getElementById('prod-qty').value; const vSale = parseFloat(document.getElementById('val-sale').value) || 0; const vShip = parseFloat(document.getElementById('val-ship-in').value) || 0; const total = vSale + vShip; const text = `📦 វិក្កយបត្រ / ORDER DETAIL\n------------------------\n👤 អតិថិជន: ${cName}\n📞 ទូរស័ព្ទ: ${cPhone}\n📍 ទីតាំង: ${cAddr}\n------------------------\n🛍️ ទំនិញ: ${pName} ${pSize ? '(' + pSize + ')' : ''}\n🔢 ចំនួន: ${pQty}\n------------------------\n💰 តម្លៃទំនិញ: $${vSale.toFixed(2)}\n🚚 ថ្លៃដឹក: $${vShip.toFixed(2)}\n💵 សរុប: $${total.toFixed(2)}\n------------------------\nអរគុណ! Thank you! 🙏`; if (navigator.share) { try { await navigator.share({ title: 'Order Details', text: text }); } catch (e) { } } else { navigator.clipboard.writeText(text); ui.showToast("📋 បានចម្លងអក្សរវិក្កយបត្រ!"); } },
+                                                            renderSettingsRate: () => {
+                                                                const el = document.getElementById('sys-rate-input');
+                                                                if (el) {
+                                                                    el.value = app.config.sysRate;
+                                                                    document.getElementById('sys-rate-mode').checked = (app.config.sysMode === 'auto');
+                                                                    el.disabled = (app.config.sysMode === 'auto');
+                                                                }
+                                                            },
+                                                                updateSysRate: (val) => {
+                                                                    app.config.sysRate = parseInt(val) || 4100;
+                                                                    app.saveConfig(); app.refresh();
+                                                                },
+                                                                    toggleSysRateMode: () => {
+                                                                        const isAuto = document.getElementById('sys-rate-mode').checked;
+                                                                        app.config.sysMode = isAuto ? 'auto' : 'manual';
+                                                                        document.getElementById('sys-rate-input').disabled = isAuto;
+                                                                        if (isAuto) {
+                                                                            ui.showToast("🔄 Fetching...");
+                                                                            setTimeout(() => {
+                                                                                app.config.sysRate = 4100;
+                                                                                app.saveConfig(); app.refresh(); ui.renderSettingsRate();
+                                                                                ui.showToast("✅ Updated");
+                                                                            }, 1000);
+                                                                        } else { app.saveConfig(); }
+                                                                    },
+                                                                        dataManager: {
+            downloadBackup: () => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(app.data));
+                const dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", `shop_backup_${new Date().toISOString().slice(0, 10)}.json`); document.body.appendChild(dlAnchorElem); dlAnchorElem.click(); dlAnchorElem.remove(); ui.showToast("✅ បាន Download ឯកសារ Backup!");
+            },
+                prepareImport: (input) => { const file = input.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = (e) => { try { const content = e.target.result; let importedData = []; if (file.name.toLowerCase().endsWith('.json')) importedData = JSON.parse(content); else if (file.name.toLowerCase().endsWith('.csv')) importedData = dataManager.parseCSV(content); else throw new Error("Format not supported"); if (!Array.isArray(importedData) || importedData.length === 0) throw new Error("No data found"); ui.showImportConfirm(importedData.length, importedData); input.value = ''; } catch (err) { alert("Error: " + err.message); } }; reader.readAsText(file); },
+                    executeImport: async (data) => { document.getElementById('modal-import-overlay').classList.add('hidden'); const loader = document.getElementById('app-loader'); loader.style.display = 'flex'; document.getElementById('loader-text').innerText = "កំពុងបញ្ចូលទិន្ន័យ..."; try { const tx = dbConn.transaction(DB_CONFIG.store, 'readwrite'); const store = tx.objectStore(DB_CONFIG.store); data.forEach(item => store.put(item)); tx.oncomplete = async () => { await app.refresh(); loader.style.display = 'none'; ui.showToast(`✅ បញ្ចូល ${data.length} ទិន្ន័យជោគជ័យ!`); }; tx.onerror = (e) => { throw new Error(e.target.error); }; } catch (err) { loader.style.display = 'none'; alert("Import Failed: " + err); } },
+                        parseCSV: (text) => {
+                            const lines = text.split('\n').filter(l => l.trim() !== '');
+                            const data = [];
+
+                            const headerLine = lines[0].toLowerCase();
+                            const isNewFormat = headerLine.includes('date(iso)') && headerLine.includes('tracking no');
+
+                            for (let i = 1; i < lines.length; i++) {
+                                const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                                if (!values) continue;
+                                const cleanVal = (val) => val ? val.replace(/^"|"$/g, '').replace(/""/g, '"').trim() : '';
+
+                                if (isNewFormat && values.length >= 18) {
+                                    const rawDate = cleanVal(values[1]);
+                                    let parsedDate = new Date().toISOString();
+                                    if (rawDate) {
+                                        const d = new Date(rawDate);
+                                        if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                                    }
+
+                                    const row = {
+                                        id: cleanVal(values[0]) ? parseInt(cleanVal(values[0])) : (Date.now() + Math.random()),
+                                        updatedAt: parsedDate,
+                                        custName: cleanVal(values[2]),
+                                        custPhone: cleanVal(values[3]),
+                                        custAddr: cleanVal(values[4]),
+                                        fbLink: cleanVal(values[5]),
+                                        prodName: cleanVal(values[6]),
+                                        prodSize: cleanVal(values[7]),
+                                        prodQty: parseInt(cleanVal(values[8])) || 1,
+                                        trackingNo: cleanVal(values[9]),
+                                        prodImg: cleanVal(values[10]),
+                                        valSale: parseFloat(cleanVal(values[11])) || 0,
+                                        valShipIn: parseFloat(cleanVal(values[12])) || 0,
+                                        costBuy: parseFloat(cleanVal(values[13])) || 0,
+                                        costShip: parseFloat(cleanVal(values[14])) || 0,
+                                        costBoost: parseFloat(cleanVal(values[15])) || 0,
+                                        exchangeRate: parseInt(cleanVal(values[16])) || 4100,
+                                        status: cleanVal(values[17]) || 'pending',
+                                        note: cleanVal(values[18]) || '',
+                                        isDeleted: false
+                                    };
+                                    data.push(row);
+                                } else {
+                                    let parsedDate = new Date().toISOString();
+                                    if (values[12]) {
+                                        const d = new Date(cleanVal(values[12]));
+                                        if (!isNaN(d.getTime())) parsedDate = d.toISOString();
+                                    }
+                                    const row = {
+                                        id: Date.now() + Math.random(),
+                                        updatedAt: parsedDate,
+                                        custName: cleanVal(values[1]),
+                                        custPhone: cleanVal(values[2]),
+                                        custAddr: cleanVal(values[3]),
+                                        prodName: cleanVal(values[4]),
+                                        prodSize: cleanVal(values[5]),
+                                        prodQty: parseInt(cleanVal(values[6])) || 1,
+                                        valSale: parseFloat(cleanVal(values[8])) || 0,
+                                        valShipIn: 0, costBuy: 0, costShip: 0, costBoost: 0,
+                                        status: cleanVal(values[10]) || 'pending',
+                                        note: cleanVal(values[11]) || '',
+                                        isDeleted: false
+                                    };
+                                    data.push(row);
+                                }
+                            }
+                            return data;
+                        },
+
+                            exportCSV: () => {
+                                const items = app.data;
+                                if (items.length === 0) { ui.showToast("⚠️ គ្មានទិន្ន័យសម្រាប់ Export"); return; }
+
+                                let csvContent = "\uFEFFID,Date(ISO),Customer,Phone,Address,FB Link,Product,Size,Qty,Tracking No,Image URL,Sale Price,Shipping In,Cost Buy,Shipping Out,Boost Ads,Exchange Rate,Status,Note\n";
+
+                                const q = (s) => {
+                                    if (s === null || s === undefined) return '""';
+                                    return `"${s.toString().replace(/"/g, '""')}"`;
+                                };
+
+                                items.forEach(o => {
+                                    const row = [
+                                        q(o.id),
+                                        q(o.updatedAt),
+                                        q(o.custName),
+                                        q(o.custPhone),
+                                        q(o.custAddr),
+                                        q(o.fbLink || ''),
+                                        q(o.prodName),
+                                        q(o.prodSize),
+                                        q(o.prodQty),
+                                        q(o.trackingNo || ''),
+                                        q(o.prodImg || ''),
+                                        q(o.valSale || 0),
+                                        q(o.valShipIn || 0),
+                                        q(o.costBuy || 0),
+                                        q(o.costShip || 0),
+                                        q(o.costBoost || 0),
+                                        q(o.exchangeRate || app.config.sysRate),
+                                        q(o.status),
+                                        q(o.note || '')
+                                    ].join(",");
+                                    csvContent += row + "\n";
+                                });
+
+                                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                                const link = document.createElement("a");
+                                const url = URL.createObjectURL(blob);
+                                link.setAttribute("href", url);
+                                const today = new Date().toISOString().slice(0, 10);
+                                link.setAttribute("download", `Shop_Data_Backup_${today}.csv`);
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                            },
+                                resetApp: () => { ui.askConfirm('reset_app'); }, emptyTrash: () => ui.askConfirm('empty_trash')
+        }
 
         };
         ui.showImportConfirm = (count, data) => { document.getElementById('import-msg-count').innerText = `បានរកឃើញ ${count} ទិន្ន័យ`; const modal = document.getElementById('modal-import-overlay'); const btn = document.getElementById('btn-confirm-import'); const newBtn = btn.cloneNode(true); btn.parentNode.replaceChild(newBtn, btn); newBtn.onclick = () => dataManager.executeImport(data); modal.classList.remove('hidden'); };
