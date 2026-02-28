@@ -1344,7 +1344,7 @@
             </div>
         </div>
 
-        <div id="view-history" class="section-view hidden pt-24 pb-24 px-4">
+        <div id="view-history" class="section-view pt-24 pb-24 px-4">
             <div class="flex justify-between items-end mb-6">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800 dark:text-white font-serif-kh">ប្រវត្តិប្រតិបត្តិការ
@@ -2021,8 +2021,6 @@
             refresh: async () => {
                 const all = await db.getAll();
                 app.data = all.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                const logs = await db.getAll('logs');
-                app.logs = logs.sort((a, b) => b.id - a.id);
                 ui.renderHome(); ui.renderStats(); ui.renderHistory();
             },
             calc: (o) => {
@@ -2048,9 +2046,7 @@
             },
             logActivity: async (msg) => {
                 const log = { id: Date.now(), msg: msg, time: new Date().toLocaleTimeString('km-KH') };
-                await db.put(log, 'logs');
                 app.logs.unshift(log);
-                ui.renderHistory();
             },
             saveConfig: () => localStorage.setItem('shopConfig', JSON.stringify(app.config)),
             formatKHR: (usd, type = 'sys') => {
@@ -2280,6 +2276,7 @@
                 }
 
                 if (tabId === 'history') { if (typeof renderProfessionalHistory === 'function') renderProfessionalHistory(); }
+                if (tabId === 'settings') { ui.renderSettingsRate(); }
             },
 
             filterList: (f) => { app.filter = f; ui.renderHome(); },
@@ -2344,7 +2341,7 @@
                     title.innerHTML = '<i class="fas fa-chart-pie text-purple-600 mr-2"></i> វិភាគ Margin %';
                     let tInc = 0, tCogs = 0, tExp = 0, nProf = 0;
                     data.forEach(o => { const f = app.calc(o); tInc += (f.sale + f.shipIn); tCogs += f.cogs; tExp += (f.shipExp + f.boost); nProf += f.profit; });
-                    if (tInc === 0) tInc = 1;
+                    if (tInc === 0) { content.innerHTML = '<div class="text-center text-gray-400 mt-10 p-4"><i class="fas fa-chart-pie text-4xl mb-3 opacity-30"></i><p>គ្មានចំណូលក្នុងរយៈពេលនេះ</p></div>'; return; }
                     const pP = Math.round((nProf / tInc) * 100); const pC = Math.round((tCogs / tInc) * 100); const pE = Math.round((tExp / tInc) * 100);
                     const chartStyle = `background: conic-gradient(#0d9488 0% ${pP}%, #ef4444 ${pP}% ${pP + pC}%, #f97316 ${pP + pC}% 100%);`;
                     content.innerHTML = `<div class="flex flex-col items-center justify-center pt-4"><div class="relative w-48 h-48 rounded-full shadow-inner mb-6" style="${chartStyle}"><div class="absolute inset-4 bg-white dark:bg-gray-800 rounded-full flex flex-col items-center justify-center shadow-lg"><span class="text-gray-400 text-xs uppercase font-bold">Margin</span><span class="text-4xl font-extrabold text-teal-600">${pP}%</span></div></div><div class="w-full bg-gray-50 dark:bg-gray-700/30 rounded-2xl p-4 space-y-3"><div class="flex justify-between"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-teal-600"></div><span class="text-sm">ចំណេញ (Profit)</span></div><span class="font-bold text-teal-600">${pP}%</span></div><div class="flex justify-between"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-red-500"></div><span class="text-sm">ថ្លៃដើម (COGS)</span></div><span class="font-bold text-red-500">${pC}%</span></div><div class="flex justify-between"><div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-orange-500"></div><span class="text-sm">ចំណាយ (Exp)</span></div><span class="font-bold text-orange-500">${pE}%</span></div></div></div>`;
@@ -2353,7 +2350,7 @@
 
             renderStats: () => {
                 let allTimeProfit = 0; let allTimeOrders = 0;
-                app.data.forEach(o => { if (!o.isDeleted && o.status === 'completed') { const f = app.calc(o); allTimeProfit += f.profit; allTimeOrders++; } });
+                app.data.forEach(o => { if (!o.isDeleted && (o.status === 'completed' || o.status === 'cancelled')) { const f = app.calc(o); allTimeProfit += f.profit; allTimeOrders += (o.status === 'completed' ? 1 : 0); } });
                 document.getElementById('lbl-lifetime-profit').innerText = `$${allTimeProfit.toFixed(2)}`;
                 document.getElementById('lbl-lifetime-orders').innerText = allTimeOrders;
 
@@ -2364,7 +2361,7 @@
                 data.forEach(o => {
                     const f = app.calc(o);
                     totalInc += f.sale; shippingIn += f.shipIn; totalCogs += f.cogs; totalShip += f.shipExp; totalAds += f.boost; netProfit += f.profit;
-                    if (!prodMap[o.prodName]) prodMap[o.prodName] = 0; prodMap[o.prodName] += parseInt(o.prodQty);
+                    if (o.status !== 'cancelled') { if (!prodMap[o.prodName]) prodMap[o.prodName] = 0; prodMap[o.prodName] += parseInt(o.prodQty); }
                 });
 
                 const elCount = document.getElementById('rpt-order-count'); elCount.innerText = data.length;
@@ -2427,10 +2424,15 @@
             },
 
             shareReportText: () => {
-                const elProfit = document.getElementById('rpt-net-profit'); elProfit.innerHTML = `$${netProfit.toFixed(2)} ${app.formatKHR(netProfit)}`; const o = document.getElementById('rpt-order-count').innerText; const s = document.getElementById('rpt-total-income').innerHTML = `$${totalInc.toFixed(2)} ${app.formatKHR(totalInc)}`;
-                const start = document.getElementById('date-start').value; const end = document.getElementById('date-end').value;
-                const text = `📊 របាយការណ៍សង្ខេប (${start} - ${end})\n------------------------\n💰 ចំណេញសុទ្ធ: ${p}\n📦 ចំនួនលក់: ${o}\n💵 ចំណូលសរុប: ${s}\n------------------------\nបង្កើតដោយ: My Small Shop App`;
-                navigator.clipboard.writeText(text); ui.showToast("📋 បានចម្លងអក្សររបាយការណ៍!");
+                const start = document.getElementById('date-start').value;
+                const end = document.getElementById('date-end').value;
+                const profit = document.getElementById('rpt-net-profit').innerText;
+                const orders = document.getElementById('rpt-order-count').innerText;
+                const income = document.getElementById('rpt-total-income').innerText;
+                const margin = document.getElementById('rpt-margin').innerText;
+                const text = `📊 របាយការណ៍សង្ខេប (${start} - ${end})\n------------------------\n💰 ចំណេញសុទ្ធ: ${profit}\n📦 ចំនួនលក់: ${orders}\n💵 ចំណូលសរុប: ${income}\n📈 Margin: ${margin}\n------------------------\nបង្កើតដោយ: My Small Shop App`;
+                navigator.clipboard.writeText(text);
+                ui.showToast("📋 បានចម្លងអក្សររបាយការណ៍!");
             },
 
             renderHome: () => {
@@ -2554,9 +2556,7 @@
                             <a href="tel:${o.custPhone}" onclick="event.stopPropagation();" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-100 transition group-phone">
                                 <i class="fas fa-phone-alt text-[10px]"></i> <span class="text-xs font-bold font-mono">${o.custPhone || 'N/A'}</span>
                             </a>
-                            <div onclick="event.stopPropagation(); ui.quickViewAddress('${o.custAddr ? o.custAddr.replace(/'/g, "\\'") : ''}')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 hover:bg-rose-100 transition cursor-pointer max-w-[150px]">
-                                <i class="fas fa-map-marker-alt text-[10px]"></i> <span class="text-xs font-medium truncate">${o.custAddr || 'N/A'}</span>
-                            </div>
+                            <div class="flex items-center gap-1">${(() => { const _url = o.custAddr ? o.custAddr.match(/(https?:\/\/[^\s]+)/) : null; const _txt = o.custAddr ? (o.custAddr.replace(/(https?:\/\/[^\s]+)/g, '').trim() || 'មើលផែនទី') : 'N/A'; return `<div onclick="event.stopPropagation(); ui.quickViewAddress('${o.custAddr ? o.custAddr.replace(/'/g, "\\'") : ''}')" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/30 hover:bg-rose-100 transition cursor-pointer max-w-[130px]"><i class="fas fa-map-marker-alt text-[10px]"></i><span class="text-xs font-medium truncate">${_txt}</span></div>${_url ? `<a href="${_url[0]}" target="_blank" onclick="event.stopPropagation();" class="flex-shrink-0 w-7 h-7 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 flex items-center justify-center hover:bg-blue-500 hover:text-white transition ml-1" title="បើ Google Maps"><i class="fas fa-directions text-xs"></i></a>` : ''}`; })()}</div>
                         </div>
                     </div>
 
@@ -2675,22 +2675,22 @@
 
             saveOrder: async () => {
                 try {
-                    const idStr = document.getElementById('entry-id').value; 
-                    const custName = document.getElementById('cust-name').value; 
+                    const idStr = document.getElementById('entry-id').value;
+                    const custName = document.getElementById('cust-name').value;
                     const prodName = document.getElementById('prod-name').value;
-                    
-                    if (!custName || !prodName) { 
-                        alert("សូមបញ្ចូលឈ្មោះអតិថិជន និងឈ្មោះទំនិញ!"); 
-                        return; 
+
+                    if (!custName || !prodName) {
+                        alert("សូមបញ្ចូលឈ្មោះអតិថិជន និងឈ្មោះទំនិញ!");
+                        return;
                     }
-                    
-                    const curRate = parseInt(document.getElementById('inv-rate-input').value) || 4100; 
-                    app.config.invRate = curRate; 
+
+                    const curRate = parseInt(document.getElementById('inv-rate-input').value) || 4100;
+                    app.config.invRate = curRate;
                     app.saveConfig();
 
                     // === [ចំណុចកែប្រែសំខាន់] ===
                     // រក្សាទុកកាលបរិច្ឆេទចាស់ប្រសិនបើវាជាការកែប្រែទិន្នន័យ (Edit)
-                    let orderDate = new Date().toISOString(); 
+                    let orderDate = new Date().toISOString();
                     if (idStr) {
                         const existingOrder = app.data.find(x => x.id === parseInt(idStr));
                         if (existingOrder && existingOrder.updatedAt) {
@@ -2699,47 +2699,48 @@
                     }
 
                     const payload = {
-                        id: idStr ? parseInt(idStr) : Date.now(), 
+                        id: idStr ? parseInt(idStr) : Date.now(),
                         updatedAt: orderDate, // ប្រើកាលបរិច្ឆេទដែលបានកំណត់ត្រឹមត្រូវ
                         exchangeRate: curRate,
                         trackingNo: document.getElementById('track-no').value,
                         prodImg: document.getElementById('prod-img').value,
                         fbLink: document.getElementById('cust-fb').value,
-                        custName: custName, 
-                        custPhone: document.getElementById('cust-phone').value, 
+                        custName: custName,
+                        custPhone: document.getElementById('cust-phone').value,
                         custAddr: document.getElementById('cust-addr').value,
-                        prodName: prodName, 
-                        prodSize: document.getElementById('prod-size').value, 
+                        prodName: prodName,
+                        prodSize: document.getElementById('prod-size').value,
                         // បំប្លែងចំនួនទំនិញជាលេខជានិច្ច ដើម្បីការពារ Error ពេលបូករបាយការណ៍
-                        prodQty: parseInt(document.getElementById('prod-qty').value) || 1, 
-                        valSale: document.getElementById('val-sale').value, 
+                        prodQty: parseInt(document.getElementById('prod-qty').value) || 1,
+                        valSale: document.getElementById('val-sale').value,
                         valShipIn: document.getElementById('val-ship-in').value,
-                        costBuy: document.getElementById('cost-buy').value, 
-                        costShip: document.getElementById('cost-ship').value, 
+                        costBuy: document.getElementById('cost-buy').value,
+                        costShip: document.getElementById('cost-ship').value,
                         costBoost: document.getElementById('cost-boost').value,
-                        note: document.getElementById('note').value, 
-                        status: document.getElementById('status').value, 
+                        note: document.getElementById('note').value,
+                        status: document.getElementById('status').value,
                         isDeleted: false
                     };
 
                     const existingIdx = app.data.findIndex(x => x.id === payload.id);
-                    if (existingIdx > -1) { 
-                        app.data[existingIdx] = payload; 
-                    } else { 
-                        app.data.unshift(payload); 
+                    if (existingIdx > -1) {
+                        app.data[existingIdx] = payload;
+                    } else {
+                        app.data.unshift(payload);
                     }
-                    
+
                     app.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 
-                    ui.renderHome(); 
-                    ui.renderStats(); 
-                    ui.closeModal('modal-order'); 
+                    ui.renderHome();
+                    ui.renderStats();
+                    ui.renderHistory();
+                    ui.closeModal('modal-order');
                     ui.showToast('✅ រក្សាទុកជោគជ័យ');
-                    
-                    await db.put(payload); 
+
+                    await db.put(payload);
                     if (!idStr) await app.logActivity(`បានបង្កើត: ${payload.prodName}`);
-                } catch (e) { 
-                    alert("Error: " + e); 
+                } catch (e) {
+                    alert("Error: " + e);
                 }
             },
 
@@ -2979,10 +2980,12 @@
                 }
 
                 const f = app.calc(item);
-                let amount = f.income;
-                let theme = { border: 'status-inc', dotColor: 'bg-emerald-500', moneyColor: 'text-emerald-600', sign: '+' };
-                if (item.status === 'pending') { theme = { border: 'status-pen', dotColor: 'bg-orange-500', moneyColor: 'text-orange-500', sign: '~' }; }
-                else if (item.status === 'cancelled') { theme = { border: 'status-exp', dotColor: 'bg-gray-400', moneyColor: 'text-gray-400 decoration-line-through', sign: '' }; amount = 0; }
+                let amount = f.profit;
+                let theme = { border: 'status-pen', dotColor: 'bg-orange-400', moneyColor: 'text-orange-500', sign: '~' };
+                if (item.status === 'ordered') { theme = { border: 'status-pen', dotColor: 'bg-blue-500', moneyColor: 'text-blue-500', sign: '~' }; }
+                else if (item.status === 'shipping') { theme = { border: 'status-pen', dotColor: 'bg-indigo-500', moneyColor: 'text-indigo-500', sign: '~' }; }
+                else if (item.status === 'completed') { theme = { border: 'status-inc', dotColor: 'bg-emerald-500', moneyColor: 'text-emerald-600', sign: '+' }; }
+                else if (item.status === 'cancelled') { theme = { border: 'status-exp', dotColor: 'bg-gray-400', moneyColor: 'text-gray-400 line-through', sign: '' }; amount = 0; }
                 const delay = index * 0.05;
                 const cardHtml = `<div class="history-card-modern ${theme.border}" style="animation-delay: ${delay}s" onclick="ui.openOrderModal(${item.id})"><div class="history-dot ${theme.dotColor}"></div><div class="flex justify-between items-start"><div><h4 class="font-bold text-gray-800 dark:text-gray-100 text-sm mb-0.5">${item.prodName}</h4><div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400"><span class="bg-gray-100 dark:bg-gray-700 px-1.5 rounded text-[10px] font-mono">${timeStr}</span><span>• ${item.custName}</span></div></div><div class="text-right"><div class="font-bold ${theme.moneyColor} text-base">${theme.sign}$${amount.toFixed(2)}</div><div class="text-[9px] uppercase font-bold opacity-60 mt-1">${item.status}</div></div></div></div>`;
                 wrapper.insertAdjacentHTML('beforeend', cardHtml);
@@ -2993,20 +2996,26 @@
         // ==========================================
 
         ui.openAddressModal = function () {
-            // 1. យកទិន្ន័យពីប្រអប់តូច (cust-addr)
             const smallInput = document.getElementById('cust-addr');
             const bigTextarea = document.getElementById('expanded-addr-text');
+            const mapBtn = document.getElementById('modal-addr-map-btn');
+            const address = smallInput.value;
 
-            // 2. បោះចូលទៅក្នុងប្រអប់ធំ
-            bigTextarea.value = smallInput.value;
+            bigTextarea.value = address;
 
-            // 3. បង្ហាញ Popup (ដែលយើងបានដាក់ z-index: 100)
+            const urlMatch = address ? address.match(/(https?:\/\/[^\s]+)/) : null;
+            if (urlMatch && mapBtn) {
+                mapBtn.href = urlMatch[0];
+                mapBtn.classList.remove('hidden');
+                mapBtn.classList.add('flex');
+            } else if (mapBtn) {
+                mapBtn.href = '#';
+                mapBtn.classList.add('hidden');
+                mapBtn.classList.remove('flex');
+            }
+
             document.getElementById('modal-address-expand').classList.remove('hidden');
-
-            // 4. ដាក់ Focus ឱ្យសរសេរបានភ្លាមៗ
-            setTimeout(() => {
-                bigTextarea.focus();
-            }, 100);
+            setTimeout(() => { bigTextarea.focus(); }, 100);
         };
 
         ui.saveExpandedAddress = function () {
@@ -3021,14 +3030,25 @@
         };
         // បន្ថែមនៅខាងក្រៅ ឬក្នុង ui object ក៏បាន
         ui.quickViewAddress = (address) => {
-            // បញ្ឈប់ការចុចនេះកុំឱ្យវាធ្លាយទៅបើក Order Modal ធំ
             if (event) event.stopPropagation();
 
-            // ដាក់អាសយដ្ឋានចូលក្នុងផ្ទាំង Modal
             const textarea = document.getElementById('expanded-addr-text');
+            const mapBtn = document.getElementById('modal-addr-map-btn');
+
             textarea.value = address || "មិនមានអាសយដ្ឋានត្រូវបានកត់ត្រាទេ";
 
-            // បង្ហាញ Modal
+            // ស្វែងរក URL ក្នុង Address (Google Maps ឬ Link ណាក៏ដោយ)
+            const urlMatch = address ? address.match(/(https?:\/\/[^\s]+)/) : null;
+            if (urlMatch && mapBtn) {
+                mapBtn.href = urlMatch[0];
+                mapBtn.classList.remove('hidden');
+                mapBtn.classList.add('flex');
+            } else if (mapBtn) {
+                mapBtn.href = '#';
+                mapBtn.classList.add('hidden');
+                mapBtn.classList.remove('flex');
+            }
+
             document.getElementById('modal-address-expand').classList.remove('hidden');
         };
         window.onload = app.init;
@@ -3216,6 +3236,10 @@
             </div>
 
             <div class="px-6 py-5 flex justify-end gap-3 relative z-10">
+                <a id="modal-addr-map-btn" href="#" target="_blank"
+                    class="hidden items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-700 font-bold text-sm hover:bg-blue-100 transition mr-auto">
+                    <i class="fas fa-map-marked-alt"></i> បើ Maps
+                </a>
                 <button onclick="document.getElementById('modal-address-expand').classList.add('hidden')"
                     class="px-5 py-2.5 rounded-xl text-gray-500 dark:text-gray-400 font-bold hover:bg-gray-100/50 dark:hover:bg-white/5 transition text-sm">
                     បោះបង់
