@@ -1268,6 +1268,7 @@
                             ចំណេញ (Net Profit)</div>
                         <div class="text-2xl font-bold text-emerald-800 dark:text-white z-10 relative"
                             id="rpt-net-profit">$0.00</div>
+                        <div id="rpt-pending-note"></div>
                     </div>
                     <div
                         class="report-item relative overflow-hidden bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800">
@@ -2364,11 +2365,19 @@
                     if (o.status !== 'cancelled') { if (!prodMap[o.prodName]) prodMap[o.prodName] = 0; prodMap[o.prodName] += parseInt(o.prodQty); }
                 });
 
-                const elCount = document.getElementById('rpt-order-count'); elCount.innerText = data.length;
+                const completedOrders = data.filter(o => o.status === 'completed');
+                const pendingOrders = data.filter(o => o.status !== 'completed' && o.status !== 'cancelled');
+                let realProfit = 0, expectedProfit = 0;
+                completedOrders.forEach(o => { realProfit += app.calc(o).profit; });
+                pendingOrders.forEach(o => { expectedProfit += app.calc(o).profit; });
+
+                const elCount = document.getElementById('rpt-order-count'); elCount.innerText = completedOrders.length;
                 elCount.parentElement.onclick = () => ui.openDrillDown('orders');
                 elCount.parentElement.className = "report-item relative overflow-hidden bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800 cursor-pointer active:scale-95 transition hover:shadow-lg";
 
-                const elProfit = document.getElementById('rpt-net-profit'); elProfit.innerText = `$${netProfit.toFixed(2)}`;
+                const elProfit = document.getElementById('rpt-net-profit'); elProfit.innerText = `$${realProfit.toFixed(2)}`;
+                const pendingEl = document.getElementById('rpt-pending-note');
+                if (pendingEl) pendingEl.innerHTML = pendingOrders.length > 0 ? `<span class="text-xs text-orange-500 font-bold mt-1 block">⏳ + $${expectedProfit.toFixed(2)} រំពឹងទុក (${pendingOrders.length})</span>` : '';
                 elProfit.parentElement.onclick = () => ui.openDrillDown('profit');
                 elProfit.parentElement.className = "report-item card-gradient-green relative overflow-hidden cursor-pointer active:scale-95 transition hover:shadow-lg";
 
