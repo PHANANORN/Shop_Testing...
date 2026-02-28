@@ -2740,7 +2740,16 @@
                         const log = o.statusLog || [];
                         if (log.length > 0 && logWrapper && logContainer) {
                             let html = '';
-                            log.forEach((entry, i) => {
+                            // តម្រៀបពី Pending→Completed (ចាស់ → ថ្មី)
+                            const sortedLog = [...log].sort((a, b) => new Date(a.time) - new Date(b.time));
+                            // បង្ហាញតែ 3 ចុងក្រោយ ប្រសិនបើច្រើន
+                            const showAll = log.length <= 4;
+                            const displayLog = showAll ? sortedLog : sortedLog.slice(-3);
+                            const hiddenCount = sortedLog.length - displayLog.length;
+                            if (!showAll) {
+                                html += `<div class="text-[11px] text-gray-400 font-bold text-center py-2 mb-1 bg-gray-50/80 dark:bg-gray-800/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition" onclick="this.parentElement.innerHTML = this.parentElement.getAttribute('data-full')">${hiddenCount} ស្ថានភាពចាស់ (ចុចដើម្បីមើល)</div>`;
+                            }
+                            displayLog.forEach((entry, i) => {
                                 const s = sLabels[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
                                 const t = new Date(entry.time);
                                 const dateStr = t.toLocaleDateString('km-KH');
@@ -2760,6 +2769,17 @@
                                         </div>
                                     </div>`;
                             });
+                            // Build full HTML for expand
+                            let fullHtml = '';
+                            sortedLog.forEach((entry, i) => {
+                                const s = sLabels[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
+                                const t = new Date(entry.time);
+                                const dateStr = t.toLocaleDateString('km-KH');
+                                const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                const isLast = i === sortedLog.length - 1;
+                                fullHtml += `<div class="flex gap-3 items-start"><div class="flex flex-col items-center flex-shrink-0"><div class="w-8 h-8 rounded-full ${s.badge} border flex items-center justify-center text-sm shadow-sm">${s.icon}</div>${!isLast ? `<div class="w-0.5 min-h-[24px] bg-gradient-to-b from-gray-300 to-gray-100 dark:from-gray-600 dark:to-gray-800 mt-1"></div>` : ''}</div><div class="${!isLast ? 'pb-4' : ''} flex-1 pt-1"><div class="flex justify-between items-center flex-wrap gap-1"><span class="text-sm font-bold text-gray-700 dark:text-gray-200">${s.text}</span><span class="text-[10px] text-gray-400 font-mono bg-white/60 dark:bg-gray-800 px-2 py-0.5 rounded-md border border-gray-100 dark:border-gray-700">${dateStr} · ${timeStr}</span></div></div></div>`;
+                            });
+                            logContainer.setAttribute('data-full', fullHtml);
                             logContainer.innerHTML = html;
                             logWrapper.classList.remove('hidden');
                         } else if (logWrapper) {
