@@ -47,6 +47,21 @@
         rel="stylesheet">
     <style>
         /* === 1. SYSTEM & GLASS EFFECTS === */
+        #app-loader {
+            position: fixed;
+            inset: 0;
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(248, 250, 252, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: opacity 0.5s ease;
+        }
+        .dark #app-loader {
+            background: rgba(2, 6, 23, 0.92);
+        }
         ::-webkit-scrollbar {
             display: none;
         }
@@ -2007,7 +2022,7 @@
                 const savedConfig = localStorage.getItem('shopConfig');
                 if (savedConfig) app.config = JSON.parse(savedConfig);
                 document.getElementById('app-loader').style.display = 'flex';
-                await app.refresh();
+                await app.refresh(true);
                 if (localStorage.getItem('theme') === 'dark') { document.documentElement.classList.add('dark'); document.getElementById('theme-icon').className = 'fas fa-sun text-yellow-300'; }
                 history.replaceState({ page: 'home' }, null, '');
                 window.onpopstate = ui.handleBack;
@@ -2019,10 +2034,12 @@
 
                 setTimeout(() => { document.getElementById('app-loader').style.opacity = '0'; setTimeout(() => document.getElementById('app-loader').style.display = 'none', 500); }, 800);
             },
-            refresh: async () => {
+            refresh: async (skipStats = false) => {
                 const all = await db.getAll();
                 app.data = all.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-                ui.renderHome(); ui.renderStats(); ui.renderHistory();
+                ui.renderHome();
+                if (!skipStats) ui.renderStats();
+                ui.renderHistory();
             },
             calc: (o) => {
                 // ការពារការបញ្ចូលលេខអវិជ្ជមាន (Logic Fix #3)
@@ -2404,7 +2421,8 @@
                 document.getElementById('rpt-cogs-total').innerText = `$${totalCogs.toFixed(2)}`;
                 document.getElementById('rpt-ship-exp').innerText = `$${totalShip.toFixed(2)}`;
                 document.getElementById('rpt-ads-total').innerText = `$${totalAds.toFixed(2)}`;
-                const margin = (totalInc > 0) ? ((netProfit / (totalInc + shippingIn)) * 100) : 0;
+                netProfit = (totalInc + shippingIn) - totalCogs - totalShip - totalAds;
+const margin = ((totalInc + shippingIn) > 0) ? ((netProfit / (totalInc + shippingIn)) * 100) : 0;
                 document.getElementById('rpt-margin').innerText = `${margin.toFixed(1)}%`;
 
                 const sortedProds = Object.entries(prodMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
@@ -2970,7 +2988,7 @@
         function renderProfessionalHistory() {
             const container = document.getElementById('history-list-container');
             const countBadge = document.getElementById('hist-total-count');
-            const allData = app.data || []; const activeData = allData.filter(x => !x.isDeleted); const sorted = [...activeData].sort((a, b) => b.id - a.id);
+            const allData = app.data || []; const activeData = allData.filter(x => !x.isDeleted); const sorted = [...activeData].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             if (countBadge) countBadge.innerText = `${sorted.length} ប្រតិបត្តិការ`;
 
             if (sorted.length === 0) {
