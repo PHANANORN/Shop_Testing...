@@ -2361,8 +2361,22 @@
 
                 data.forEach(o => {
                     const f = app.calc(o);
-                    totalInc += f.sale; shippingIn += f.shipIn; totalCogs += f.cogs; totalShip += f.shipExp; totalAds += f.boost; netProfit += f.profit;
-                    if (o.status !== 'cancelled') { if (!prodMap[o.prodName]) prodMap[o.prodName] = 0; prodMap[o.prodName] += parseInt(o.prodQty); }
+                    // ចំណូល → completed ប៉ុណ្ណោះ
+                    if (o.status === 'completed') {
+                        totalInc += f.sale;
+                        shippingIn += f.shipIn;
+                        totalCogs += f.cogs;
+                    }
+                    // ចំណាយ → completed + cancelled (ការខាតពិត)
+                    if (o.status === 'completed' || o.status === 'cancelled') {
+                        totalShip += f.shipExp;
+                        totalAds += f.boost;
+                    }
+                    // Top Products → completed ប៉ុណ្ណោះ
+                    if (o.status === 'completed') {
+                        if (!prodMap[o.prodName]) prodMap[o.prodName] = 0;
+                        prodMap[o.prodName] += parseInt(o.prodQty);
+                    }
                 });
 
                 const completedOrders = data.filter(o => o.status === 'completed');
