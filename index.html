@@ -1883,33 +1883,35 @@
                             <i class="fas fa-chevron-down text-gray-400"></i>
                         </div>
                     </div>
-                    <div id="status-log-wrapper" class="hidden rounded-[24px] overflow-hidden bg-white/50 dark:bg-slate-800/60 border border-white/60 dark:border-white/10 backdrop-blur-xl"></div>
-                        <div class="p-4">
-                            <div class="flex items-center gap-2 mb-3">
-                                <div
-                                    class="w-7 h-7 rounded-lg bg-gradient-to-br from-slate-500 to-slate-700 shadow-md flex items-center justify-center text-white">
-                                    <i class="fas fa-history text-[10px]"></i>
-                                </div>
-                                <span
-                                    class="text-xs font-extrabold text-gray-600 dark:text-gray-300 uppercase tracking-widest">ប្រវត្តិស្ថានភាព
-                                    (Status Log)</span>
-                            </div>
-                            <div id="status-log-container" class="space-y-0"></div>
-                        </div>
+                    <div id="status-log-wrapper"
+                        class="hidden rounded-[24px] overflow-hidden bg-white/50 dark:bg-slate-800/60 border border-white/60 dark:border-white/10 backdrop-blur-xl">
                     </div>
-
-                </form>
+                    <div class="p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <div
+                                class="w-7 h-7 rounded-lg bg-gradient-to-br from-slate-500 to-slate-700 shadow-md flex items-center justify-center text-white">
+                                <i class="fas fa-history text-[10px]"></i>
+                            </div>
+                            <span
+                                class="text-xs font-extrabold text-gray-600 dark:text-gray-300 uppercase tracking-widest">ប្រវត្តិស្ថានភាព
+                                (Status Log)</span>
+                        </div>
+                        <div id="status-log-container" class="space-y-0"></div>
+                    </div>
             </div>
 
-            <div class="absolute bottom-6 left-0 w-full flex justify-center z-30 pointer-events-none">
-                <button type="button" onclick="ui.saveOrder()"
-                    class="pointer-events-auto w-[85%] sm:w-[400px] h-[64px] rounded-[32px] bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white font-black text-xl shadow-[0_15px_35px_rgba(13,148,136,0.4)] dark:shadow-[0_15px_35px_rgba(45,212,191,0.2)] transition-all transform active:scale-[0.95] flex justify-center items-center gap-3 border-[4px] border-white/20 backdrop-blur-md ring-1 ring-white/30">
-                    <i class="fas fa-save text-2xl drop-shadow-md"></i> <span
-                        class="drop-shadow-sm tracking-wide">រក្សាទុក (SAVE)</span>
-                </button>
-            </div>
-
+            </form>
         </div>
+
+        <div class="absolute bottom-6 left-0 w-full flex justify-center z-30 pointer-events-none">
+            <button type="button" onclick="ui.saveOrder()"
+                class="pointer-events-auto w-[85%] sm:w-[400px] h-[64px] rounded-[32px] bg-gradient-to-br from-[#0d9488] to-[#0f766e] text-white font-black text-xl shadow-[0_15px_35px_rgba(13,148,136,0.4)] dark:shadow-[0_15px_35px_rgba(45,212,191,0.2)] transition-all transform active:scale-[0.95] flex justify-center items-center gap-3 border-[4px] border-white/20 backdrop-blur-md ring-1 ring-white/30">
+                <i class="fas fa-save text-2xl drop-shadow-md"></i> <span class="drop-shadow-sm tracking-wide">រក្សាទុក
+                    (SAVE)</span>
+            </button>
+        </div>
+
+    </div>
     </div>
     <div id="invoice-modal" class="fixed inset-0 bg-black/80 z-[100] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-xl overflow-hidden shadow-2xl animate-fade-in relative">
@@ -2974,7 +2976,60 @@
                 viewer.innerHTML = html; document.getElementById('invoice-modal').classList.remove('hidden');
             },
 
-            shareTextOrder: async () => { const cName = document.getElementById('cust-name').value; const cPhone = document.getElementById('cust-phone').value; const cAddr = document.getElementById('cust-addr').value; const pName = document.getElementById('prod-name').value; const pSize = document.getElementById('prod-size').value; const pQty = document.getElementById('prod-qty').value; const vSale = parseFloat(document.getElementById('val-sale').value) || 0; const vShip = parseFloat(document.getElementById('val-ship-in').value) || 0; const total = vSale + vShip; const text = `📦 វិក្កយបត្រ / ORDER DETAIL\n------------------------\n👤 អតិថិជន: ${cName}\n📞 ទូរស័ព្ទ: ${cPhone}\n📍 ទីតាំង: ${cAddr}\n------------------------\n🛍️ ទំនិញ: ${pName} ${pSize ? '(' + pSize + ')' : ''}\n🔢 ចំនួន: ${pQty}\n------------------------\n💰 តម្លៃទំនិញ: $${vSale.toFixed(2)}\n🚚 ថ្លៃដឹក: $${vShip.toFixed(2)}\n💵 សរុប: $${total.toFixed(2)}\n------------------------\nអរគុណ! Thank you! 🙏`; if (navigator.share) { try { await navigator.share({ title: 'Order Details', text: text }); } catch (e) { } } else { navigator.clipboard.writeText(text); ui.showToast("📋 បានចម្លងអក្សរវិក្កយបត្រ!"); } },
+            shareTextOrder: async () => {
+                const cName = document.getElementById('cust-name').value;
+                const cPhone = document.getElementById('cust-phone').value;
+                const cAddr = document.getElementById('cust-addr').value;
+                const pName = document.getElementById('prod-name').value;
+                const pSize = document.getElementById('prod-size').value;
+                const pQty = document.getElementById('prod-qty').value;
+                const trackNo = document.getElementById('track-no').value;
+                const vSale = parseFloat(document.getElementById('val-sale').value) || 0;
+                const vShip = parseFloat(document.getElementById('val-ship-in').value) || 0;
+                const total = vSale + vShip;
+                const status = document.getElementById('status').value;
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('km-KH', { year: 'numeric', month: 'long', day: 'numeric' });
+                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                const statusMap = {
+                    'pending': '⏳ រង់ចាំ (Pending)',
+                    'ordered': '🛒 បានកុម្មង់ (Ordered)',
+                    'shipping': '🚚 កំពុងដឹក (Shipping)',
+                    'completed': '✅ ជោគជ័យ (Completed)',
+                    'cancelled': '❌ បោះបង់ (Cancelled)'
+                };
+                const addrUrlMatch = cAddr ? cAddr.match(/(https?:\/\/[^\s]+)/) : null;
+                const addrText = cAddr ? cAddr.replace(/(https?:\/\/[^\s]+)/g, '').trim() : 'N/A';
+                const addrLine = addrText + (addrUrlMatch ? '\n     🗺️ ' + addrUrlMatch[0] : '');
+                const lines = [
+                    '📦 វិក្កយបត្រ / ORDER DETAIL',
+                    '━━━━━━━━━━━━━━━━━━━━━━',
+                    '📅 កាលបរិច្ឆេទ: ' + dateStr + ' · ' + timeStr,
+                    '🔖 ស្ថានភាព: ' + (statusMap[status] || status),
+                    '━━━━━━━━━━━━━━━━━━━━━━',
+                    '👤 អតិថិជន: ' + (cName || 'N/A'),
+                    '📞 ទូរស័ព្ទ: ' + (cPhone || 'N/A'),
+                    '📍 ទីតាំង: ' + addrLine,
+                    '━━━━━━━━━━━━━━━━━━━━━━',
+                    '🛍️ ទំនិញ: ' + (pName || 'N/A'),
+                    ...(pSize ? ['📐 ទំហំ (Size): ' + pSize] : []),
+                    '🔢 ចំនួន (Qty): ' + (pQty || 1),
+                    ...(trackNo ? ['📬 Tracking: ' + trackNo] : []),
+                    '━━━━━━━━━━━━━━━━━━━━━━',
+                    '💵 តម្លៃទំនិញ: $' + vSale.toFixed(2),
+                    '🚚 ថ្លៃដឹក: $' + vShip.toFixed(2),
+                    '💰 សរុបទូទាត់: $' + total.toFixed(2),
+                    '━━━━━━━━━━━━━━━━━━━━━━',
+                    '🙏 អរគុណដែលបានគាំទ្រ! Thank you!'
+                ];
+                const text = lines.join('\n');
+                if (navigator.share) {
+                    try { await navigator.share({ title: 'Order Details', text: text }); } catch (e) { }
+                } else {
+                    navigator.clipboard.writeText(text);
+                    ui.showToast('📋 បានចម្លងអក្សរវិក្កយបត្រ!');
+                }
+            },
             renderSettingsRate: () => {
                 const el = document.getElementById('sys-rate-input');
                 if (el) {
