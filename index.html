@@ -2743,11 +2743,11 @@
                         const logWrapper = document.getElementById('status-log-wrapper');
                         const logContainer = document.getElementById('status-log-container');
                         const sLabels = {
-                            'pending': { icon: '⏳', text: 'រង់ចាំ (Pending)', badge: 'bg-orange-50 text-orange-600 border-orange-200' },
-                            'ordered': { icon: '🛒', text: 'បានកុម្មង់ (Ordered)', badge: 'bg-blue-50 text-blue-600 border-blue-200' },
-                            'shipping': { icon: '🚚', text: 'កំពុងដឹក (Shipping)', badge: 'bg-indigo-50 text-indigo-600 border-indigo-200' },
-                            'completed': { icon: '✅', text: 'ជោគជ័យ (Completed)', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-                            'cancelled': { icon: '❌', text: 'បោះបង់ (Cancelled)', badge: 'bg-red-50 text-red-600 border-red-200' }
+                            'pending': { icon: '⏳', text: 'រង់ចាំ (Pending)', badge: 'bg-orange-50  dark:bg-orange-900/30  text-orange-600  dark:text-orange-400  border-orange-200  dark:border-orange-700/50' },
+                            'ordered': { icon: '🛒', text: 'បានកុម្មង់ (Ordered)', badge: 'bg-blue-50    dark:bg-blue-900/30    text-blue-600    dark:text-blue-400    border-blue-200    dark:border-blue-700/50' },
+                            'shipping': { icon: '🚚', text: 'កំពុងដឹក (Shipping)', badge: 'bg-indigo-50  dark:bg-indigo-900/30  text-indigo-600  dark:text-indigo-400  border-indigo-200  dark:border-indigo-700/50' },
+                            'completed': { icon: '✅', text: 'ជោគជ័យ (Completed)', badge: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-700/50' },
+                            'cancelled': { icon: '❌', text: 'បោះបង់ (Cancelled)', badge: 'bg-red-50     dark:bg-red-900/30     text-red-600     dark:text-red-400     border-red-200     dark:border-red-700/50' }
                         };
                         const log = o.statusLog || [];
                         if (log.length > 0 && logWrapper && logContainer) {
@@ -2798,7 +2798,13 @@
                                 const needC = sl.length > 3;
                                 const col = sl.slice(-3);
                                 const entries = expanded ? sl : col;
-                                const sL = container._sLabels;
+                                const sL = {
+                                    'pending': { icon: '⏳', text: 'រង់ចាំ (Pending)', badge: 'bg-orange-50  dark:bg-orange-900/30  text-orange-600  dark:text-orange-400  border-orange-200  dark:border-orange-700/50' },
+                                    'ordered': { icon: '🛒', text: 'បានកុម្មង់ (Ordered)', badge: 'bg-blue-50    dark:bg-blue-900/30    text-blue-600    dark:text-blue-400    border-blue-200    dark:border-blue-700/50' },
+                                    'shipping': { icon: '🚚', text: 'កំពុងដឹក (Shipping)', badge: 'bg-indigo-50  dark:bg-indigo-900/30  text-indigo-600  dark:text-indigo-400  border-indigo-200  dark:border-indigo-700/50' },
+                                    'completed': { icon: '✅', text: 'ជោគជ័យ (Completed)', badge: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-700/50' },
+                                    'cancelled': { icon: '❌', text: 'បោះបង់ (Cancelled)', badge: 'bg-red-50     dark:bg-red-900/30     text-red-600     dark:text-red-400     border-red-200     dark:border-red-700/50' }
+                                };
                                 let html = '';
                                 if (needC) {
                                     if (!expanded) {
