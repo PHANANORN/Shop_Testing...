@@ -2021,7 +2021,7 @@
         let fpStart, fpEnd;
 
         const db = {
-            init: () => new Promise(r => { const q = indexedDB.open(DB_CONFIG.name, DB_CONFIG.version); q.onupgradeneeded = e => { const d = e.target.result; if (!d.objectStoreNames.contains(DB_CONFIG.store)) d.createObjectStore(DB_CONFIG.store, { keyPath: 'id' }); if (!d.objectStoreNames.contains('logs')) d.createObjectStore('logs', { keyPath: 'id' }); }; q.onsuccess = e => { dbConn = e.target.result; r(); }; }),
+            init: () => new Promise(r => { const q = indexedDB.open(DB_CONFIG.name, DB_CONFIG.version); q.onupgradeneeded = e => { const d = e.target.result; if (!d.objectStoreNames.contains(DB_CONFIG.store)) d.createObjectStore(DB_CONFIG.store, { keyPath: 'id' }); }; q.onsuccess = e => { dbConn = e.target.result; r(); }; }),
             getAll: (s = DB_CONFIG.store) => new Promise(r => { if (!dbConn) return r([]); const q = dbConn.transaction(s, 'readonly').objectStore(s).getAll(); q.onsuccess = () => r(q.result || []); }),
             put: (d, s = DB_CONFIG.store) => new Promise(r => { if (!dbConn) return; const q = dbConn.transaction(s, 'readwrite').objectStore(s).put(d); q.oncomplete = () => r(); }),
             delete: (id, s = DB_CONFIG.store) => new Promise(r => { if (!dbConn) return; const q = dbConn.transaction(s, 'readwrite').objectStore(s).delete(id); q.oncomplete = () => r(); }),
@@ -2030,7 +2030,7 @@
 
         const app = {
 
-            data: [], logs: [], filter: 'all', config: { sysRate: 4100, sysMode: 'manual', invRate: 4100 },
+            data: [], filter: 'all', config: { sysRate: 4100, sysMode: 'manual', invRate: 4100 },
             init: async () => {
                 await db.init();
                 const savedConfig = localStorage.getItem('shopConfig');
@@ -2075,10 +2075,6 @@
                 const exp = costBuy + cShip + cBoost; // រាប់បញ្ចូលថ្លៃដឹកចេញ និង Boost ជានិច្ចទោះ Cancel ក៏ដោយ
 
                 return { income: inc, expense: exp, profit: inc - exp, cogs: costBuy, shipExp: cShip, boost: cBoost, sale: sale, shipIn: shipIn };
-            },
-            logActivity: async (msg) => {
-                const log = { id: Date.now(), msg: msg, time: new Date().toLocaleTimeString('km-KH') };
-                app.logs.unshift(log);
             },
             saveConfig: () => localStorage.setItem('shopConfig', JSON.stringify(app.config)),
             formatKHR: (usd, type = 'sys') => {
@@ -2930,7 +2926,7 @@
                     ui.showToast('✅ រក្សាទុកជោគជ័យ');
 
                     await db.put(payload);
-                    if (!idStr) await app.logActivity(`បានបង្កើត: ${payload.prodName}`);
+
                 } catch (e) {
                     alert("Error: " + e);
                 }
@@ -2952,10 +2948,10 @@
             closeConfirm: () => { ui.confirmType = null; ui.confirmId = null; document.getElementById('modal-confirm-overlay').classList.add('hidden'); },
             onConfirmYes: async () => {
                 const type = ui.confirmType; const id = ui.confirmId; ui.closeConfirm();
-                if (type === 'delete' && id) { const item = app.data.find(x => x.id === id); if (item) { item.isDeleted = true; ui.renderHome(); ui.showToast('🗑️ បានលុបទៅធុងសំរាម'); await db.put(item); await app.logActivity(`បានលុប: ${item.prodName}`); ui.closeModal('modal-order'); } }
-                else if (type === 'restore' && id) { const item = app.data.find(x => x.id === id); if (item) { item.isDeleted = false; ui.renderTrashList(); ui.renderHome(); ui.renderStats(); ui.showToast('♻️ បានយកមកវិញ'); await db.put(item); await app.logActivity(`បាន Restore: ${item.prodName}`); } }
-                else if (type === 'empty_trash') { const trash = app.data.filter(x => x.isDeleted); app.data = app.data.filter(x => !x.isDeleted); ui.renderTrashList(); ui.showToast('🧹 សម្អាតធុងសំរាមរួចរាល់!'); for (let t of trash) { await db.delete(t.id); } await app.logActivity('បានសម្អាតធុងសំរាម'); }
-                else if (type === 'reset_app') { document.getElementById('app-loader').style.display = 'flex'; document.getElementById('loader-text').innerText = "កំពុងលុបចោលទិន្ន័យ..."; await db.clear(); await db.clear('logs'); localStorage.clear(); setTimeout(() => { location.reload(); }, 1500); }
+                if (type === 'delete' && id) { const item = app.data.find(x => x.id === id); if (item) { item.isDeleted = true; ui.renderHome(); ui.showToast('🗑️ បានលុបទៅធុងសំរាម'); await db.put(item); ui.closeModal('modal-order'); } }
+                else if (type === 'restore' && id) { const item = app.data.find(x => x.id === id); if (item) { item.isDeleted = false; ui.renderTrashList(); ui.renderHome(); ui.renderStats(); ui.showToast('♻️ បានយកមកវិញ'); await db.put(item); } }
+                else if (type === 'empty_trash') { const trash = app.data.filter(x => x.isDeleted); app.data = app.data.filter(x => !x.isDeleted); ui.renderTrashList(); ui.showToast('🧹 សម្អាតធុងសំរាមរួចរាល់!'); for (let t of trash) { await db.delete(t.id); } }
+                else if (type === 'reset_app') { document.getElementById('app-loader').style.display = 'flex'; document.getElementById('loader-text').innerText = "កំពុងលុបចោលទិន្ន័យ..."; await db.clear(); localStorage.clear(); setTimeout(() => { location.reload(); }, 1500); }
             },
 
             confirmDelete: (id) => ui.askConfirm('delete', id),
