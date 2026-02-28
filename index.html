@@ -59,9 +59,11 @@
             -webkit-backdrop-filter: blur(10px);
             transition: opacity 0.5s ease;
         }
+
         .dark #app-loader {
             background: rgba(2, 6, 23, 0.92);
         }
+
         ::-webkit-scrollbar {
             display: none;
         }
@@ -834,10 +836,6 @@
         #modal-confirm-overlay,
         #modal-import-overlay {
             z-index: 10000;
-        }
-
-        #app-loader {
-            z-index: 10001;
         }
 
         /* Glass Box for Modals */
@@ -1885,6 +1883,22 @@
                             <i class="fas fa-chevron-down text-gray-400"></i>
                         </div>
                     </div>
+                    <div id="status-log-wrapper" class="hidden rounded-[24px] overflow-hidden"
+                        style="background: linear-gradient(135deg, rgba(255,255,255,0.5), rgba(248,250,252,0.4)); border: 1px solid rgba(255,255,255,0.6); backdrop-filter: blur(12px);">
+                        <div class="p-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div
+                                    class="w-7 h-7 rounded-lg bg-gradient-to-br from-slate-500 to-slate-700 shadow-md flex items-center justify-center text-white">
+                                    <i class="fas fa-history text-[10px]"></i>
+                                </div>
+                                <span
+                                    class="text-xs font-extrabold text-gray-600 dark:text-gray-300 uppercase tracking-widest">ប្រវត្តិស្ថានភាព
+                                    (Status Log)</span>
+                            </div>
+                            <div id="status-log-container" class="space-y-0"></div>
+                        </div>
+                    </div>
+
                 </form>
             </div>
 
@@ -2422,7 +2436,7 @@
                 document.getElementById('rpt-ship-exp').innerText = `$${totalShip.toFixed(2)}`;
                 document.getElementById('rpt-ads-total').innerText = `$${totalAds.toFixed(2)}`;
                 netProfit = (totalInc + shippingIn) - totalCogs - totalShip - totalAds;
-const margin = ((totalInc + shippingIn) > 0) ? ((netProfit / (totalInc + shippingIn)) * 100) : 0;
+                const margin = ((totalInc + shippingIn) > 0) ? ((netProfit / (totalInc + shippingIn)) * 100) : 0;
                 document.getElementById('rpt-margin').innerText = `${margin.toFixed(1)}%`;
 
                 const sortedProds = Object.entries(prodMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
@@ -2588,7 +2602,7 @@ const margin = ((totalInc + shippingIn) > 0) ? ((netProfit / (totalInc + shippin
                 <div class="p-5 pl-6">
                     <div class="flex justify-between items-center mb-3">
                         <span class="status-badge ${st.bg} ${st.text}"><i class="fas ${st.icon}"></i> ${st.label}</span>
-                        <span class="text-[11px] text-gray-400 dark:text-gray-500 font-bold font-sans tracking-wide">${new Date(o.updatedAt).toLocaleDateString('km-KH')}</span>
+                        <span class="text-[11px] text-gray-400 dark:text-gray-500 font-bold font-sans tracking-wide" title="ថ្ងៃ Order">${new Date(o.createdAt || o.id).toLocaleDateString('km-KH')}</span>
                     </div>
                     
                     <div class="mb-3 pb-3 border-b border-gray-100 dark:border-gray-700/50">
@@ -2661,6 +2675,9 @@ const margin = ((totalInc + shippingIn) > 0) ? ((netProfit / (totalInc + shippin
                 // លាក់ប៊ូតុង Invoice
                 document.getElementById('invoice-btn-group').classList.add('hidden');
                 document.getElementById('invoice-btn-group').classList.remove('flex');
+                // លាក់ Status Log ពេល Create Mode
+                const logWrap = document.getElementById('status-log-wrapper');
+                if (logWrap) logWrap.classList.add('hidden');
 
                 // សម្អាតទិន្នន័យចាស់ក្នុង Form
                 ['cust-name', 'cust-phone', 'cust-addr', 'cust-fb', 'track-no', 'prod-img', 'prod-name', 'prod-size', 'val-sale', 'val-ship-in', 'cost-buy', 'cost-ship', 'cost-boost', 'note'].forEach(i => document.getElementById(i).value = '');
@@ -2709,6 +2726,45 @@ const margin = ((totalInc + shippingIn) > 0) ? ((netProfit / (totalInc + shippin
                         // បង្ហាញប៊ូតុង Invoice ពេលកែប្រែ
                         document.getElementById('invoice-btn-group').classList.remove('hidden');
                         document.getElementById('invoice-btn-group').classList.add('flex');
+
+                        // *** Render Status Log ***
+                        const logWrapper = document.getElementById('status-log-wrapper');
+                        const logContainer = document.getElementById('status-log-container');
+                        const sLabels = {
+                            'pending': { icon: '⏳', text: 'រង់ចាំ (Pending)', badge: 'bg-orange-50 text-orange-600 border-orange-200' },
+                            'ordered': { icon: '🛒', text: 'បានកុម្មង់ (Ordered)', badge: 'bg-blue-50 text-blue-600 border-blue-200' },
+                            'shipping': { icon: '🚚', text: 'កំពុងដឹក (Shipping)', badge: 'bg-indigo-50 text-indigo-600 border-indigo-200' },
+                            'completed': { icon: '✅', text: 'ជោគជ័យ (Completed)', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+                            'cancelled': { icon: '❌', text: 'បោះបង់ (Cancelled)', badge: 'bg-red-50 text-red-600 border-red-200' }
+                        };
+                        const log = o.statusLog || [];
+                        if (log.length > 0 && logWrapper && logContainer) {
+                            let html = '';
+                            log.forEach((entry, i) => {
+                                const s = sLabels[entry.status] || { icon: '•', text: entry.status, badge: 'bg-gray-50 text-gray-600 border-gray-200' };
+                                const t = new Date(entry.time);
+                                const dateStr = t.toLocaleDateString('km-KH');
+                                const timeStr = t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                const isLast = i === log.length - 1;
+                                html += `
+                                    <div class="flex gap-3 items-start">
+                                        <div class="flex flex-col items-center flex-shrink-0">
+                                            <div class="w-8 h-8 rounded-full ${s.badge} border flex items-center justify-center text-sm shadow-sm">${s.icon}</div>
+                                            ${!isLast ? `<div class="w-0.5 min-h-[24px] bg-gradient-to-b from-gray-300 to-gray-100 dark:from-gray-600 dark:to-gray-800 mt-1"></div>` : ''}
+                                        </div>
+                                        <div class="${!isLast ? 'pb-4' : ''} flex-1 pt-1">
+                                            <div class="flex justify-between items-center flex-wrap gap-1">
+                                                <span class="text-sm font-bold text-gray-700 dark:text-gray-200">${s.text}</span>
+                                                <span class="text-[10px] text-gray-400 font-mono bg-white/60 dark:bg-gray-800 px-2 py-0.5 rounded-md border border-gray-100 dark:border-gray-700">${dateStr} · ${timeStr}</span>
+                                            </div>
+                                        </div>
+                                    </div>`;
+                            });
+                            logContainer.innerHTML = html;
+                            logWrapper.classList.remove('hidden');
+                        } else if (logWrapper) {
+                            logWrapper.classList.add('hidden');
+                        }
                     }
                 }
             },
@@ -2731,17 +2787,32 @@ const margin = ((totalInc + shippingIn) > 0) ? ((netProfit / (totalInc + shippin
 
                     // === [ចំណុចកែប្រែសំខាន់] ===
                     // រក្សាទុកកាលបរិច្ឆេទចាស់ប្រសិនបើវាជាការកែប្រែទិន្នន័យ (Edit)
-                    let orderDate = new Date().toISOString();
+                    const now = new Date().toISOString();
+                    let createdAt = now;
+                    let statusLog = [];
+                    const newStatus = document.getElementById('status').value;
+
                     if (idStr) {
                         const existingOrder = app.data.find(x => x.id === parseInt(idStr));
-                        if (existingOrder && existingOrder.updatedAt) {
-                            orderDate = existingOrder.updatedAt; // ទាញយកកាលបរិច្ឆេទដើមមកប្រើវិញ
+                        if (existingOrder) {
+                            // createdAt មិនផ្លាស់ប្ដូរ — ប្រើ id ជា fallback សម្រាប់ Order ចាស់
+                            createdAt = existingOrder.createdAt || new Date(existingOrder.id).toISOString();
+                            statusLog = Array.isArray(existingOrder.statusLog) ? [...existingOrder.statusLog] : [];
+                            // បន្ថែម Log តែ ពេល Status ផ្លាស់ប្ដូរ
+                            const lastLogStatus = statusLog.length > 0 ? statusLog[statusLog.length - 1].status : null;
+                            if (newStatus !== lastLogStatus) {
+                                statusLog.push({ status: newStatus, time: now });
+                            }
                         }
+                    } else {
+                        // Order ថ្មី — Log ដំបូង
+                        statusLog = [{ status: newStatus, time: now }];
                     }
 
                     const payload = {
                         id: idStr ? parseInt(idStr) : Date.now(),
-                        updatedAt: orderDate, // ប្រើកាលបរិច្ឆេទដែលបានកំណត់ត្រឹមត្រូវ
+                        createdAt: createdAt,
+                        updatedAt: now,
                         exchangeRate: curRate,
                         trackingNo: document.getElementById('track-no').value,
                         prodImg: document.getElementById('prod-img').value,
@@ -2760,6 +2831,8 @@ const margin = ((totalInc + shippingIn) > 0) ? ((netProfit / (totalInc + shippin
                         costBoost: document.getElementById('cost-boost').value,
                         note: document.getElementById('note').value,
                         status: document.getElementById('status').value,
+                        statusLog: statusLog,
+                        statusLog: statusLog,
                         isDeleted: false
                     };
 
